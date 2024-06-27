@@ -15,11 +15,13 @@ class PromotionsTableSeeder extends Seeder
     {
         DB::table('promotions')->insert([
             'image' => 'promo1.png',
+            'name' => 'Yoga',
             'deskripsi' => 'Discount 50% for new members'
         ]);
 
         DB::table('promotions')->insert([
             'image' => 'promo2.png',
+            'name' => 'Boxing',
             'deskripsi' => 'Free first class for all new users'
         ]);
     }

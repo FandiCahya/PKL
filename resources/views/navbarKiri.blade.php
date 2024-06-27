@@ -24,26 +24,26 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="/absensi_karyawan">
-                    <i class="fas fa-fw fa-table"></i>
+                <a class="nav-link" href="/kelola_user">
+                    <i class="fas fa-fw fa-users"></i>
                     <span>Users</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="/gaji">
-                    <i class="fas fa-fw fa-table"></i>
+                <a class="nav-link" href="/kelola_room">
+                    <i class="fas fa-fw fa-home"></i>
                     <span>Room</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="/izin">
-                    <i class="fas fa-fw fa-table"></i>
+                    <i class="fas fa-fw fa-clipboard"></i>
                     <span>Bookings</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="/izin">
-                    <i class="fas fa-fw fa-table"></i>
+                <a class="nav-link" href="/kelola_promo">
+                    <i class="fas fa-fw fa-bullhorn"></i>
                     <span>Promosi</span></a>
             </li>
 
