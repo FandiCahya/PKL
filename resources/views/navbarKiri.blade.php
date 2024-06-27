@@ -6,7 +6,7 @@
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">{{ auth()->user()->nama }}</div>
+                <div class="sidebar-brand-text mx-3">{{ auth()->check() ? auth()->user()->nama : 'Guest' }}</div>
             </a>
 
             <!-- Divider -->
@@ -14,7 +14,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="/beranda">
+                <a class="nav-link" href="/dashboard">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
@@ -26,19 +26,25 @@
             <li class="nav-item">
                 <a class="nav-link" href="/absensi_karyawan">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Presensi</span></a>
+                    <span>Users</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="/gaji">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Gaji</span></a>
+                    <span>Room</span></a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link" href="/izin">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Izin</span></a>
+                    <span>Bookings</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="/izin">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Promosi</span></a>
             </li>
 
             <!-- Divider -->
