@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PromotionsTableSeeder extends Seeder
 {
@@ -14,15 +15,33 @@ class PromotionsTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('promotions')->insert([
-            'image' => 'promo1.png',
-            'name' => 'Yoga',
-            'deskripsi' => 'Discount 50% for new members'
-        ]);
-
-        DB::table('promotions')->insert([
-            'image' => 'promo2.png',
-            'name' => 'Boxing',
-            'deskripsi' => 'Free first class for all new users'
+            [
+                'name' => 'Yoga Class',
+                'image' => 'early_bird_discount.jpg',
+                'deskripsi' => 'Yoga Class',
+                'date' => Carbon::parse('2024-07-01'),
+                'time' => Carbon::parse('06:00:00'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Boxing Class',
+                'image' => 'weekend_special.jpg',
+                'deskripsi' => 'Boxing Class',
+                'date' => Carbon::parse('2024-07-05'),
+                'time' => Carbon::parse('00:00:00'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Taekwondo Class',
+                'image' => 'happy_hour.jpg',
+                'deskripsi' => 'Taekwondo Class',
+                'date' => Carbon::parse('2024-07-01'),
+                'time' => Carbon::parse('14:00:00'),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
         ]);
     }
 }

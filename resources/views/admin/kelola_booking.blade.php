@@ -1,21 +1,21 @@
 @extends('master')
-@section('title', 'Promo')
+@section('title', 'Bookings')
 @section('isi')
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Data Promosi</h1>
+    <h1 class="h3 mb-2 text-gray-800">Data Bookings</h1>
 
     <!-- Search Form -->
     <div class="row mb-4">
         <div class="col-lg-6">
-            <form action="{{ route('kelola_promo') }}" method="GET" class="form-inline">
+            <form action="{{ route('kelola_booking') }}" method="GET" class="form-inline">
                 <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="#" class="btn btn-success">Tambah Promo</a>
+            <a href="#" class="btn btn-success">Tambah Booking</a>
         </div>
     </div>
 
@@ -23,7 +23,7 @@
     <div class="card shadow mb-4">
         @if (auth()->user()->role == 'admin')
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Data Promo</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Data Bookings</h6>
             </div>
         @endif
         <div class="card-body">
@@ -32,28 +32,30 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Image</th>
-                            <th>Deskripsi</th>
-                            <th>Tanggal</th>
-                            <th>Waktu</th>
+                            <th>User</th>
+                            <th>Room</th>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>Estimasi</th>
+                            <th>End Time</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($promo as $promotion)
+                        @foreach($bookings as $booking)
                         <tr>
-                            <td>{{ $promotion->id }}</td>
-                            <td>{{ $promotion->name }}</td>
+                            <td>{{ $booking->id }}</td>
+                            <td>{{ $booking->user->name }}</td>
+                            <td>{{ $booking->room->nama }}</td>
+                            <td>{{ $booking->tgl }}</td>
+                            <td>{{ $booking->start_time }}</td>
+                            <td>{{ $booking->estimasi }}</td>
+                            <td>{{ $booking->end_time }}</td>
+                            <td>{{ $booking->status }}</td>
                             <td>
-                                <img src="{{ asset('storage/' . $promotion->image) }}" alt="Promotion Image" style="max-width: 150px;">
-                            </td>
-                            <td>{{ $promotion->deskripsi }}</td>
-                            <td>{{ $promotion->date }}</td>
-                            <td>{{ $promotion->time }}</td>
-                            <td>
-                                {{-- <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-primary btn-sm">Edit</a> --}}
-                                {{-- <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST" style="display: inline-block;">
+                                {{-- <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>

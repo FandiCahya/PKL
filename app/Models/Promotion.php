@@ -13,5 +13,7 @@ class Promotion extends Model
         'name',
         'image',
         'deskripsi',
+        'date',
+        'time'
     ];
 }

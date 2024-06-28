@@ -16,7 +16,7 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert([
             'name' => 'Admin User',
-            'email' => 'admin@example.com',
+            'email' => 'admin@gmail.com',
             'alamat' => 'Kediri',
             'no_hp' => '1234567890',
             'image' => 'default.png',
@@ -27,7 +27,7 @@ class UsersTableSeeder extends Seeder
 
         DB::table('users')->insert([
             'name' => 'Regular User',
-            'email' => 'user@example.com',
+            'email' => 'user@gmail.com',
             'alamat' => 'Kediri',
             'no_hp' => '0987654321',
             'image' => 'default.png',

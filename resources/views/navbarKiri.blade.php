@@ -36,7 +36,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="/izin">
+                <a class="nav-link" href="/kelola_booking">
                     <i class="fas fa-fw fa-clipboard"></i>
                     <span>Bookings</span></a>
             </li>
@@ -44,7 +44,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="/kelola_promo">
                     <i class="fas fa-fw fa-bullhorn"></i>
-                    <span>Promosi</span></a>
+                    <span>Promo</span></a>
             </li>
 
             <!-- Divider -->
