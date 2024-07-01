@@ -14,6 +14,9 @@
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
+        <div class="col-lg-6 text-right">
+            <a href="{{ route('tambah_user') }}" class="btn btn-success">Tambah Room</a>
+        </div>
     </div>
 
     <!-- DataTales Example -->
@@ -34,7 +37,7 @@
                             <th>Alamat</th>
                             <th>No HP</th>
                             <th>Role</th>
-                            {{-- <th>Actions</th> --}}
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -46,11 +49,15 @@
                             <td>{{ $users->alamat }}</td>
                             <td>{{ $users->no_hp }}</td>
                             <td>{{ $users->role }}</td>
-                            {{-- <td>
-                                <!-- Add any actions here, like edit or delete -->
-                                <a href="#" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                            </td> --}}
+                            <td>
+                                <a href="{{ route('edit_user', $users->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <form action="{{ route('hapus_user', $users->id) }}" method="POST" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            </td>
+                            
                         </tr>
                         @endforeach
                     </tbody>

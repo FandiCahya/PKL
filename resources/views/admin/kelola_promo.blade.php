@@ -15,7 +15,7 @@
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="#" class="btn btn-success">Tambah Promo</a>
+            <a href="{{ route('tambah_promo') }}" class="btn btn-success">Tambah Promo</a>
         </div>
     </div>
 
@@ -35,8 +35,7 @@
                             <th>Name</th>
                             <th>Image</th>
                             <th>Deskripsi</th>
-                            <th>Tanggal</th>
-                            <th>Waktu</th>
+                            <th>Tanggal dan Jam</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -49,16 +48,16 @@
                                 <img src="{{ asset('storage/' . $promotion->image) }}" alt="Promotion Image" style="max-width: 150px;">
                             </td>
                             <td>{{ $promotion->deskripsi }}</td>
-                            <td>{{ $promotion->date }}</td>
-                            <td>{{ $promotion->time }}</td>
+                            <td>{{ $promotion->datetime }}</td>
                             <td>
-                                {{-- <a href="{{ route('promotions.edit', $promotion->id) }}" class="btn btn-primary btn-sm">Edit</a> --}}
-                                {{-- <form action="{{ route('promotions.destroy', $promotion->id) }}" method="POST" style="display: inline-block;">
+                                <a href="{{ route('edit_promo', $promotion->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <form action="{{ route('hapus_promo', $promotion->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form> --}}
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
                             </td>
+                            
                         </tr>
                         @endforeach
                     </tbody>
