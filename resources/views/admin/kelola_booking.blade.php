@@ -54,11 +54,11 @@
                             <td>{{ $booking->end_time }}</td>
                             <td>{{ $booking->status }}</td>
                             <td>
-                                <a href="{{ route('edit_booking',$booking->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="{{ route('edit_booking',$booking->id) }}" class="btn btn-warning btn-sm">Update</a>
                                 <form action="{{ route('hapus_booking', $booking->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
                             </td>
                         </tr>

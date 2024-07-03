@@ -44,8 +44,16 @@
             <li class="nav-item">
                 <a class="nav-link" href="/kelola_promo">
                     <i class="fas fa-fw fa-bullhorn"></i>
-                    <span>Promo</span></a>
+                    <span>Promotion</span></a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('blocked_dates.index') }}">
+                    <i class="fas fa-calendar-times"></i>
+                    <span>Block Date</span>
+                </a>
+            </li>
+            
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

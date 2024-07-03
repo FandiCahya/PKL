@@ -411,18 +411,5 @@ class AdminController extends Controller
         return redirect('/dashboard')->with('success', 'Profile updated successfully.');
     }
     
-    public function block_dates()
-    {
-        $blockedDates = BlockedDate::all();
-        return view('admin.blocked_dates.index', compact('blockedDates'));
-    }
-
-    public function hapus_block_dates($id)
-    {
-        $blockedDate = BlockedDate::findOrFail($id);
-        $blockedDate->delete();
-
-        return redirect()->route('blocked-dates.index')->with('success', 'Tanggal berhasil dihapus.');
-    }
 
 }

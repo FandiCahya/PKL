@@ -15,7 +15,7 @@
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="{{ route('tambah_promo') }}" class="btn btn-success">Tambah Promo</a>
+            <a href="{{ route('tambah_promo') }}" class="btn btn-success">Create Promo</a>
         </div>
     </div>
 
@@ -52,11 +52,11 @@
                             <td>{{ $promotion->tgl }}</td>
                             <td>{{ $promotion->waktu }}</td>
                             <td>
-                                <a href="{{ route('edit_promo', $promotion->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="{{ route('edit_promo', $promotion->id) }}" class="btn btn-warning btn-sm">Update</a>
                                 <form action="{{ route('hapus_promo', $promotion->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
                             </td>
                             

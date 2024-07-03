@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bloked_dates', function (Blueprint $table) {
+        Schema::create('blocked_dates', function (Blueprint $table) {
             $table->id();
             $table->date('blocked_date');
             $table->string('reason')->nullable();

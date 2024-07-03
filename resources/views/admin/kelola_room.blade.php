@@ -15,7 +15,7 @@
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="{{ route('tambah_room') }}" class="btn btn-success">Tambah Room</a>
+            <a href="{{ route('tambah_room') }}" class="btn btn-success">Create Room</a>
         </div>
     </div>
 
@@ -48,11 +48,11 @@
                             <td>{{ $room->availability ? 'Available' : 'Not Available' }}</td>
                             <td>{{ $room->harga }}</td>
                             <td>
-                                <a href="{{ route('edit_room', $room->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="{{ route('edit_room', $room->id) }}" class="btn btn-warning btn-sm">Update</a>
                                 <form action="{{ route('hapus_room', $room->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
                             </td>
                             

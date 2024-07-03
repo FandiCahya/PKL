@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BlockedDateController;
 
 Route::get('/login', [AuthController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'auth']);
@@ -33,6 +34,7 @@ Route::get('/edit_promo/{id}', [AdminController::class, 'editPromo'])->name('edi
 Route::put('/update_promo/{id}', [AdminController::class, 'updatePromo'])->name('update_promo')->middleware('admin');
 Route::delete('/hapus_promo/{id}', [AdminController::class, 'hapusPromo'])->name('hapus_promo')->middleware('admin');
 
+Route::resource('/blocked_dates', BlockedDateController::class)->middleware('admin');
 
 
 
