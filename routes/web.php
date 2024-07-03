@@ -34,6 +34,14 @@ Route::put('/update_promo/{id}', [AdminController::class, 'updatePromo'])->name(
 Route::delete('/hapus_promo/{id}', [AdminController::class, 'hapusPromo'])->name('hapus_promo')->middleware('admin');
 
 
-Route::get('/kelola_booking', [AdminController::class, 'kelola_booking'])->name('kelola_booking')->middleware('admin');
 
-Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware('auth');
+
+Route::get('/kelola_booking', [AdminController::class, 'kelola_booking'])->name('kelola_booking')->middleware('admin');
+Route::get('/edit_booking/{id}', [AdminController::class, 'editBooking'])->name('edit_booking')->middleware('admin');
+Route::put('/update_booking/{id}', [AdminController::class, 'updateBooking'])->name('bookings_update')->middleware('admin');
+Route::delete('/hapus_booking/{id}', [AdminController::class, 'hapusBooking'])->name('hapus_booking')->middleware('admin');
+
+Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware('auth',);
+
+Route::get('/profile/edit', [AdminController::class, 'edit_profile'])->name('profile.edit')->middleware('admin');
+Route::post('/profile/update', [AdminController::class, 'update_Profile'])->name('profile.update')->middleware('admin');

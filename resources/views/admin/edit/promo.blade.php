@@ -5,16 +5,14 @@
 
     <h1 class="h3 mb-2 text-gray-800">Edit Promo</h1>
 
-    @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
     @endif
 
     <div class="card shadow mb-4">
@@ -23,30 +21,31 @@
                 @csrf
                 @method('PUT')
                 <div class="form-group">
-                    <label for="name">Nama</label>
-                    <input type="text" class="form-control" id="name" name="name" value="{{ $promo->name }}" required>
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ $promo->name }}">
                 </div>
                 <div class="form-group">
-                    <label for="image">Gambar</label>
-                    <input type="file" class="form-control" id="image" name="image">
+                    <label for="image">Image</label>
+                    <input type="file" class="form-control-file" id="image" name="image">
                     <img src="{{ asset('storage/' . $promo->image) }}" alt="Promotion Image" style="max-width: 150px; margin-top: 10px;">
                 </div>
                 <div class="form-group">
                     <label for="deskripsi">Deskripsi</label>
-                    <input type="text" class="form-control" id="deskripsi" name="deskripsi" value="{{ $promo->deskripsi }}" required>
+                    <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3">{{ $promo->deskripsi }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="date">Tanggal</label>
-                    <input type="date" class="form-control" id="date" name="date" value="{{ $promo->date }}" required>
+                    <label for="tgl">Tanggal</label>
+                    <input type="date" class="form-control" id="tgl" name="tgl" value="{{ $promo->tgl }}">
                 </div>
                 <div class="form-group">
-                    <label for="time">Waktu</label>
-                    <input type="time" class="form-control" id="time" name="time" value="{{ $promo->time }}">
+                    <label for="waktu">Waktu</label>
+                    <input type="time" class="form-control" id="waktu" name="waktu" value="{{ $promo->waktu }}">
                 </div>
-                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                <button type="submit" class="btn btn-primary">Update Promo</button>
             </form>
         </div>
     </div>
+    
 
 </div>
 @endsection

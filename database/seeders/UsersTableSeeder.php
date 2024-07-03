@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder
             'no_hp' => '1234567890',
             'image' => 'default.png',
             'password' => Hash::make('1'),
-            'confirm_pass' => Hash::make('1'),
+            // 'confirm_pass' => Hash::make('1'),
             'role' => 'admin'
         ]);
 
@@ -32,7 +32,7 @@ class UsersTableSeeder extends Seeder
             'no_hp' => '0987654321',
             'image' => 'default.png',
             'password' => Hash::make('1'),
-            'confirm_pass' => Hash::make('1'),
+            // 'confirm_pass' => Hash::make('1'),
             'role' => 'users'
         ]);
     }

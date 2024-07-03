@@ -61,6 +61,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                {{ $rooms->links('pagination::bootstrap-4') }}
+            </div>
         </div>
     </div>
 

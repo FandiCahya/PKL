@@ -14,9 +14,9 @@
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
-        <div class="col-lg-6 text-right">
+        {{-- <div class="col-lg-6 text-right">
             <a href="#" class="btn btn-success">Tambah Booking</a>
-        </div>
+        </div> --}}
     </div>
 
     <!-- DataTales Example -->
@@ -34,9 +34,9 @@
                             <th>ID</th>
                             <th>User</th>
                             <th>Room</th>
+                            <th>Promo</th>
                             <th>Date</th>
                             <th>Start Time</th>
-                            <th>Estimasi</th>
                             <th>End Time</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -46,25 +46,29 @@
                         @foreach($bookings as $booking)
                         <tr>
                             <td>{{ $booking->id }}</td>
-                            <td>{{ $booking->user->name }}</td>
-                            <td>{{ $booking->room->nama }}</td>
+                            <td>{{ isset($booking->user) ? $booking->user->name : '-' }}</td>
+                            <td>{{ isset($booking->room) ? $booking->room->nama : '-' }}</td>
+                            <td>{{ isset($booking->promotion) ? $booking->promotion->name : '-' }}</td>
                             <td>{{ $booking->tgl }}</td>
                             <td>{{ $booking->start_time }}</td>
-                            <td>{{ $booking->estimasi }}</td>
                             <td>{{ $booking->end_time }}</td>
                             <td>{{ $booking->status }}</td>
                             <td>
-                                {{-- <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST" style="display: inline-block;">
+                                <a href="{{ route('edit_booking',$booking->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <form action="{{ route('hapus_booking', $booking->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form> --}}
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                {{ $bookings->links('pagination::bootstrap-4') }}
             </div>
         </div>
     </div>

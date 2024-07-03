@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', 'Users')
+@section('title', 'Rooms')
 @section('isi')
 <div class="container-fluid">
 
@@ -10,12 +10,12 @@
     <div class="row mb-4">
         <div class="col-lg-6">
             <form action="{{ route('kelola_user') }}" method="GET" class="form-inline">
-                <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search">
+                <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search" value="{{ request('search') }}">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="{{ route('tambah_user') }}" class="btn btn-success">Tambah Room</a>
+            <a href="{{ route('tambah_user') }}" class="btn btn-success">Tambah User</a>
         </div>
     </div>
 
@@ -36,32 +36,40 @@
                             <th>Email</th>
                             <th>Alamat</th>
                             <th>No HP</th>
+                            <th>Image</th>
                             <th>Role</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($users as $users)
+                        @foreach($users as $user)
                         <tr>
-                            <td>{{ $users->id }}</td>
-                            <td>{{ $users->name }}</td>
-                            <td>{{ $users->email }}</td>
-                            <td>{{ $users->alamat }}</td>
-                            <td>{{ $users->no_hp }}</td>
-                            <td>{{ $users->role }}</td>
+                            <td>{{ $user->id }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>{{ $user->alamat }}</td>
+                            <td>{{ $user->no_hp }}</td>
                             <td>
-                                <a href="{{ route('edit_user', $users->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                <form action="{{ route('hapus_user', $users->id) }}" method="POST" style="display: inline-block;">
+                                <img src="{{ asset('storage/' . $user->image) }}" alt="Photo Profile" style="max-width: 150px;">
+                            </td>
+                            <td>{{ $user->role }}</td>
+                            <td>
+                                <a href="{{ route('edit_user', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                <form action="{{ route('hapus_user', $user->id) }}" method="POST" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                                 </form>
                             </td>
-                            
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                {{ $users->links('pagination::bootstrap-4') }}
             </div>
         </div>
     </div>

@@ -35,7 +35,8 @@
                             <th>Name</th>
                             <th>Image</th>
                             <th>Deskripsi</th>
-                            <th>Tanggal dan Jam</th>
+                            <th>Tanggal</th>
+                            <th>Waktu</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -48,7 +49,8 @@
                                 <img src="{{ asset('storage/' . $promotion->image) }}" alt="Promotion Image" style="max-width: 150px;">
                             </td>
                             <td>{{ $promotion->deskripsi }}</td>
-                            <td>{{ $promotion->datetime }}</td>
+                            <td>{{ $promotion->tgl }}</td>
+                            <td>{{ $promotion->waktu }}</td>
                             <td>
                                 <a href="{{ route('edit_promo', $promotion->id) }}" class="btn btn-primary btn-sm">Edit</a>
                                 <form action="{{ route('hapus_promo', $promotion->id) }}" method="POST" style="display: inline-block;">
@@ -62,6 +64,10 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                {{ $promo->links('pagination::bootstrap-4') }}
             </div>
         </div>
     </div>

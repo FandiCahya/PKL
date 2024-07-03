@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('image');
             $table->string('deskripsi');
-            $table->datetime('datetime')->nullable();
+            $table->date('tgl')->nullable();
+            $table->time('waktu')->nullable();
             $table->timestamps();
         });
     }

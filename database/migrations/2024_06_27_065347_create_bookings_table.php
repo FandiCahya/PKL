@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('booking_rooms', function (Blueprint $table) {
+        Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('room_id')->constrained('rooms');
+            $table->foreignId('room_id')->nullable()->constrained('rooms');
+            $table->foreignId('promotion_id')->nullable()->constrained('promotions');
             $table->date('tgl');
             $table->time('start_time');
             // $table->time('estimasi')->nullable();
             $table->time('end_time')->nullable();
+            $table->string('qrcode',255);
             $table->enum('status', ['Booked', 'Pending', 'Rejected'])->default('Pending');
             $table->timestamps();
         });

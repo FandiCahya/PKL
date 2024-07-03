@@ -5,17 +5,17 @@
 
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Tambah Room</h1>
-    @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
     </div>
     @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
+    
     <div class="card shadow mb-4">
         <div class="card-body">
             <form action="{{ route('simpan_room') }}" method="POST">

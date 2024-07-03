@@ -5,17 +5,15 @@
 
     <h1 class="h3 mb-2 text-gray-800">Tambah Promo</h1>
      <!-- Display Success and Error Messages -->
-        @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+     @if ($errors->any())
+     <div class="alert alert-danger">
+         <ul>
+             @foreach ($errors->all() as $error)
+                 <li>{{ $error }}</li>
+             @endforeach
+         </ul>
+     </div>
+     @endif
 
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -34,8 +32,12 @@
                     <input type="text" class="form-control" id="deskripsi" name="deskripsi" required>
                 </div>
                 <div class="form-group">
-                    <label for="datetime">Tanggal dan Waktu:</label>
-                    <input type="datetime-local" class="form-control" id="datetime" name="datetime">
+                    <label for="tgl">Tanggal</label>
+                    <input type="date" class="form-control" id="tgl" name="tgl" required>
+                </div>
+                <div class="form-group">
+                    <label for="waktu">Waktu</label>
+                    <input type="time" class="form-control" id="waktu" name="waktu" required>
                 </div>
                 
                 <button type="submit" class="btn btn-primary">Simpan</button>
