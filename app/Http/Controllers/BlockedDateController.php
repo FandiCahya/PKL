@@ -36,26 +36,31 @@ class BlockedDateController extends Controller
         return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil diblokir.');
     }
 
-    public function edit(BlockedDate $blockedDate)
+    public function edit($id)
     {
+        $blockedDate = BlockedDate::findOrFail($id);
         $profile = Auth::user();
-        return view('admin.blocked_dates.edit', compact('blockedDate','profile'));
+        return view('admin.edit.block_dates', compact('blockedDate','profile'));
     }
 
-    public function update(Request $request, BlockedDate $blockedDate)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'blocked_date' => 'required|date',
+            'date' => 'required|date',
             'reason' => 'nullable|string|max:255',
         ]);
 
-        $blockedDate->update($request->all());
+        $blockedDate = BlockedDate::findOrFail($id);
+        $blockedDate->update([
+            'date' => $request->date,
+            'reason' => $request->reason,
+        ]);
 
-        return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil diperbarui.');
+        return redirect()->route('blocked_dates.index')->with('success', 'Blocked date updated successfully.');
     }
-
-    public function destroy(BlockedDate $blockedDate)
+    public function destroy($id)
     {
+        $blockedDate = BlockedDate::findOrFail($id);
         $blockedDate->delete();
 
         return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil dihapus.');

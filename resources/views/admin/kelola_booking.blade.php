@@ -6,6 +6,12 @@
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Data Bookings</h1>
 
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
     <!-- Search Form -->
     <div class="row mb-4">
         <div class="col-lg-6">
@@ -14,9 +20,9 @@
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
-        {{-- <div class="col-lg-6 text-right">
-            <a href="#" class="btn btn-success">Tambah Booking</a>
-        </div> --}}
+        <div class="col-lg-6 text-right">
+            <a href="{{ route('tambah_booking') }}" class="btn btn-success">Create Booking</a>
+        </div>
     </div>
 
     <!-- DataTales Example -->
@@ -39,6 +45,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Status</th>
+                            <th>QR Code</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -53,6 +60,9 @@
                             <td>{{ $booking->start_time }}</td>
                             <td>{{ $booking->end_time }}</td>
                             <td>{{ $booking->status }}</td>
+                            <td>
+                                <img src="{{ asset('storage/' . $booking->qrcode) }}" alt="QR Code">
+                            </td>
                             <td>
                                 <a href="{{ route('edit_booking',$booking->id) }}" class="btn btn-warning btn-sm">Update</a>
                                 <form action="{{ route('hapus_booking', $booking->id) }}" method="POST" style="display: inline-block;">

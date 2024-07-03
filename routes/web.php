@@ -39,6 +39,8 @@ Route::resource('/blocked_dates', BlockedDateController::class)->middleware('adm
 
 
 Route::get('/kelola_booking', [AdminController::class, 'kelola_booking'])->name('kelola_booking')->middleware('admin');
+Route::get('/tambah_booking', [AdminController::class, 'tambahBooking'])->name('tambah_booking')->middleware('admin');
+Route::post('/simpan_booking', [AdminController::class, 'simpanBooking'])->name('simpan_booking')->middleware('admin');
 Route::get('/edit_booking/{id}', [AdminController::class, 'editBooking'])->name('edit_booking')->middleware('admin');
 Route::put('/update_booking/{id}', [AdminController::class, 'updateBooking'])->name('bookings_update')->middleware('admin');
 Route::delete('/hapus_booking/{id}', [AdminController::class, 'hapusBooking'])->name('hapus_booking')->middleware('admin');

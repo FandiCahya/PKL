@@ -6,6 +6,12 @@
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Data Users</h1>
 
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Search Form -->
     <div class="row mb-4">
         <div class="col-lg-6">

@@ -15,7 +15,7 @@ class Booking extends Model
         'tgl',
         'start_time',
         'end_time',
-        'qr_code',
+        'qrcode',
         'status',
     ];
 

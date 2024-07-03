@@ -11,6 +11,8 @@ use App\Models\Room;
 use App\Models\Promotion;
 use App\Models\Booking;
 use App\Models\BlockedDate;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -316,6 +318,58 @@ class AdminController extends Controller
         return redirect()->route('kelola_promo')->with('success', 'Promo berhasil dihapus.');
     }
 
+    public function tambahBooking()
+    {
+        // Ambil data dari tabel rooms dan promotions
+        $users = User::all();
+        $rooms = Room::all();
+        $promotions = Promotion::all();
+        $profile = Auth::user();
+        
+        // Kirim data ke view
+        return view('admin.tambah.booking', compact('users','rooms', 'promotions','profile'));
+    }
+
+    public function simpanBooking(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'room_id' => 'nullable|exists:rooms,id',
+            'promotion_id' => 'nullable|exists:promotions,id',
+            'tgl' => 'required|date',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i',
+            'status' => 'required|in:Booked,Pending,Rejected',
+        ]);
+    
+        $blockedDate = BlockedDate::where('blocked_date', $request->tgl)->first();
+        
+        if ($blockedDate) {
+            return back()->withErrors(['tgl' => 'The selected date is blocked: ' . $blockedDate->reason]);
+        }
+    
+        // Generate QR Code based on the booking details
+        $qrCode = QrCode::generate('Booking ID: ' . $request->user_id);
+    
+        // Simpan QR Code ke dalam storage
+        $qrCodePath = 'qr_codes/' . uniqid() . '.png';
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+    
+        // Simpan data booking ke dalam database
+        $booking = Booking::create([
+            'user_id' => $request->user_id,
+            'room_id' => $request->room_id,
+            'promotion_id' => $request->promotion_id,
+            'tgl' => $request->tgl,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'status' => $request->status,
+            'qrcode' => $qrCodePath,
+        ]);
+    
+        return redirect()->route('kelola_booking')->with('success', 'Booking created successfully.');
+    }
+    
     public function editBooking($id)
     {
         $booking = Booking::findOrFail($id);
