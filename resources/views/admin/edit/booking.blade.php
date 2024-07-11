@@ -18,7 +18,7 @@
 
     <div class="card shadow mb-4">
         <div class="card-body">
-            <form action="{{ route('bookings_update', $booking->id) }}" method="POST">
+            <form action="{{ route('update_booking', $booking->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -27,30 +27,30 @@
                 </div>
                 <div class="form-group">
                     <label for="room_id">Room</label>
-                    <input type="text" class="form-control" id="room_id" name="room_id" value="{{ $booking->room_id }}">
+                    <input type="text" class="form-control" id="room_id" name="room_id" value="{{ $booking->room_id }}" readonly>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="promotion_id">Promotion</label>
-                    <input type="text" class="form-control" id="promotion_id" name="promotion_id" value="{{ $booking->promotion_id }}">
-                </div>
+                    <input type="text" class="form-control" id="promotion_id" name="promotion_id" value="{{ $booking->promotion_id }}" readonly>
+                </div> --}}
                 <div class="form-group">
                     <label for="tgl">Date</label>
                     <input type="date" class="form-control" id="tgl" name="tgl" value="{{ $booking->tgl }}">
                 </div>
                 <div class="form-group">
-                    <label for="start_time">Start Time</label>
+                    <label for="start_time">Time</label>
                     <input type="time" class="form-control" id="start_time" name="start_time" value="{{ $booking->start_time }}">
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="end_time">End Time</label>
                     <input type="time" class="form-control" id="end_time" name="end_time" value="{{ $booking->end_time }}">
-                </div>
+                </div> --}}
                 <div class="form-group">
                     <label for="status">Status</label>
-                    <select class="form-control" id="status" name="status">
+                    <select class="form-control" id="status" name="status" readonly>
                         <option value="Booked" {{ $booking->status == 'Booked' ? 'selected' : '' }}>Booked</option>
-                        <option value="Pending" {{ $booking->status == 'Pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="Rejected" {{ $booking->status == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                        {{-- <option value="Pending" {{ $booking->status == 'Pending' ? 'selected' : '' }}>Pending</option> --}}
+                        {{-- <option value="Rejected" {{ $booking->status == 'Rejected' ? 'selected' : '' }}>Rejected</option> --}}
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Update Booking</button>

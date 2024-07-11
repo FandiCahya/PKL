@@ -11,17 +11,29 @@ use App\Models\User;
 
 class BlockedDateController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $profile = Auth::user();
-        $blockedDates = BlockedDate::all();
-        return view('admin.block_dates', compact('blockedDates','profile'));
+        $search = $request->input('search');
+        $query = BlockedDate::query();
+
+        if ($search) {
+            $query->where('blocked_date', 'LIKE', "%{$search}%")->orWhere('reason', 'LIKE', "%{$search}%");
+        }
+
+        $blockedDates = $query->get();
+
+        if ($request->ajax()) {
+            return view('admin.blocked_dates_table', compact('blockedDates'))->render();
+        }
+
+        return view('admin.block_dates', compact('blockedDates', 'profile'));
     }
 
     public function create()
     {
         $profile = Auth::user();
-        return view('admin.tambah.block_dates',compact('profile'));
+        return view('admin.tambah.block_dates', compact('profile'));
     }
 
     public function store(Request $request)
@@ -40,7 +52,7 @@ class BlockedDateController extends Controller
     {
         $blockedDate = BlockedDate::findOrFail($id);
         $profile = Auth::user();
-        return view('admin.edit.block_dates', compact('blockedDate','profile'));
+        return view('admin.edit.block_dates', compact('blockedDate', 'profile'));
     }
 
     public function update(Request $request, $id)

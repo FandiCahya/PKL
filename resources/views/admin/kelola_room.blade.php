@@ -15,13 +15,19 @@
     <!-- Search Form -->
     <div class="row mb-4">
         <div class="col-lg-6">
-            <form action="{{ route('kelola_room') }}" method="GET" class="form-inline">
-                <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search by nama">
-                <button type="submit" class="btn btn-primary">Search</button>
+            <form class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search by nama" value="{{ request('search') }}">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="{{ route('tambah_room') }}" class="btn btn-success">Create Room</a>
+            <a href="{{ route('tambah_room') }}" class="btn btn-success">
+                Create Room
+            </a>
         </div>
     </div>
 
@@ -33,46 +39,29 @@
             </div>
         @endif
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama</th>
-                            <th>Kapasitas</th>
-                            <th>Availability</th>
-                            <th>Harga</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($rooms as $room)
-                        <tr>
-                            <td>{{ $room->id }}</td>
-                            <td>{{ $room->nama }}</td>
-                            <td>{{ $room->kapasitas }}</td>
-                            <td>{{ $room->availability ? 'Available' : 'Not Available' }}</td>
-                            <td>{{ $room->harga }}</td>
-                            <td>
-                                <a href="{{ route('edit_room', $room->id) }}" class="btn btn-warning btn-sm">Update</a>
-                                <form action="{{ route('hapus_room', $room->id) }}" method="POST" style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
-                            </td>
-                            
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center">
-                {{ $rooms->links('pagination::bootstrap-4') }}
+            <div class="table-responsive" id="rooms-table">
+                @include('admin.rooms_table', ['rooms' => $rooms])
             </div>
         </div>
     </div>
 
 </div>
+
+<!-- jQuery and AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#search').on('keyup', function() {
+            var query = $(this).val();
+            $.ajax({
+                url: "{{ route('kelola_room') }}",
+                type: "GET",
+                data: {'search': query},
+                success: function(data) {
+                    $('#rooms-table').html(data);
+                }
+            });
+        });
+    });
+</script>
 @endsection

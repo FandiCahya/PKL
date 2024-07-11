@@ -42,36 +42,36 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="promotion_id">Promotion</label>
                     <select class="form-control" id="promotion_id" name="promotion_id">
                         @foreach($promotions as $promotion)
                             <option value="{{ $promotion->id }}">{{ $promotion->name }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div> --}}
                 <div class="form-group">
                     <label for="tgl">Date</label>
                     <input type="date" class="form-control" id="tgl" name="tgl" required>
                 </div>
                 <div class="form-group">
-                    <label for="start_time">Start Time</label>
+                    <label for="start_time">Time</label>
                     <input type="time" class="form-control" id="start_time" name="start_time" required>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="end_time">End Time</label>
                     <input type="time" class="form-control" id="end_time" name="end_time">
-                </div>
+                </div> --}}
                 {{-- <div class="form-group">
                     <label for="qr_code">QR Code</label>
                     <input type="text" class="form-control" id="qr_code" name="qr_code" required>
                 </div> --}}
                 <div class="form-group">
                     <label for="status">Status</label>
-                    <select class="form-control" id="status" name="status" required>
+                    <select class="form-control" id="status" name="status" required readonly>
                         <option value="Booked">Booked</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Rejected">Rejected</option>
+                        {{-- <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option> --}}
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Create</button>

@@ -21,7 +21,7 @@ return new class extends Migration
             // $table->time('estimasi')->nullable();
             $table->time('end_time')->nullable();
             $table->string('qrcode',255);
-            $table->enum('status', ['Booked', 'Pending', 'Rejected'])->default('Pending');
+            $table->enum('status', ['Booked', 'Pending', 'Rejected','Finished'])->default('Pending');
             $table->timestamps();
         });
     }

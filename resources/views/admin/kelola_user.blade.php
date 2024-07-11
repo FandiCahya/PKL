@@ -2,7 +2,6 @@
 @section('title', 'Rooms')
 @section('isi')
 <div class="container-fluid">
-
     <!-- Page Heading -->
     <h1 class="h3 mb-2 text-gray-800">Data Users</h1>
 
@@ -15,13 +14,19 @@
     <!-- Search Form -->
     <div class="row mb-4">
         <div class="col-lg-6">
-            <form action="{{ route('kelola_user') }}" method="GET" class="form-inline">
-                <input type="text" name="search" class="form-control mr-sm-2" placeholder="Search" value="{{ request('search') }}">
-                <button type="submit" class="btn btn-primary">Search</button>
+            <form class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
             </form>
         </div>
         <div class="col-lg-6 text-right">
-            <a href="{{ route('tambah_user') }}" class="btn btn-success">Create User</a>
+            <a href="{{ route('tambah_user') }}" class="btn btn-success">
+                Create User
+            </a>
         </div>
     </div>
 
@@ -33,52 +38,28 @@
             </div>
         @endif
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Alamat</th>
-                            <th>No HP</th>
-                            <th>Image</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($users as $user)
-                        <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->alamat }}</td>
-                            <td>{{ $user->no_hp }}</td>
-                            <td>
-                                <img src="{{ asset('storage/' . $user->image) }}" alt="Photo Profile" style="max-width: 150px;">
-                            </td>
-                            <td>{{ $user->role }}</td>
-                            <td>
-                                <a href="{{ route('edit_user', $user->id) }}" class="btn btn-warning btn-sm">Update</a>
-                                <form action="{{ route('hapus_user', $user->id) }}" method="POST" style="display: inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center">
-                {{ $users->links('pagination::bootstrap-4') }}
+            <div class="table-responsive" id="users-table">
+                @include('admin.users_table', ['users' => $users])
             </div>
         </div>
     </div>
-
 </div>
+
+<!-- jQuery and AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#search').on('keyup', function() {
+            var query = $(this).val();
+            $.ajax({
+                url: "{{ route('kelola_user') }}",
+                type: "GET",
+                data: {'search': query},
+                success: function(data) {
+                    $('#users-table').html(data);
+                }
+            });
+        });
+    });
+</script>
 @endsection
