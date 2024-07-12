@@ -96,7 +96,7 @@ class BookingController extends Controller
         $room->reduceCapacity();
 
         // Generate the actual QR code
-        $qrContent = 'Booking ID: ' . $booking->id . ', User ID: ' . $booking->user_id;
+        $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name .', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: '. $booking->start_time;
         $qrCode = QrCode::format('png')->generate($qrContent);
         $qrCodePath = 'qr_codes/' . uniqid() . '.png';
         Storage::disk('public')->put($qrCodePath, $qrCode);
