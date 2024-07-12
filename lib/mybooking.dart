@@ -230,7 +230,7 @@ class BookingItem extends StatelessWidget {
               SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  date.isNotEmpty ? 'Date : $date' : 'Room : $room',
+                  date.isNotEmpty ? 'Date : $date' : '',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -243,7 +243,7 @@ class BookingItem extends StatelessWidget {
               SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  time.isNotEmpty ? 'Time : $time' : '',
+                  time.isNotEmpty ? 'Time : $time' : 'Room : $room',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
