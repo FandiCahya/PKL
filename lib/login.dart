@@ -1,7 +1,7 @@
-import 'package:aplikasi_booking_gym/dashboard.dart';
-import 'package:aplikasi_booking_gym/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'bottom_navigation_bar.dart'; // Import file bottom_navigation_bar.dart
+import 'register.dart'; // Import file register.dart
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -99,9 +99,9 @@ class LoginPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => BottomNavigation()), // Pindah ke BottomNavigation
                         );
                       },
                       child: Container(

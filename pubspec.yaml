@@ -68,6 +68,7 @@ flutter:
     - assets/img/yoga.jpg
     - assets/img/boxing.jpg
     - assets/img/taekwondo.jpg
+    - assets/img/profile.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

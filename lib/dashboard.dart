@@ -1,26 +1,22 @@
+import 'package:aplikasi_booking_gym/mybooking.dart';
+import 'package:aplikasi_booking_gym/myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'bottom_navigation_bar.dart'; // Import file bottom_navigation_bar.dart
 import 'bookingPopup.dart'; // Import file booking_popup.dart
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class Dashboard extends StatefulWidget {
+  const Dashboard({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _DashboardState extends State<Dashboard> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,8 +176,10 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
-                            leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
-                            rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white),
+                            leftChevronIcon:
+                                Icon(Icons.chevron_left, color: Colors.white),
+                            rightChevronIcon:
+                                Icon(Icons.chevron_right, color: Colors.white),
                             leftChevronMargin: EdgeInsets.only(left: 20),
                             rightChevronMargin: EdgeInsets.only(right: 20),
                           ),
@@ -227,10 +225,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }

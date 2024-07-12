@@ -1,3 +1,5 @@
+import 'package:aplikasi_booking_gym/dashboard.dart';
+import 'package:aplikasi_booking_gym/myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:intl/intl.dart'; // To format date
@@ -11,7 +13,7 @@ class MyBooking extends StatefulWidget {
 }
 
 class _MyBookingState extends State<MyBooking> {
-  int _selectedIndex = 0; // Add a variable to track the current tab index
+  int _selectedIndex = 1; // Add a variable to track the current tab index
 
   DateTime _selectedDate = DateTime.now();
   DateTime _firstDate = DateTime.now().subtract(Duration(days: 365)); // 1 year ago
@@ -33,11 +35,6 @@ class _MyBookingState extends State<MyBooking> {
     // Add more bookings as needed
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +99,7 @@ class _MyBookingState extends State<MyBooking> {
                         SizedBox(height: 8), // Adjust the height as needed
                         Container(
                           width: 318,
-                          height: 1,
+                          height: 2,
                           decoration: ShapeDecoration(
                             color: Color(0xFF726BBC),
                             shape: RoundedRectangleBorder(
@@ -172,10 +169,6 @@ class _MyBookingState extends State<MyBooking> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
       ),
     );
   }
@@ -279,8 +272,8 @@ class BookingItem extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: MyBooking(),
-  ));
-}
+// void main() {
+//   runApp(MaterialApp(
+//     home: MyBooking(),
+//   ));
+// }
