@@ -4,10 +4,11 @@
             <th>No</th>
             <th>Name</th>
             <th>Image</th>
-            <th>Deskripsi</th>
-            <th>Tanggal</th>
-            <th>Waktu</th>
-            <th>Aksi</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Price</th>
+            <th>Action</th>
         </tr>
     </thead>
     @php
@@ -24,6 +25,7 @@
                 <td>{{ $promotion->deskripsi }}</td>
                 <td>{{ $promotion->tgl }}</td>
                 <td>{{ $promotion->waktu }}</td>
+                <td>{{ $promotion->harga }}</td>
                 <td>
                     <a href="{{ route('edit_promo', $promotion->id) }}" class="btn btn-warning btn-sm">Update</a>
                     <form action="{{ route('hapus_promo', $promotion->id) }}" method="POST"

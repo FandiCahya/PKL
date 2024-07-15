@@ -4,6 +4,7 @@
             <th>No</th>
             <th>User</th>
             <th>Room</th>
+            <th>Schedule</th>
             <th>Date</th>
             <th>Time</th>
             <th>End Time</th>
@@ -21,6 +22,7 @@
             <td>{{ $no++ }}</td>
             <td>{{ isset($booking->user) ? $booking->user->name : '-' }}</td>
             <td>{{ isset($booking->room) ? $booking->room->nama : '-' }}</td>
+            <td>{{ isset($booking->schedule) ? $booking->schedule->id : '-' }}</td>
             <td>{{ $booking->tgl }}</td>
             <td>{{ $booking->start_time }}</td>
             <td>{{ $booking->end_time }}</td>

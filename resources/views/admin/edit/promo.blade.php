@@ -5,11 +5,12 @@
 
     <h1 class="h3 mb-2 text-gray-800">Edit Promo</h1>
 
+    <!-- Display Success and Error Messages -->
     @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
@@ -41,11 +42,14 @@
                     <label for="waktu">Waktu</label>
                     <input type="time" class="form-control" id="waktu" name="waktu" value="{{ $promo->waktu }}">
                 </div>
+                <div class="form-group">
+                    <label for="harga">Harga</label>
+                    <input type="number" class="form-control" id="harga" name="harga" value="{{ $promo->harga }}">
+                </div>
                 <button type="submit" class="btn btn-primary">Update Promo</button>
             </form>
         </div>
     </div>
-    
 
 </div>
 @endsection

@@ -1,10 +1,10 @@
 @extends('master')
-@section('title', 'Promo')
+@section('title', 'Kelas')
 @section('isi')
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Data Promosi</h1>
+        <h1 class="h3 mb-2 text-gray-800">Data Kelas</h1>
 
         @if (session('success'))
             <div class="alert alert-success">
@@ -26,7 +26,7 @@
                 </form>
             </div>
             <div class="col-lg-6 text-right">
-                <a href="{{ route('tambah_promo') }}" class="btn btn-success">Create Promo</a>
+                <a href="{{ route('tambah_promo') }}" class="btn btn-success">Create Kelas</a>
             </div>
         </div>
 
@@ -34,7 +34,7 @@
         <div class="card shadow mb-4">
             @if (auth()->user()->role == 'admin')
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-primary">Data Promo</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Data Kelas</h6>
                 </div>
             @endif
             <div class="card-body">

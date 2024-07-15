@@ -30,9 +30,21 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('instrukturs.index') }}">
+                    <i class="fas fa-fw fa-chalkboard-teacher"></i>
+                    <span>Instrukturs</span></a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('kelola_room') }}">
                     <i class="fas fa-fw fa-home"></i>
                     <span>Room</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('schedules.index') }}">
+                    <i class="fas fa-fw fa-calendar-alt"></i>
+                    <span>Schedule</span></a>
             </li>
 
             <li class="nav-item">
@@ -43,8 +55,8 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('kelola_promo') }}">
-                    <i class="fas fa-fw fa-bullhorn"></i>
-                    <span>Promotion</span></a>
+                    <i class="fas fa-fw fa-chalkboard"></i>
+                    <span>Class</span></a>
             </li>
 
             <li class="nav-item">

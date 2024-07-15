@@ -8,6 +8,8 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\InstrukturController;
+use App\Http\Controllers\ScheduleController;
 
 Route::get('/login', [AuthController::class, 'index'])
     ->name('login')
@@ -65,4 +67,24 @@ Route::middleware(['admin'])->group(function () {
     });
 
     Route::resource('/blocked_dates', BlockedDateController::class);
+
+    Route::resource('instrukturs', InstrukturController::class);
+
+    // Menampilkan semua jadwal
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
+
+    // Menampilkan form untuk membuat jadwal baru
+    Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
+
+    // Menyimpan jadwal baru
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+
+    // Menampilkan form untuk mengedit jadwal
+    Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
+
+    // Memperbarui jadwal yang sudah ada
+    Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+
+    // Menghapus jadwal
+    Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 });

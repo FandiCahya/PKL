@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Promotion extends Model
+class Instruktur extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'image',
-        'deskripsi',
-        'tgl',
-        'waktu',
-        'harga'
+        'nama',
+        'alamat',
+        'no_hp',
+        'email',
     ];
 
     public function schedule()

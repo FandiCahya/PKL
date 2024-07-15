@@ -43,11 +43,12 @@ class PromoController extends Controller
                 'deskripsi' => 'required|string|max:255',
                 'tgl' => 'required|date',
                 'waktu' => 'required',
+                'harga' => 'required|numeric|min:0',
             ]);
-
+    
             // Simpan gambar ke storage
             $imagePath = $request->file('image')->store('promotions', 'public');
-
+    
             // Simpan data ke database
             $promotion = Promotion::create([
                 'name' => $request->name,
@@ -55,8 +56,9 @@ class PromoController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'tgl' => $request->tgl,
                 'waktu' => $request->waktu,
+                'harga' => $request->harga, // Menyimpan harga dari request
             ]);
-
+    
             return redirect()->route('kelola_promo')->with('success', 'Promo berhasil ditambahkan.');
         } catch (\Exception $e) {
             // Tangkap kesalahan dan kirim pesan error ke view
@@ -65,6 +67,7 @@ class PromoController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+    
 
     public function editPromo($id)
     {
@@ -76,30 +79,33 @@ class PromoController extends Controller
     public function updatePromo(Request $request, $id)
     {
         $promo = Promotion::findOrFail($id);
-
+    
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5048',
             'deskripsi' => 'required|string|max:255',
             'tgl' => 'required|date',
             'waktu' => 'required',
+            'harga' => 'required|numeric|min:0', // Validasi harga sebagai numerik
         ]);
-
+    
         $imagePath = $promo->image;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('promotions', 'public');
         }
-
+    
         $promo->update([
             'name' => $request->name,
             'image' => $imagePath,
             'deskripsi' => $request->deskripsi,
             'tgl' => $request->tgl,
             'waktu' => $request->waktu,
+            'harga' => $request->harga, // Update harga dari request
         ]);
-
+    
         return redirect()->route('kelola_promo')->with('success', 'Promo berhasil diperbarui.');
     }
+    
 
     public function hapusPromo($id)
     {

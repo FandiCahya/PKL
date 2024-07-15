@@ -29,6 +29,10 @@
                     <label for="room_id">Room</label>
                     <input type="text" class="form-control" id="room_id" name="room_id" value="{{ $booking->room_id }}" readonly>
                 </div>
+                <div class="form-group">
+                    <label for="schedule_id">Schedule</label>
+                    <input type="text" class="form-control" id="schedule_id" name="schedule_id" value="{{ $booking->schedule_id }}" readonly>
+                </div>
                 {{-- <div class="form-group">
                     <label for="promotion_id">Promotion</label>
                     <input type="text" class="form-control" id="promotion_id" name="promotion_id" value="{{ $booking->promotion_id }}" readonly>

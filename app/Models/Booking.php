@@ -11,6 +11,7 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'room_id',
+        'schedule_id',
         'promotion_id',
         'tgl',
         'start_time',
@@ -31,5 +32,10 @@ class Booking extends Model
 
     public function promotion() {
         return $this->belongsTo(Promotion::class);
+    }
+
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class);
     }
 }
