@@ -13,4 +13,9 @@ class BlockedDate extends Model
         'blocked_date', 
         'reason'
     ];
+
+    public function logs()
+    {
+        return $this->hasMany(Logs::class);
+    }
 }

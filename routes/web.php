@@ -10,6 +10,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\InstrukturController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\LogController;
 
 Route::get('/login', [AuthController::class, 'index'])
     ->name('login')
@@ -87,4 +88,6 @@ Route::middleware(['admin'])->group(function () {
 
     // Menghapus jadwal
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+
+    Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
 });

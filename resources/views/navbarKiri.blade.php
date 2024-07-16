@@ -42,6 +42,12 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('kelola_promo') }}">
+                    <i class="fas fa-fw fa-chalkboard"></i>
+                    <span>Class</span></a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('schedules.index') }}">
                     <i class="fas fa-fw fa-calendar-alt"></i>
                     <span>Schedule</span></a>
@@ -53,11 +59,7 @@
                     <span>Bookings</span></a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('kelola_promo') }}">
-                    <i class="fas fa-fw fa-chalkboard"></i>
-                    <span>Class</span></a>
-            </li>
+
 
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('blocked_dates.index') }}">
@@ -65,10 +67,17 @@
                     <span>Block Date</span>
                 </a>
             </li>
-            
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('logs.index') }}">
+                    <i class="fas fa-history"></i>
+                    <span>Logs</span>
+                </a>
+            </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">

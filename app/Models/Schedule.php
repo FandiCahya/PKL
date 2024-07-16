@@ -35,4 +35,8 @@ class Schedule extends Model
     {
         return $this->hasMany(Booking::class);
     }
+    public function logs()
+    {
+        return $this->hasMany(Logs::class);
+    }
 }

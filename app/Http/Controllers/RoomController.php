@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\Logs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,12 +43,25 @@ class RoomController extends Controller
             'harga' => 'required|integer',
         ]);
 
-        Room::create([
+        $room = Room::create([
             'nama' => $request->nama,
             'kapasitas' => $request->kapasitas,
             'availability' => $request->availability,
             'harga' => $request->harga,
         ]);
+
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => 'Created a new room: ' . $room->nama,
+            'table_name' => 'rooms',
+            'table_id' => $room->id,
+            'data' => json_encode($room->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
 
         return redirect()->route('kelola_room')->with('success', 'Room berhasil ditambahkan.');
     }
@@ -75,14 +89,42 @@ class RoomController extends Controller
             'harga' => $request->harga,
         ]);
 
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => 'Updated room: ' . $room->nama,
+            'table_name' => 'rooms',
+            'table_id' => $room->id,
+            'data' => json_encode($room->toArray()),
+        ];
+
+        // Simpan log
+        logs::create($logData);
+
         return redirect()->route('kelola_room')->with('success', 'Room berhasil diperbarui.');
     }
     public function hapusRoom($id)
     {
         $room = Room::findOrFail($id);
+        $roomData = $room->toArray();
+
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => 'Deleted room: ' . $roomData['nama'],
+            'table_name' => 'rooms',
+            'table_id' => $id,
+            'data' => json_encode($roomData),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
         $room->delete();
+
+
 
         return redirect()->route('kelola_room')->with('success', 'Room berhasil dihapus.');
     }
-
 }

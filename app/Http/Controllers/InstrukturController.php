@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Instruktur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Logs;
 
 class InstrukturController extends Controller
 {
@@ -21,7 +22,7 @@ class InstrukturController extends Controller
             return view('admin.kelola_instruktur', compact('instrukturs'))->render();
         }
 
-        return view('admin.kelola_instruktur', compact('instrukturs','profile'));
+        return view('admin.kelola_instruktur', compact('instrukturs','profile','search'));
     }
 
     /**
@@ -45,7 +46,20 @@ class InstrukturController extends Controller
             'email' => 'required|string|email|max:255',
         ]);
 
-        Instruktur::create($request->all());
+        $instruktur = Instruktur::create($request->all());
+
+         // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => 'Created a new instructor: ' . $instruktur->nama,
+            'table_name' => 'instrukturs',
+            'table_id' => $instruktur->id,
+            'data' => json_encode($instruktur->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
 
         return redirect()->route('instrukturs.index')->with('success', 'Instruktur created successfully.');
     }
@@ -77,10 +91,24 @@ class InstrukturController extends Controller
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string|max:255',
             'no_hp' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:instrukturs,email,' . $instruktur->id,
+            'email' => 'required|string|email|max:255' . $instruktur->id,
         ]);
 
         $instruktur->update($request->all());
+
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'Update',
+            'description' => 'Update an instructor: ' . $instruktur->nama,
+            'table_name' => 'instrukturs',
+            'table_id' => $instruktur->id,
+            'data' => json_encode($instruktur->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
+
 
         return redirect()->route('instrukturs.index')->with('success', 'Instruktur updated successfully.');
     }
@@ -90,6 +118,18 @@ class InstrukturController extends Controller
      */
     public function destroy(Instruktur $instruktur)
     {
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => 'Deleted an instructor: ' . $instruktur->nama,
+            'table_name' => 'instrukturs',
+            'table_id' => $instruktur->id,
+            'data' => json_encode($instruktur->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
+
         $instruktur->delete();
 
         return redirect()->route('instrukturs.index')->with('success', 'Instruktur deleted successfully.');

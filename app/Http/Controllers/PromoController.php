@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Promotion;
+use App\Models\Logs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -56,8 +57,21 @@ class PromoController extends Controller
                 'deskripsi' => $request->deskripsi,
                 'tgl' => $request->tgl,
                 'waktu' => $request->waktu,
-                'harga' => $request->harga, // Menyimpan harga dari request
+                'harga' => $request->harga,
             ]);
+    
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'create',
+                'description' => 'Created a new promotion: ' . $promotion->name,
+                'table_name' => 'promotions',
+                'table_id' => $promotion->id,
+                'data' => json_encode($promotion->toArray()),
+            ];
+    
+            // Simpan log
+            Logs::create($logData);
     
             return redirect()->route('kelola_promo')->with('success', 'Promo berhasil ditambahkan.');
         } catch (\Exception $e) {
@@ -67,7 +81,6 @@ class PromoController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-    
 
     public function editPromo($id)
     {
@@ -86,7 +99,7 @@ class PromoController extends Controller
             'deskripsi' => 'required|string|max:255',
             'tgl' => 'required|date',
             'waktu' => 'required',
-            'harga' => 'required|numeric|min:0', // Validasi harga sebagai numerik
+            'harga' => 'required|numeric|min:0',
         ]);
     
         $imagePath = $promo->image;
@@ -100,19 +113,44 @@ class PromoController extends Controller
             'deskripsi' => $request->deskripsi,
             'tgl' => $request->tgl,
             'waktu' => $request->waktu,
-            'harga' => $request->harga, // Update harga dari request
+            'harga' => $request->harga,
         ]);
+    
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => 'Updated promotion: ' . $promo->name,
+            'table_name' => 'promotions',
+            'table_id' => $promo->id,
+            'data' => json_encode($promo->toArray()),
+        ];
+    
+        // Simpan log
+        Logs::create($logData);
     
         return redirect()->route('kelola_promo')->with('success', 'Promo berhasil diperbarui.');
     }
-    
 
     public function hapusPromo($id)
     {
         $promo = Promotion::findOrFail($id);
+        $promoData = $promo->toArray();
         $promo->delete();
-
+    
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => 'Deleted promotion: ' . $promoData['name'],
+            'table_name' => 'promotions',
+            'table_id' => $id,
+            'data' => json_encode($promoData),
+        ];
+    
+        // Simpan log
+        Logs::create($logData);
+    
         return redirect()->route('kelola_promo')->with('success', 'Promo berhasil dihapus.');
     }
-
 }

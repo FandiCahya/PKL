@@ -38,4 +38,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(Logs::class);
+    }
 }

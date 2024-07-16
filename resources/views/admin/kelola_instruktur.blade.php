@@ -56,7 +56,7 @@
                 type: "GET",
                 data: {'search': query},
                 success: function(data) {
-                    $('#instrukturs-table').html(data);
+                    $('#instruktur-table').html(data);
                 }
             });
         });

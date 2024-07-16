@@ -13,6 +13,7 @@ use App\Models\Room;
 use App\Models\Promotion;
 use Carbon\Carbon;
 use App\Models\Schedule;
+use App\Models\Logs;
 
 class BookingController extends Controller
 {
@@ -51,7 +52,7 @@ class BookingController extends Controller
         $profile = Auth::user();
 
         // Kirim data ke view
-        return view('admin.tambah.booking', compact('users', 'rooms', 'promotions', 'profile','schedules'));
+        return view('admin.tambah.booking', compact('users', 'rooms', 'promotions', 'profile', 'schedules'));
     }
 
     public function simpanBooking(Request $request)
@@ -100,13 +101,26 @@ class BookingController extends Controller
         $room->reduceCapacity();
 
         // Generate the actual QR code
-        $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name .', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: '. $booking->start_time;
+        $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: ' . $booking->start_time;
         $qrCode = QrCode::format('png')->generate($qrContent);
         $qrCodePath = 'qr_codes/' . uniqid() . '.png';
         Storage::disk('public')->put($qrCodePath, $qrCode);
 
         // Update the booking record with the actual QR code path
         $booking->update(['qrcode' => $qrCodePath]);
+
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => 'Created a new booking: ' . $booking->id,
+            'table_name' => 'bookings',
+            'table_id' => $booking->id,
+            'data' => json_encode($booking->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
 
         return redirect()->route('kelola_booking')->with('success', 'Booking created successfully.');
     }
@@ -158,12 +172,38 @@ class BookingController extends Controller
             'status' => $request->status,
         ]);
 
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => 'Updated booking: ' . $booking->id,
+            'table_name' => 'bookings',
+            'table_id' => $booking->id,
+            'data' => json_encode($booking->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
+
         return redirect()->route('kelola_booking')->with('success', 'Booking berhasil diperbarui.');
     }
 
     public function hapusBooking($id)
     {
         $booking = Booking::findOrFail($id);
+        $bookingData = $booking->toArray();
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => 'Deleted booking: ' . $bookingData['id'],
+            'table_name' => 'bookings',
+            'table_id' => $bookingData['id'],
+            'data' => json_encode($bookingData),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
         $booking->delete();
 
         return redirect()->route('kelola_booking')->with('success', 'Booking berhasil dihapus.');

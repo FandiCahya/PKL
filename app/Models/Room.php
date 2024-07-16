@@ -20,6 +20,11 @@ class Room extends Model
         return $this->hasMany(Schedule::class);
     }
 
+    public function logs()
+    {
+        return $this->hasMany(Logs::class);
+    }
+
     public function reduceCapacity()
     {
         $this->kapasitas--;

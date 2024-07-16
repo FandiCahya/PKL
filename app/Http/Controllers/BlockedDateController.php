@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Logs;
 
 class BlockedDateController extends Controller
 {
@@ -43,7 +44,20 @@ class BlockedDateController extends Controller
             'reason' => 'nullable|string|max:255',
         ]);
 
-        BlockedDate::create($request->all());
+        $blockdate = BlockedDate::create($request->all());
+
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'create',
+            'description' => 'Created a new Block Date: ' . $blockdate->nama,
+            'table_name' => 'blocked_dates',
+            'table_id' => $blockdate->id,
+            'data' => json_encode($blockdate->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
 
         return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil diblokir.');
     }
@@ -68,12 +82,39 @@ class BlockedDateController extends Controller
             'reason' => $request->reason,
         ]);
 
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'update',
+            'description' => 'Updated blocked date: ' . $blockedDate->id,
+            'table_name' => 'blocked_dates',
+            'table_id' => $blockedDate->id,
+            'data' => json_encode($blockedDate->toArray()),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
+
         return redirect()->route('blocked_dates.index')->with('success', 'Blocked date updated successfully.');
     }
     public function destroy($id)
     {
         $blockedDate = BlockedDate::findOrFail($id);
+        $blockedDateData = $blockedDate->toArray();
         $blockedDate->delete();
+
+        // Data log
+        $logData = [
+            'user_id' => Auth::id(),
+            'action' => 'delete',
+            'description' => 'Deleted blocked date: ' . $blockedDateData['id'],
+            'table_name' => 'blocked_dates',
+            'table_id' => $blockedDateData['id'],
+            'data' => json_encode($blockedDateData),
+        ];
+
+        // Simpan log
+        Logs::create($logData);
 
         return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil dihapus.');
     }

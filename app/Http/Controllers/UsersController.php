@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Logs;
+use Illuminate\Support\Facades\Storage;
 
 class UsersController extends Controller
 {
@@ -31,6 +33,7 @@ class UsersController extends Controller
 
         return view('admin.kelola_user', compact('users', 'profile'));
     }
+
     public function tambahUser()
     {
         $profile = Auth::user();
@@ -49,20 +52,38 @@ class UsersController extends Controller
             'role' => 'required|in:admin,user',
         ]);
 
-        // Simpan gambar ke storage
-        $imagePath = $request->file('image')->store('profile_images', 'public');
+        try {
+            // Simpan gambar ke storage
+            $imagePath = $request->file('image')->store('profile_images', 'public');
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
-            'image' => $imagePath,
-            'password' => bcrypt($request->password),
-            'role' => $request->role,
-        ]);
+            // Buat pengguna baru
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+                'image' => $imagePath,
+                'password' => bcrypt($request->password),
+                'role' => $request->role,
+            ]);
 
-        return redirect()->route('kelola_user')->with('success', 'User berhasil ditambahkan.');
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'create',
+                'description' => 'Created a new user: ' . $user->name,
+                'table_name' => 'users',
+                'table_id' => $user->id,
+                'data' => json_encode($user->toArray()),
+            ];
+
+            // Simpan log
+            Logs::create($logData);
+
+            return redirect()->route('kelola_user')->with('success', 'User berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return redirect()->route('kelola_user')->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
+        }
     }
 
     public function editUser($id)
@@ -86,30 +107,76 @@ class UsersController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $imagePath = $user->image;
-        if ($request->hasFile('image')) {
-            // Simpan gambar baru ke storage
-            $imagePath = $request->file('image')->store('profile_images', 'public');
+        try {
+            $imagePath = $user->image;
+            if ($request->hasFile('image')) {
+                // Hapus gambar lama jika ada
+                if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+
+                // Simpan gambar baru ke storage
+                $imagePath = $request->file('image')->store('profile_images', 'public');
+            }
+
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'alamat' => $request->alamat,
+                'no_hp' => $request->no_hp,
+                'image' => $imagePath,
+                'password' => $request->password ? bcrypt($request->password) : $user->password,
+                'role' => $request->role,
+            ]);
+
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'update',
+                'description' => 'Updated a user: ' . $user->name,
+                'table_name' => 'users',
+                'table_id' => $user->id,
+                'data' => json_encode($user->toArray()),
+            ];
+
+            // Simpan log
+            Logs::create($logData);
+
+            return redirect()->route('kelola_user')->with('success', 'User berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->route('kelola_user')->with('error', 'Gagal memperbarui pengguna: ' . $e->getMessage());
         }
-
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'alamat' => $request->alamat,
-            'no_hp' => $request->no_hp,
-            'image' => $imagePath,
-            'password' => $request->password ? bcrypt($request->password) : $user->password,
-            'role' => $request->role,
-        ]);
-
-        return redirect()->route('kelola_user')->with('success', 'User berhasil diperbarui.');
     }
 
     public function hapusUser($id)
     {
         $user = User::findOrFail($id);
-        $user->delete();
 
-        return redirect()->route('kelola_user')->with('success', 'User berhasil dihapus.');
+        try {
+            // Hapus gambar jika ada
+            if ($user->image && Storage::disk('public')->exists($user->image)) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted a user: ' . $user->name,
+                'table_name' => 'users',
+                'table_id' => $user->id,
+                'data' => json_encode($user->toArray()),
+            ];
+
+            // Simpan log
+            Logs::create($logData);
+
+            $user->delete();
+
+            return redirect()->route('kelola_user')->with('success', 'User berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->route('kelola_user')->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+        }
     }
 }
+

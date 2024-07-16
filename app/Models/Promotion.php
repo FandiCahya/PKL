@@ -22,4 +22,9 @@ class Promotion extends Model
     {
         return $this->hasMany(Schedule::class);
     }
+
+    public function logs()
+    {
+        return $this->hasMany(Logs::class);
+    }
 }
