@@ -54,9 +54,17 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('kelola_booking') }}">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-clipboard"></i>
-                    <span>Bookings</span></a>
+                    <span>Booking</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('kelola_booking') }}">Booking Room</a>
+                        <a class="collapse-item"href="{{ route('booking_schedule.index') }}">Booking Schedule</a>
+                    </div>
+                </div>
             </li>
 
 

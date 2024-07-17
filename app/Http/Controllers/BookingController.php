@@ -60,8 +60,6 @@ class BookingController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'room_id' => 'nullable|exists:rooms,id',
-            'promotion_id' => 'nullable|exists:promotions,id',
-            'schedule_id' => 'nullable|exists:schedules,id',
             'tgl' => 'required|date',
             'start_time' => 'required',
             'end_time' => 'nullable',
@@ -89,8 +87,6 @@ class BookingController extends Controller
         $booking = Booking::create([
             'user_id' => $request->user_id,
             'room_id' => $request->room_id,
-            'promotion_id' => $request->promotion_id,
-            'schedule_id' => $request->schedule_id,
             'tgl' => $request->tgl,
             'start_time' => $request->start_time,
             'end_time' => $endTime->format('H:i'),
@@ -137,8 +133,6 @@ class BookingController extends Controller
 
         $request->validate([
             'room_id' => 'nullable|exists:rooms,id',
-            'promotion_id' => 'nullable|exists:promotions,id',
-            'schedule_id' => 'nullable|exists:schedules,id',
             'tgl' => 'required|date',
             'start_time' => 'required',
             'end_time' => 'nullable|after:start_time',
@@ -164,8 +158,6 @@ class BookingController extends Controller
 
         $booking->update([
             'room_id' => $request->room_id,
-            'promotion_id' => $request->promotion_id,
-            'schedule_id' => $request->schedule_id,
             'tgl' => $request->tgl,
             'start_time' => $request->start_time,
             'end_time' => $endTime->format('H:i'),

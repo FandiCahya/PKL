@@ -43,15 +43,6 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="schedule_id">Schedule</label>
-                        <select class="form-control" id="schedule_id" name="schedule_id">
-                            @foreach ($schedules as $schedule)
-                                <option value="{{ $schedule->id }}">{{ $schedule->id }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="tgl">Date</label>
                         <input type="date" class="form-control" id="tgl" name="tgl" required>
                     </div>

@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create('booking_schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('room_id')->nullable()->constrained('rooms');
-            $table->date('tgl');
-            $table->time('start_time');
-            // $table->time('estimasi')->nullable();
-            $table->time('end_time')->nullable();
-            $table->string('qrcode',255);
+            $table->unsignedBigInteger('schedule_id');
+            $table->string('qrcode')->nullable();
             $table->enum('status', ['Booked', 'Pending', 'Rejected','Finished'])->default('Pending');
             $table->timestamps();
         });
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('booking_schedules');
     }
 };

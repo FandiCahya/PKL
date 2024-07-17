@@ -3,7 +3,7 @@
 @section('isi')
 <div class="container-fluid">
 
-    <h1 class="h3 mb-2 text-gray-800">Tambah Promo</h1>
+    <h1 class="h3 mb-2 text-gray-800">Tambah Class</h1>
 
     <!-- Display Success and Error Messages -->
     @if ($errors->any())

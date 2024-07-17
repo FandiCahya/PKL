@@ -3,7 +3,7 @@
 @section('isi')
 <div class="container-fluid">
 
-    <h1 class="h3 mb-2 text-gray-800">Edit Promo</h1>
+    <h1 class="h3 mb-2 text-gray-800">Edit Class</h1>
 
     <!-- Display Success and Error Messages -->
     @if ($errors->any())
@@ -46,7 +46,7 @@
                     <label for="harga">Harga</label>
                     <input type="number" class="form-control" id="harga" name="harga" value="{{ $promo->harga }}">
                 </div>
-                <button type="submit" class="btn btn-primary">Update Promo</button>
+                <button type="submit" class="btn btn-primary">Update Class</button>
             </form>
         </div>
     </div>

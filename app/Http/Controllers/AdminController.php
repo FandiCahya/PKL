@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlockedDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +11,10 @@ use App\Models\User;
 use App\Models\Room;
 use App\Models\Promotion;
 use App\Models\Booking;
+use App\Models\BookingSchedule;
+use App\Models\Instruktur;
+use App\Models\Logs;
+use App\Models\Schedule;
 
 class AdminController extends Controller
 {
@@ -19,8 +24,13 @@ class AdminController extends Controller
         $jumlahRoom = Room::count();
         $jumlahPromo = Promotion::count();
         $jumlahBooking = Booking::count();
+        $jumlahBooking2 = BookingSchedule::count();
+        $jumlahInstruktur = Instruktur::count();
+        $jumlahSchedule = Schedule::count();
+        $jumlahBlockdate = BlockedDate::count();
+        $jumlahLog = Logs::count();
         $profile = Auth::user();
-        return view('admin.dashboard', compact('jumlahUser', 'jumlahRoom', 'jumlahPromo', 'jumlahBooking', 'profile'));
+        return view('admin.dashboard', compact('jumlahLog','jumlahBlockdate','jumlahBooking2','jumlahSchedule','jumlahUser', 'jumlahRoom', 'jumlahPromo', 'jumlahBooking','jumlahInstruktur', 'profile'));
     }
 
 }

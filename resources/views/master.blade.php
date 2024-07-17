@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,7 +23,108 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <script src="
+        https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js
+        "></script>
+
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialDate: '2023-01-12',
+                editable: true,
+                selectable: true,
+                businessHours: true,
+                dayMaxEvents: true, // allow "more" link when too many events
+                events: [{
+                        title: 'All Day Event',
+                        start: '2023-01-01'
+                    },
+                    {
+                        title: 'Long Event',
+                        start: '2023-01-07',
+                        end: '2023-01-10'
+                    },
+                    {
+                        groupId: 999,
+                        title: 'Repeating Event',
+                        start: '2023-01-09T16:00:00'
+                    },
+                    {
+                        groupId: 999,
+                        title: 'Repeating Event',
+                        start: '2023-01-16T16:00:00'
+                    },
+                    {
+                        title: 'Conference',
+                        start: '2023-01-11',
+                        end: '2023-01-13'
+                    },
+                    {
+                        title: 'Meeting',
+                        start: '2023-01-12T10:30:00',
+                        end: '2023-01-12T12:30:00'
+                    },
+                    {
+                        title: 'Lunch',
+                        start: '2023-01-12T12:00:00'
+                    },
+                    {
+                        title: 'Meeting',
+                        start: '2023-01-12T14:30:00'
+                    },
+                    {
+                        title: 'Happy Hour',
+                        start: '2023-01-12T17:30:00'
+                    },
+                    {
+                        title: 'Dinner',
+                        start: '2023-01-12T20:00:00'
+                    },
+                    {
+                        title: 'Birthday Party',
+                        start: '2023-01-13T07:00:00'
+                    },
+                    {
+                        title: 'Click for Google',
+                        url: 'http://google.com/',
+                        start: '2023-01-28'
+                    }
+                ]
+            });
+
+            calendar.render();
+        });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                events: '/api/schedules', // URL untuk mendapatkan data schedule
+                eventRender: function(info) {
+                    var tooltip = new Tooltip(info.el, {
+                        title: info.event.extendedProps.description,
+                        placement: 'top',
+                        trigger: 'hover',
+                        container: 'body'
+                    });
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
 </head>
+
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -95,30 +197,31 @@
 
     <!-- Bootstrap core JavaScript-->
     <!-- Bootstrap core JavaScript-->
-<script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-<script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-<!-- Core plugin JavaScript-->
-<script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
 
-<!-- Custom scripts for all pages-->
-<script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
-<!-- Page level plugins -->
-<script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
+    <!-- Page level plugins -->
+    <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
 
-<!-- Page level custom scripts -->
-<script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
-<script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+    <!-- Page level custom scripts -->
+    <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
+    <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
 
-{{-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script> --}}
-<script>
-    $(document).ready(function() {
-        $('#dataTable').DataTable();
-    });
-</script>
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+    </script>
 
 </body>
+
 </html>

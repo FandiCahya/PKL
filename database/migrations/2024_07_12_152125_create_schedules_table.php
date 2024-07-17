@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('promotions_id');
             $table->unsignedBigInteger('instrukturs_id');
             $table->unsignedBigInteger('rooms_id');
-            $table->dateTime('tgl');
+            $table->date('tgl');
             $table->timestamps();
 
             // Add foreign key constraints

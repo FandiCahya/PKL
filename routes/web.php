@@ -11,6 +11,8 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\InstrukturController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\BookingScheduleController;
+use App\Models\Schedule;
 
 Route::get('/login', [AuthController::class, 'index'])
     ->name('login')
@@ -90,4 +92,31 @@ Route::middleware(['admin'])->group(function () {
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
+
+    // Route untuk index, create, store, edit, update, destroy
+Route::get('/booking-schedule', [BookingScheduleController::class, 'index'])->name('booking_schedule.index');
+Route::get('/booking-schedule/create', [BookingScheduleController::class, 'create'])->name('tambah_booking_schedule');
+Route::post('/booking-schedule/store', [BookingScheduleController::class, 'store'])->name('simpan_booking_schedule');
+Route::get('/booking-schedule/edit/{id}', [BookingScheduleController::class, 'edit'])->name('edit_booking_schedule');
+Route::put('/booking-schedule/update/{id}', [BookingScheduleController::class, 'update'])->name('update_booking_schedule');
+Route::delete('/booking-schedule/delete/{id}', [BookingScheduleController::class, 'destroy'])->name('hapus_booking_schedule');
+
+// Route untuk search
+Route::get('/booking-schedule/search', [BookingScheduleController::class, 'index'])->name('kelola_booking_schedule');
+});
+
+Route::get('/api/schedules', function() {
+    $schedules = Schedule::with(['promotion', 'instruktur', 'room'])->get();
+
+    $events = $schedules->map(function($schedule) {
+        return [
+            'title' => $schedule->promotion->name,
+            'start' => $schedule->tgl,
+            'promotion_name' => $schedule->promotion->name,
+            'instruktur_name' => $schedule->instruktur->nama,
+            'room_name' => $schedule->room->nama,
+        ];
+    });
+
+    return response()->json($events);
 });

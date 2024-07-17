@@ -2,11 +2,11 @@
     <thead>
         <tr>
             <th>No</th>
-            <th>User</th>
+            <th>Schedule id</th>
+            <th>Kelas</th>
             <th>Room</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>End Time</th>
+            <th>Instruktur</th>
+            <th>Harga</th>
             <th>Status</th>
             <th>QR Code</th>
             <th>Aksi</th>
@@ -16,21 +16,21 @@
         @php
             $no=1;
         @endphp
-        @foreach($bookings as $booking)
+        @foreach($booking_schedule as $booking)
         <tr>
             <td>{{ $no++ }}</td>
-            <td>{{ isset($booking->user) ? $booking->user->name : '-' }}</td>
-            <td>{{ isset($booking->room) ? $booking->room->nama : '-' }}</td>
-            <td>{{ $booking->tgl }}</td>
-            <td>{{ $booking->start_time }}</td>
-            <td>{{ $booking->end_time }}</td>
+            <td>{{ $booking->schedule_id }}</td>
+            <td>{{ $booking->schedule->promotion->name }}</td>
+            <td>{{ $booking->schedule->room->nama }}</td>
+            <td>{{ $booking->schedule->instruktur->nama }}</td>
+            <td>{{ $booking->schedule->promotion->harga }}</td>
             <td>{{ $booking->status }}</td>
             <td>
                 <img src="{{ asset('storage/' . $booking->qrcode) }}" alt="QR Code">
             </td>
             <td>
-                <a href="{{ route('edit_booking', $booking->id) }}" class="btn btn-warning btn-sm">Update</a>
-                <form action="{{ route('hapus_booking', $booking->id) }}" method="POST" style="display: inline-block;">
+                {{-- <a href="{{ route('edit_booking_schedule', $booking->id) }}" class="btn btn-warning btn-sm">Update</a> --}}
+                <form action="{{ route('hapus_booking_schedule', $booking->id) }}" method="POST" style="display: inline-block;">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -42,4 +42,4 @@
 </table>
 
 <!-- Pagination Links -->
-{{ $bookings->links('pagination::bootstrap-4') }}
+{{ $booking_schedule->links('pagination::bootstrap-4') }}

@@ -64,7 +64,7 @@ class PromoController extends Controller
             $logData = [
                 'user_id' => Auth::id(),
                 'action' => 'create',
-                'description' => 'Created a new promotion: ' . $promotion->name,
+                'description' => 'Created a new Class: ' . $promotion->name,
                 'table_name' => 'promotions',
                 'table_id' => $promotion->id,
                 'data' => json_encode($promotion->toArray()),
@@ -73,7 +73,7 @@ class PromoController extends Controller
             // Simpan log
             Logs::create($logData);
     
-            return redirect()->route('kelola_promo')->with('success', 'Promo berhasil ditambahkan.');
+            return redirect()->route('kelola_promo')->with('success', 'Class berhasil ditambahkan.');
         } catch (\Exception $e) {
             // Tangkap kesalahan dan kirim pesan error ke view
             return redirect()
@@ -120,7 +120,7 @@ class PromoController extends Controller
         $logData = [
             'user_id' => Auth::id(),
             'action' => 'update',
-            'description' => 'Updated promotion: ' . $promo->name,
+            'description' => 'Updated class: ' . $promo->name,
             'table_name' => 'promotions',
             'table_id' => $promo->id,
             'data' => json_encode($promo->toArray()),
@@ -129,7 +129,7 @@ class PromoController extends Controller
         // Simpan log
         Logs::create($logData);
     
-        return redirect()->route('kelola_promo')->with('success', 'Promo berhasil diperbarui.');
+        return redirect()->route('kelola_promo')->with('success', 'Class berhasil diperbarui.');
     }
 
     public function hapusPromo($id)
@@ -142,7 +142,7 @@ class PromoController extends Controller
         $logData = [
             'user_id' => Auth::id(),
             'action' => 'delete',
-            'description' => 'Deleted promotion: ' . $promoData['name'],
+            'description' => 'Deleted class: ' . $promoData['name'],
             'table_name' => 'promotions',
             'table_id' => $id,
             'data' => json_encode($promoData),
@@ -151,6 +151,6 @@ class PromoController extends Controller
         // Simpan log
         Logs::create($logData);
     
-        return redirect()->route('kelola_promo')->with('success', 'Promo berhasil dihapus.');
+        return redirect()->route('kelola_promo')->with('success', 'Class berhasil dihapus.');
     }
 }
