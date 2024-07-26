@@ -26,7 +26,7 @@
             <td>{{ $booking->end_time }}</td>
             <td>{{ $booking->status }}</td>
             <td>
-                <img src="{{ asset('storage/' . $booking->qrcode) }}" alt="QR Code">
+                <img src="{{ asset('' . $booking->qrcode) }}" alt="QR Code">
             </td>
             <td>
                 <a href="{{ route('edit_booking', $booking->id) }}" class="btn btn-warning btn-sm">Update</a>

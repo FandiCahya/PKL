@@ -14,6 +14,7 @@ use App\Models\Promotion;
 use Carbon\Carbon;
 use App\Models\Schedule;
 use App\Models\Logs;
+use Illuminate\Support\Facades\File;
 
 class BookingController extends Controller
 {
@@ -97,13 +98,30 @@ class BookingController extends Controller
         $room->reduceCapacity();
 
         // Generate the actual QR code
-        $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: ' . $booking->start_time;
-        $qrCode = QrCode::format('png')->generate($qrContent);
-        $qrCodePath = 'qr_codes/' . uniqid() . '.png';
-        Storage::disk('public')->put($qrCodePath, $qrCode);
+        // $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: ' . $booking->start_time;
+        // $qrCode = QrCode::format('png')->generate($qrContent);
+        // $qrCodePath = 'qr_codes/' . uniqid() . '.png';
+        // Storage::disk('public')->put($qrCodePath, $qrCode);
+        // $destinationPath = public_path('qr_code');
 
-        // Update the booking record with the actual QR code path
-        $booking->update(['qrcode' => $qrCodePath]);
+        // // Update the booking record with the actual QR code path
+        // $booking->update(['qrcode' => $qrCodePath]);
+
+        $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: ' . $booking->start_time;
+
+        // Generate the QR code as a PNG
+        $qrCode = QrCode::format('png')->generate($qrContent);
+
+        // Define the file name and path
+        $fileName = uniqid() . '.png';
+        $destinationPath = public_path('qr_codes/' . $fileName);
+
+        // Save the QR code directly to the public/qr_code directory
+        File::put($destinationPath, $qrCode);
+
+        // Save the QR code path in the database
+        $booking->qrcode = 'qr_codes/' . $fileName;
+        $booking->save();
 
         // Data log
         $logData = [

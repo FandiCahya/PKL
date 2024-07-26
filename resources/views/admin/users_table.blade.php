@@ -23,7 +23,7 @@
                 <td>{{ $user->alamat }}</td>
                 <td>{{ $user->no_hp }}</td>
                 <td>
-                    <img src="{{ asset('storage/' . $user->image) }}" alt="Photo Profile" style="max-width: 150px;">
+                    <img src="{{ asset('' . $user->image) }}" alt="Photo Profile" style="max-width: 150px;">
                 </td>
                 <td>{{ $user->role }}</td>
                 <td>

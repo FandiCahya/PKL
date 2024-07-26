@@ -54,7 +54,21 @@ class UsersController extends Controller
 
         try {
             // Simpan gambar ke storage
-            $imagePath = $request->file('image')->store('profile_images', 'public');
+            // $imagePath = $request->file('image')->store('profile_images', 'public');
+
+            $image = $request->file('image');
+
+            // Define the destination path (public/promotions)
+            $destinationPath = public_path('profile_images');
+
+            // Get the file's original name
+            $fileName = $image->getClientOriginalName();
+
+            // Move the file to the destination path~
+            $image->move($destinationPath, $fileName);
+
+            // Get the relative path to save in the database or further processing
+            $imagePath = 'profile_images/' . $fileName;
 
             // Buat pengguna baru
             $user = User::create([
@@ -116,7 +130,11 @@ class UsersController extends Controller
                 }
 
                 // Simpan gambar baru ke storage
-                $imagePath = $request->file('image')->store('profile_images', 'public');
+                // $imagePath = $request->file('image')->store('profile_images', 'public');
+
+                $fileName = $request->file('image')->getClientOriginalName();
+                $request->file('image')->move(public_path('profile_images'), $fileName);
+                $imagePath = 'profile_images/'.$fileName;
             }
 
             $user->update([

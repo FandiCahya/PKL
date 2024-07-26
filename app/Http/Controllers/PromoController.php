@@ -46,10 +46,25 @@ class PromoController extends Controller
                 'waktu' => 'required',
                 'harga' => 'required|numeric|min:0',
             ]);
-    
+
             // Simpan gambar ke storage
-            $imagePath = $request->file('image')->store('promotions', 'public');
-    
+            // $imagePath = $request->file('image')->store('promotions', 'public');
+
+            // Get the uploaded file
+            $image = $request->file('image');
+
+            // Define the destination path (public/promotions)
+            $destinationPath = public_path('kelas');
+
+            // Get the file's original name
+            $fileName = $image->getClientOriginalName();
+
+            // Move the file to the destination path
+            $image->move($destinationPath, $fileName);
+
+            // Get the relative path to save in the database or further processing
+            $imagePath = 'kelas/' . $fileName;
+
             // Simpan data ke database
             $promotion = Promotion::create([
                 'name' => $request->name,
@@ -59,7 +74,7 @@ class PromoController extends Controller
                 'waktu' => $request->waktu,
                 'harga' => $request->harga,
             ]);
-    
+
             // Data log
             $logData = [
                 'user_id' => Auth::id(),
@@ -69,10 +84,10 @@ class PromoController extends Controller
                 'table_id' => $promotion->id,
                 'data' => json_encode($promotion->toArray()),
             ];
-    
+
             // Simpan log
             Logs::create($logData);
-    
+
             return redirect()->route('kelola_promo')->with('success', 'Class berhasil ditambahkan.');
         } catch (\Exception $e) {
             // Tangkap kesalahan dan kirim pesan error ke view
@@ -92,7 +107,7 @@ class PromoController extends Controller
     public function updatePromo(Request $request, $id)
     {
         $promo = Promotion::findOrFail($id);
-    
+
         $request->validate([
             'name' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5048',
@@ -101,12 +116,15 @@ class PromoController extends Controller
             'waktu' => 'required',
             'harga' => 'required|numeric|min:0',
         ]);
-    
+
         $imagePath = $promo->image;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('promotions', 'public');
+            // $imagePath = $request->file('image')->store('promotions', 'public');
+            $fileName = $request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('kelas'), $fileName);
+            $imagePath = 'kelas/'.$fileName;
         }
-    
+
         $promo->update([
             'name' => $request->name,
             'image' => $imagePath,
@@ -115,7 +133,7 @@ class PromoController extends Controller
             'waktu' => $request->waktu,
             'harga' => $request->harga,
         ]);
-    
+
         // Data log
         $logData = [
             'user_id' => Auth::id(),
@@ -125,10 +143,10 @@ class PromoController extends Controller
             'table_id' => $promo->id,
             'data' => json_encode($promo->toArray()),
         ];
-    
+
         // Simpan log
         Logs::create($logData);
-    
+
         return redirect()->route('kelola_promo')->with('success', 'Class berhasil diperbarui.');
     }
 
@@ -137,7 +155,7 @@ class PromoController extends Controller
         $promo = Promotion::findOrFail($id);
         $promoData = $promo->toArray();
         $promo->delete();
-    
+
         // Data log
         $logData = [
             'user_id' => Auth::id(),
@@ -147,10 +165,10 @@ class PromoController extends Controller
             'table_id' => $id,
             'data' => json_encode($promoData),
         ];
-    
+
         // Simpan log
         Logs::create($logData);
-    
+
         return redirect()->route('kelola_promo')->with('success', 'Class berhasil dihapus.');
     }
 }

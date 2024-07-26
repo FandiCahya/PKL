@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', 'Rooms')
+@section('title', 'Users')
 @section('isi')
 <div class="container-fluid">
     <!-- Page Heading -->

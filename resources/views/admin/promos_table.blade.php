@@ -20,7 +20,7 @@
                 <td>{{ $no++ }}</td>
                 <td>{{ $promotion->name }}</td>
                 <td>
-                    <img src="{{ asset('storage/' . $promotion->image) }}" alt="Promotion Image" style="max-width: 150px;">
+                    <img src="{{ asset('' . $promotion->image) }}" alt="Promotion Image" style="max-width: 150px;">
                 </td>
                 <td>{{ $promotion->deskripsi }}</td>
                 <td>{{ $promotion->tgl }}</td>

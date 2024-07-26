@@ -46,7 +46,7 @@ Route::middleware(['admin'])->group(function () {
         Route::delete('/hapus/{id}', [RoomController::class, 'hapusRoom'])->name('hapus_room');
     });
 
-    Route::prefix('promo')->group(function () {
+    Route::prefix('class')->group(function () {
         Route::get('/kelola', [PromoController::class, 'kelola_promo'])->name('kelola_promo');
         Route::get('/tambah', [PromoController::class, 'tambahPromo'])->name('tambah_promo');
         Route::post('/simpan', [PromoController::class, 'simpanPromo'])->name('simpan_promo');
