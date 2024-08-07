@@ -27,6 +27,14 @@
                     <label for="date">Date</label>
                     <input type="date" class="form-control" id="date" name="date" value="{{ $blockedDate->blocked_date }}" required>
                 </div>
+                <div>
+                    <label for="time_slot_id">Time Slot:</label>
+                    <select name="time_slot_id" id="time_slot_id" required>
+                        @foreach ($timeSlots as $timeSlot)
+                            <option value="{{ $timeSlot->id }}">{{ $timeSlot->start_time }} - {{ $timeSlot->end_time }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="reason">Reason</label>
                     <input type="text" class="form-control" id="reason" name="reason" value="{{ $blockedDate->reason }}">

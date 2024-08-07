@@ -30,23 +30,30 @@
                     <input type="text" class="form-control" id="room_id" name="room_id" value="{{ $booking->room_id }}" readonly>
                 </div>
                 <div class="form-group">
+                    <label for="promotion_id">Class</label>
+                    <input type="text" class="form-control" id="promotion_id" name="promotion_id" value="{{ $booking->promotion_id }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="booking_type">booking_type</label>
+                    <select class="form-control" id="booking_type" name="booking_type" >
+                        <option value="room" {{ $booking->booking_type == 'room' ? 'selected' : '' }}>room</option>
+                        <option value="class" {{ $booking->booking_type == 'class' ? 'selected' : '' }}>class</option> 
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="tgl">Date</label>
                     <input type="date" class="form-control" id="tgl" name="tgl" value="{{ $booking->tgl }}">
                 </div>
                 <div class="form-group">
-                    <label for="start_time">Time</label>
-                    <input type="time" class="form-control" id="start_time" name="start_time" value="{{ $booking->start_time }}">
+                    <label for="time_slot_id">Time</label>
+                    <input type="text" class="form-control" id="time_slot_id" name="time_slot_id" value="{{ $booking->time_slot_id }}" readonly>
                 </div>
-                {{-- <div class="form-group">
-                    <label for="end_time">End Time</label>
-                    <input type="time" class="form-control" id="end_time" name="end_time" value="{{ $booking->end_time }}">
-                </div> --}}
                 <div class="form-group">
                     <label for="status">Status</label>
-                    <select class="form-control" id="status" name="status" readonly>
+                    <select class="form-control" id="status" name="status" >
                         <option value="Booked" {{ $booking->status == 'Booked' ? 'selected' : '' }}>Booked</option>
-                        {{-- <option value="Pending" {{ $booking->status == 'Pending' ? 'selected' : '' }}>Pending</option> --}}
-                        {{-- <option value="Rejected" {{ $booking->status == 'Rejected' ? 'selected' : '' }}>Rejected</option> --}}
+                        <option value="Pending" {{ $booking->status == 'Pending' ? 'selected' : '' }}>Pending</option> 
+                        <option value="Rejected" {{ $booking->status == 'Rejected' ? 'selected' : '' }}>Rejected</option> 
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Update Booking</button>

@@ -4,6 +4,7 @@
             {{-- <th>ID</th> --}}
             <th>No</th>
             <th>Date</th>
+            <th>Time</th>
             <th>Reason</th>
             <th>Actions</th>
         </tr>
@@ -16,6 +17,7 @@
             <tr>
                 <td>{{ $no++ }}</td>
                 <td>{{ $blockedDate->blocked_date }}</td>
+                <td>{{ $blockedDate->timeSlot->start_time .'-'.$blockedDate->timeSlot->end_time }}</td>
                 <td>{{ $blockedDate->reason }}</td>
                 <td>
                     <a href="{{ route('blocked_dates.edit', $blockedDate) }}" class="btn btn-warning">Edit</a>

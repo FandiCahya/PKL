@@ -21,6 +21,11 @@ class Instruktur extends Model
         return $this->hasMany(Schedule::class);
     }
 
+    public function promotions()
+    {
+        return $this->hasMany(Promotion::class);
+    }
+
     public function logs()
     {
         return $this->hasMany(Logs::class);

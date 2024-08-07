@@ -5,7 +5,6 @@
             <th>Nama</th>
             <th>Kapasitas</th>
             <th>Availability</th>
-            <th>Harga</th>
             <th>Aksi</th>
         </tr>
     </thead>
@@ -19,7 +18,6 @@
                 <td>{{ $room->nama }}</td>
                 <td>{{ $room->kapasitas }}</td>
                 <td>{{ $room->availability ? 'Available' : 'Not Available' }}</td>
-                <td>{{ $room->harga }}</td>
                 <td>
                     <a href="{{ route('edit_room', $room->id) }}" class="btn btn-warning btn-sm">Update</a>
                     <form action="{{ route('hapus_room', $room->id) }}" method="POST" style="display: inline-block;">

@@ -50,17 +50,17 @@ class UserApiController extends Controller
             ]);
 
             // Data log
-            $logData = [
-                'user_id' => Auth::id(),
-                'action' => 'create',
-                'description' => 'Created a new user: ' . $user->name,
-                'table_name' => 'users',
-                'table_id' => $user->id,
-                'data' => json_encode($user->toArray()),
-            ];
+            // $logData = [
+            //     'user_id' => $user->id,
+            //     'action' => 'create',
+            //     'description' => 'Created a new user: ' . $user->name,
+            //     'table_name' => 'users',
+            //     'table_id' => $user->id,
+            //     'data' => json_encode($user->toArray()),
+            // ];
 
-            // Simpan log
-            Logs::create($logData);
+            // // Simpan log
+            // Logs::create($logData);
 
             return response()->json(['message' => 'User berhasil ditambahkan.', 'user' => $user], 201);
         } catch (\Exception $e) {

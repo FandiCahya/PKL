@@ -18,7 +18,13 @@ return new class extends Migration
             $table->string('deskripsi');
             $table->date('tgl')->nullable();
             $table->time('waktu')->nullable();
+            $table->unsignedBigInteger('room_id');
+            $table->unsignedBigInteger('instruktur_id');
             $table->timestamps();
+
+            // Adding foreign key constraints
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
+            $table->foreign('instruktur_id')->references('id')->on('instrukturs')->onDelete('cascade');
         });
     }
 

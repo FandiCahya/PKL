@@ -42,40 +42,68 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="{{ route('time-slots.index') }}">
+                    <i class="fas fa-fw fa-clock"></i>
+                    <span>Time</span></a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('kelola_promo') }}">
                     <i class="fas fa-fw fa-chalkboard"></i>
                     <span>Class</span></a>
             </li>
 
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link" href="{{ route('schedules.index') }}">
                     <i class="fas fa-fw fa-calendar-alt"></i>
                     <span>Schedule</span></a>
+            </li> --}}
+
+            <!-- Payments Nav Item -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('payments.index') }}">
+                    <i class="fas fa-fw fa-credit-card"></i>
+                    <span>Payments</span>
+                </a>
             </li>
 
+            <!-- Nav Item - Booking -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
+                <a class="nav-link" href="{{ route('kelola_booking') }}">
+                    <i class="fas fa-fw fa-clipboard"></i>
+                    <span>Booking</span></a>
+            </li>
+
+            {{-- <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBooking"
+                    aria-expanded="true" aria-controls="collapseBooking">
                     <i class="fas fa-fw fa-clipboard"></i>
                     <span>Booking</span>
                 </a>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div id="collapseBooking" class="collapse" aria-labelledby="headingBooking"
+                    data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('kelola_booking') }}">Booking Room</a>
-                        <a class="collapse-item"href="{{ route('booking_schedule.index') }}">Booking Schedule</a>
+                        <a class="collapse-item" href="{{ route('booking_schedule.index') }}">Booking Schedule</a>
+                    </div>
+                </div>
+            </li> --}}
+
+            <!-- Nav Item - Blocking -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBlocking"
+                    aria-expanded="true" aria-controls="collapseBlocking">
+                    <i class="fas fa-fw fa-ban"></i>
+                    <span>Blocking</span>
+                </a>
+                <div id="collapseBlocking" class="collapse" aria-labelledby="headingBlocking"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('blocked_dates.index') }}">Date</a>
+                        <a class="collapse-item" href="{{ route('blocked_tgl.index') }}">Date & Time</a>
                     </div>
                 </div>
             </li>
-
-
-
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('blocked_dates.index') }}">
-                    <i class="fas fa-calendar-times"></i>
-                    <span>Block Date</span>
-                </a>
-            </li>
-
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

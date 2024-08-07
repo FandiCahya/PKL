@@ -31,7 +31,7 @@ class ScheduleController extends Controller
             });
         }
     
-        $schedules = $query->with(['promotion', 'instruktur', 'room'])->paginate(10);
+        $schedules = $query->with(['promotion', 'instruktur', 'room'])->orderBy('created_at','desc')->paginate(10);
     
         if ($request->ajax()) {
             return view('schedules.schedule_table', compact('schedules', 'profile'))->render();

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Instruktur;
 use App\Models\Promotion;
 use App\Models\Logs;
+use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class PromoController extends Controller
 {
@@ -19,7 +23,7 @@ class PromoController extends Controller
             $query->where('name', 'like', '%' . $search . '%')->orWhere('deskripsi', 'like', '%' . $search . '%');
         }
 
-        $promo = $query->paginate(10);
+        $promo = $query->orderBy('created_at', 'desc')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.promos_table', compact('promo'))->render();
@@ -31,7 +35,9 @@ class PromoController extends Controller
     public function tambahPromo()
     {
         $profile = Auth::user();
-        return view('admin.tambah.promo', compact('profile'));
+        $roomsq = Room::all();
+        $instruktursq = Instruktur::all();
+        return view('admin.class.create', compact('profile','roomsq','instruktursq'));
     }
 
     public function simpanPromo(Request $request)
@@ -45,26 +51,17 @@ class PromoController extends Controller
                 'tgl' => 'required|date',
                 'waktu' => 'required',
                 'harga' => 'required|numeric|min:0',
+                'room_id' => 'required|exists:rooms,id',
+                'instruktur_id' => 'required|exists:instrukturs,id',
             ]);
-
+    
             // Simpan gambar ke storage
-            // $imagePath = $request->file('image')->store('promotions', 'public');
-
-            // Get the uploaded file
             $image = $request->file('image');
-
-            // Define the destination path (public/promotions)
             $destinationPath = public_path('kelas');
-
-            // Get the file's original name
             $fileName = $image->getClientOriginalName();
-
-            // Move the file to the destination path
             $image->move($destinationPath, $fileName);
-
-            // Get the relative path to save in the database or further processing
             $imagePath = 'kelas/' . $fileName;
-
+    
             // Simpan data ke database
             $promotion = Promotion::create([
                 'name' => $request->name,
@@ -73,8 +70,12 @@ class PromoController extends Controller
                 'tgl' => $request->tgl,
                 'waktu' => $request->waktu,
                 'harga' => $request->harga,
+                'room_id' => $request->room_id,
+                'instruktur_id' => $request->instruktur_id,
             ]);
 
+            // dd($promotion);
+    
             // Data log
             $logData = [
                 'user_id' => Auth::id(),
@@ -84,24 +85,30 @@ class PromoController extends Controller
                 'table_id' => $promotion->id,
                 'data' => json_encode($promotion->toArray()),
             ];
-
+    
             // Simpan log
             Logs::create($logData);
-
+    
             return redirect()->route('kelola_promo')->with('success', 'Class berhasil ditambahkan.');
         } catch (\Exception $e) {
+            // Tambahkan logging error ke log Laravel
+            Log::error('Error adding promo: ' . $e->getMessage());
+    
             // Tangkap kesalahan dan kirim pesan error ke view
             return redirect()
                 ->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+    
 
     public function editPromo($id)
     {
         $profile = Auth::user();
         $promo = Promotion::findOrFail($id);
-        return view('admin.edit.promo', compact('promo', 'profile'));
+        $rooms = Room::all();
+        $instrukturs = Instruktur::all();
+        return view('admin.class.edit', compact('promo', 'profile','rooms','instrukturs'));
     }
 
     public function updatePromo(Request $request, $id)
@@ -115,6 +122,8 @@ class PromoController extends Controller
             'tgl' => 'required|date',
             'waktu' => 'required',
             'harga' => 'required|numeric|min:0',
+            'room_id' => 'required|exists:rooms,id',
+            'instruktur_id' => 'required|exists:instrukturs,id',
         ]);
 
         $imagePath = $promo->image;
@@ -122,7 +131,7 @@ class PromoController extends Controller
             // $imagePath = $request->file('image')->store('promotions', 'public');
             $fileName = $request->file('image')->getClientOriginalName();
             $request->file('image')->move(public_path('kelas'), $fileName);
-            $imagePath = 'kelas/'.$fileName;
+            $imagePath = 'kelas/' . $fileName;
         }
 
         $promo->update([
@@ -132,6 +141,8 @@ class PromoController extends Controller
             'tgl' => $request->tgl,
             'waktu' => $request->waktu,
             'harga' => $request->harga,
+            'room_id' => $request->room_id,
+            'instruktur_id' => $request->instruktur_id,
         ]);
 
         // Data log

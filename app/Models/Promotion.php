@@ -15,7 +15,9 @@ class Promotion extends Model
         'deskripsi',
         'tgl',
         'waktu',
-        'harga'
+        'harga',
+        'room_id',
+        'instruktur_id'
     ];
 
     public function schedule()
@@ -23,6 +25,20 @@ class Promotion extends Model
         return $this->hasMany(Schedule::class);
     }
 
+    public function instruktur()
+    {
+        return $this->belongsTo(Instruktur::class);
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
     public function logs()
     {
         return $this->hasMany(Logs::class);

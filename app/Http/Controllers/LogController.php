@@ -12,14 +12,17 @@ class LogController extends Controller
     {
         $profile = Auth::user();
         $search = $request->input('search');
+        
         $logs = Logs::with('user')
             ->when($search, function ($query, $search) {
-                return $query->where('action', 'like', "%{$search}%")->orWhereHas('user', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%");
-                });
+                return $query->where('action', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%");
+                    });
             })
+            ->orderBy('created_at', 'desc') // Add this line to sort by newest first
             ->paginate(10);
 
-        return view('admin.logs', compact('logs', 'search','profile'));
+        return view('admin.logs', compact('logs', 'search', 'profile'));
     }
 }

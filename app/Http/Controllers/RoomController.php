@@ -19,7 +19,7 @@ class RoomController extends Controller
             $query->where('nama', 'LIKE', "%{$search}%");
         }
 
-        $rooms = $query->paginate(10);
+        $rooms = $query->orderBy('created_at','desc')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.rooms_table', compact('rooms'))->render();
@@ -40,14 +40,12 @@ class RoomController extends Controller
             'nama' => 'required|string|max:255',
             'kapasitas' => 'required|integer',
             'availability' => 'required|boolean',
-            'harga' => 'required|integer',
         ]);
 
         $room = Room::create([
             'nama' => $request->nama,
             'kapasitas' => $request->kapasitas,
             'availability' => $request->availability,
-            'harga' => $request->harga,
         ]);
 
         // Data log
@@ -78,7 +76,6 @@ class RoomController extends Controller
             'nama' => 'required|string|max:255',
             'kapasitas' => 'required|integer',
             'availability' => 'required|boolean',
-            'harga' => 'required|integer',
         ]);
 
         $room = Room::findOrFail($id);
@@ -86,7 +83,6 @@ class RoomController extends Controller
             'nama' => $request->nama,
             'kapasitas' => $request->kapasitas,
             'availability' => $request->availability,
-            'harga' => $request->harga,
         ]);
 
         // Data log

@@ -10,12 +10,17 @@ class BlockedDate extends Model
     use HasFactory;
 
     protected $fillable = [
-        'blocked_date', 
+        'blocked_date',
+        'time_slot_id',
         'reason'
     ];
 
     public function logs()
     {
         return $this->hasMany(Logs::class);
+    }
+    public function timeSlot()
+    {
+        return $this->belongsTo(TimeSlot::class);
     }
 }

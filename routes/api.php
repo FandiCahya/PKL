@@ -7,14 +7,17 @@ use App\Http\Controllers\Api\PromoController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\RoomController;
 use App\Http\Controllers\API\BookingController;
-
+use App\Http\Controllers\API\TimeController;
 
 // Route::get('detailbooking/{id}',[BookingController::class,'show']);
 Route::get('detailbooking/{user_id}', [BookingController::class, 'getBookingsByUserId']);
+Route::post('/bookings', [BookingController::class, 'store']);
 
 // Route::get('/detailbooking/{userId}', [BookingController::class, 'getBookingsByUserIdAndDate']);
 // Route::apiResource('rooms', RoomController::class);
 Route::get('/kelolarooms',[RoomController::class,'index']);
+
+Route::get('/kelolawaktu',[TimeController::class,'index']);
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);

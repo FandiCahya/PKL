@@ -35,10 +35,10 @@
                         <option value="0">Not Available</option>
                     </select>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="harga">Harga</label>
                     <input type="number" class="form-control" id="harga" name="harga" required>
-                </div>
+                </div> --}}
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </form>
         </div>

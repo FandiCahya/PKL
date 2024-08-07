@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Room extends Model
 {
     use HasFactory;
-    protected $fillable = ['nama', 'kapasitas', 'availability', 'harga'];
+    protected $fillable = ['nama', 'kapasitas', 'availability'];
 
     public function bookings()
     {
@@ -18,6 +18,11 @@ class Room extends Model
     public function schedule()
     {
         return $this->hasMany(Schedule::class);
+    }
+
+    public function promotions()
+    {
+        return $this->hasMany(Promotion::class);
     }
 
     public function logs()

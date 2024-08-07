@@ -9,10 +9,14 @@ use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\InstrukturController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\BookingScheduleController;
+use App\Http\Controllers\TimeSlotController;
 use App\Models\Schedule;
+use App\Http\Controllers\BlockedTglController;
+use App\Models\Promotion;
 
 Route::get('/login', [AuthController::class, 'index'])
     ->name('login')
@@ -28,6 +32,8 @@ Route::post('/', [AuthController::class, 'auth']);
 Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware('auth');
 
 Route::middleware(['admin'])->group(function () {
+
+
     Route::prefix('user')->group(function () {
         Route::get('/kelola', [UsersController::class, 'kelola_users'])->name('kelola_user');
         Route::get('/tambah', [UsersController::class, 'tambahUser'])->name('tambah_user');
@@ -73,6 +79,26 @@ Route::middleware(['admin'])->group(function () {
 
     Route::resource('instrukturs', InstrukturController::class);
 
+    Route::resource('blocked_tgl', BlockedTglController::class);
+
+    Route::resource('time-slots', TimeSlotController::class);
+
+    Route::resource('/payments', PaymentController::class);
+
+    Route::prefix('paymentsq')->group(function () {
+        Route::get('/', [PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/create', [PaymentController::class, 'create'])->name('payments.create');
+        Route::post('/store', [PaymentController::class, 'store'])->name('payments.store');
+        Route::get('/{payment}', [PaymentController::class, 'show'])->name('payments.show');
+        Route::get('/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
+        Route::put('/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+        Route::delete('/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+    });
+    
+
+
+    Route::put('bookings/{id}/validate', [BookingController::class, 'validateBooking'])->name('validate_booking');
+
     // Menampilkan semua jadwal
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
 
@@ -94,27 +120,26 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
 
     // Route untuk index, create, store, edit, update, destroy
-Route::get('/booking-schedule', [BookingScheduleController::class, 'index'])->name('booking_schedule.index');
-Route::get('/booking-schedule/create', [BookingScheduleController::class, 'create'])->name('tambah_booking_schedule');
-Route::post('/booking-schedule/store', [BookingScheduleController::class, 'store'])->name('simpan_booking_schedule');
-Route::get('/booking-schedule/edit/{id}', [BookingScheduleController::class, 'edit'])->name('edit_booking_schedule');
-Route::put('/booking-schedule/update/{id}', [BookingScheduleController::class, 'update'])->name('update_booking_schedule');
-Route::delete('/booking-schedule/delete/{id}', [BookingScheduleController::class, 'destroy'])->name('hapus_booking_schedule');
+    Route::get('/booking-schedule', [BookingScheduleController::class, 'index'])->name('booking_schedule.index');
+    Route::get('/booking-schedule/create', [BookingScheduleController::class, 'create'])->name('tambah_booking_schedule');
+    Route::post('/booking-schedule/store', [BookingScheduleController::class, 'store'])->name('simpan_booking_schedule');
+    Route::get('/booking-schedule/edit/{id}', [BookingScheduleController::class, 'edit'])->name('edit_booking_schedule');
+    Route::put('/booking-schedule/update/{id}', [BookingScheduleController::class, 'update'])->name('update_booking_schedule');
+    Route::delete('/booking-schedule/delete/{id}', [BookingScheduleController::class, 'destroy'])->name('hapus_booking_schedule');
 
-// Route untuk search
-Route::get('/booking-schedule/search', [BookingScheduleController::class, 'index'])->name('kelola_booking_schedule');
+    // Route untuk search
+    Route::get('/booking-schedule/search', [BookingScheduleController::class, 'index'])->name('kelola_booking_schedule');
 });
 
-Route::get('/api/schedules', function() {
-    $schedules = Schedule::with(['promotion', 'instruktur', 'room'])->get();
+Route::get('/api/schedules', function () {
+    $schedules = Promotion::with(['instruktur', 'room'])->get();
 
-    $events = $schedules->map(function($schedule) {
+    $events = $schedules->map(function ($schedule) {
         return [
-            'title' => $schedule->promotion->name,
+            'title' => $schedule->name,
             'start' => $schedule->tgl,
-            'promotion_name' => $schedule->promotion->name,
-            'instruktur_name' => $schedule->instruktur->nama,
             'room_name' => $schedule->room->nama,
+            'instruktur_name' => $schedule->instruktur->nama,
         ];
     });
 

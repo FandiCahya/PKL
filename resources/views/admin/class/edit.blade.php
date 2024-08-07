@@ -46,6 +46,14 @@
                     <label for="harga">Harga</label>
                     <input type="number" class="form-control" id="harga" name="harga" value="{{ $promo->harga }}">
                 </div>
+                <div class="form-group">
+                    <label for="room_id">Room</label>
+                    <input type="text" class="form-control" id="room_id" name="room_id" value="{{ $promo->room_id }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="instruktur_id">Instruktur</label>
+                    <input type="text" class="form-control" id="instruktur_id" name="instruktur_id" value="{{ $promo->instruktur_id }}" readonly>
+                </div>
                 <button type="submit" class="btn btn-primary">Update Class</button>
             </form>
         </div>

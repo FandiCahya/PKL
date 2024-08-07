@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Logs;
+
 
 class AuthController extends Controller
 {
@@ -16,6 +18,12 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
+            Logs::create([
+                'user_id' => null,
+                'action' => 'login_failed',
+                'description' => 'Invalid login details',
+                'data' => json_encode($credentials),
+            ]);
             return response()->json([
                 'user' => null,
                 'message' => 'Invalid login details',
@@ -26,6 +34,13 @@ class AuthController extends Controller
         $user = Auth::user();
         // $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Logs::create([
+        //     'user_id' => $user->id,
+        //     'action' => 'login_success',
+        //     'description' => 'User logged in successfully',
+        //     'data' => json_encode($user),
+        // ]);
+
         return response()->json([
             'id' => $user->id,
             'email' => $user->email,
@@ -35,8 +50,6 @@ class AuthController extends Controller
             'image' => $user->image,
             'password' => $user->password,
             'status' => 'loggedin',
-            // 'user_token' => $token,
-            // 'token_type' => 'Bearer',
         ], 200);
     }
 
@@ -52,6 +65,12 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
+            Logs::create([
+                'user_id' => null,
+                'action' => 'register_failed',
+                'description' => 'Registration failed due to validation errors',
+                'data' => json_encode($validator->errors()),
+            ]);
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
@@ -64,6 +83,12 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        // Logs::create([
+        //     'user_id' => $user->id,
+        //     'action' => 'register_success',
+        //     'description' => 'User registered successfully',
+        //     'data' => json_encode($user),
+        // ]);
 
         return response()->json(['message' => 'Registration successful', 'user' => $user]);
     }

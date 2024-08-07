@@ -38,7 +38,7 @@
                             <th>Description</th>
                             <th>Table Name</th>
                             <th>Table ID</th>
-                            <th>Data</th>
+                            {{-- <th>Data</th> --}}
                             <th>Waktu</th>
                         </tr>
                     </thead>
@@ -54,7 +54,7 @@
                                 <td>{{ $log->description }}</td>
                                 <td>{{ $log->table_name }}</td>
                                 <td>{{ $log->table_id }}</td>
-                                <td><pre>{{ json_encode($log->data, JSON_PRETTY_PRINT) }}</pre></td>
+                                {{-- <td><pre>{{ json_encode($log->data, JSON_PRETTY_PRINT) }}</pre></td> --}}
                                 <td>{{ $log->created_at }}</td>
                             </tr>
                         @endforeach

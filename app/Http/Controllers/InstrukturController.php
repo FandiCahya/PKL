@@ -16,7 +16,7 @@ class InstrukturController extends Controller
     {
         $search = $request->get('search');
         $profile = Auth::user();
-        $instrukturs = Instruktur::where('nama', 'like', "%{$search}%")->paginate(10);
+        $instrukturs = Instruktur::where('nama', 'like', "%{$search}%")->orderBy('created_at','desc')->paginate(10);
         
         if ($request->ajax()) {
             return view('admin.kelola_instruktur', compact('instrukturs'))->render();

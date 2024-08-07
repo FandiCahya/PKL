@@ -24,7 +24,7 @@ class BookingScheduleController extends Controller
             });
         }
 
-        $booking_schedule = $query->paginate(10);
+        $booking_schedule = $query->orderBy('created_at','desc')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.kelola_booking_schedule', compact('booking_schedule', 'profile'))->render();

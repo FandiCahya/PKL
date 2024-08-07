@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Logs;
+use App\Models\TimeSlot;
 
 class BlockedDateController extends Controller
 {
@@ -22,7 +23,7 @@ class BlockedDateController extends Controller
             $query->where('blocked_date', 'LIKE', "%{$search}%")->orWhere('reason', 'LIKE', "%{$search}%");
         }
 
-        $blockedDates = $query->get();
+        $blockedDates = $query->orderBy('created_at', 'desc')->get();
 
         if ($request->ajax()) {
             return view('admin.blocked_dates_table', compact('blockedDates'))->render();
@@ -34,13 +35,15 @@ class BlockedDateController extends Controller
     public function create()
     {
         $profile = Auth::user();
-        return view('admin.tambah.block_dates', compact('profile'));
+        $timeSlots = TimeSlot::all();
+        return view('admin.tambah.block_dates', compact('profile', 'timeSlots'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'blocked_date' => 'required|date',
+            'time_slot_id' => 'required|exists:time_slots,id',
             'reason' => 'nullable|string|max:255',
         ]);
 
@@ -73,6 +76,7 @@ class BlockedDateController extends Controller
     {
         $request->validate([
             'date' => 'required|date',
+            'time_slot_id' => 'required|exists:time_slots,id',
             'reason' => 'nullable|string|max:255',
         ]);
 

@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Auth;
 
 class PromoController extends Controller
 {
-    public function kelola_promo(Request $request)
+    public function kelola_promo()
     {
 
         $kelas = Promotion::all();
 
-        return response()->json(['promotions' => $kelas]);
+        return response()->json(['promotions' => $kelas],200);
     }
 
     public function show($id)

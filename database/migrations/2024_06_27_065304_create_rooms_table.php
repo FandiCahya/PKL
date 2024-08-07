@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nama');
             $table->integer('kapasitas');
             $table->boolean('availability')->default(true);
-            $table->integer('harga');
             $table->timestamps();
         });
     }

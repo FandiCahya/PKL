@@ -26,9 +26,9 @@
 
                 </form>
             </div>
-            <div class="col-lg-6 text-right">
+            {{-- <div class="col-lg-6 text-right">
                 <a href="{{ route('tambah_booking') }}" class="btn btn-success">Create Booking Room</a>
-            </div>
+            </div> --}}
         </div>
 
         <!-- DataTales Example -->

@@ -11,11 +11,12 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'room_id',
-        'schedule_id',
         'promotion_id',
+        'booking_type',
         'tgl',
-        'start_time',
-        'end_time',
+        'time_slot_id',
+        'promotion_time',
+        'harga',
         'qrcode',
         'status',
     ];
@@ -25,18 +26,19 @@ class Booking extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function promotion()
+    {
+        return $this->belongsTo(Promotion::class);
+    }
+    
     public function room()
     {
         return $this->belongsTo(Room::class);
     }
 
-    public function promotion() {
-        return $this->belongsTo(Promotion::class);
-    }
-
-    public function schedule()
+    public function timeSlot()
     {
-        return $this->belongsTo(Schedule::class);
+        return $this->belongsTo(TimeSlot::class);
     }
 
     public function logs()

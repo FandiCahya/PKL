@@ -43,27 +43,39 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="promotion_id">Class</label>
+                        <select class="form-control" id="promotion_id" name="promotion_id">
+                            @foreach ($promotions as $promotion)
+                                <option value="{{ $promotion->id }}">{{ $promotion->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="booking_type">booking_type</label>
+                        <select class="form-control" id="booking_type" name="booking_type">
+                            <option value="room">room</option>
+                            <option value="class">class</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="tgl">Date</label>
                         <input type="date" class="form-control" id="tgl" name="tgl" required>
                     </div>
+
                     <div class="form-group">
-                        <label for="start_time">Time</label>
-                        <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        <label for="time_slot_id">Time</label>
+                        <select class="form-control" id="time_slot_id" name="time_slot_id">
+                            @foreach ($timeSlots as $time)
+                                <option value="{{ $time->id }}">{{ $time->start_time }}</option>
+                            @endforeach
+                        </select>
                     </div>
-                    {{-- <div class="form-group">
-                    <label for="end_time">End Time</label>
-                    <input type="time" class="form-control" id="end_time" name="end_time">
-                </div> --}}
-                    {{-- <div class="form-group">
-                    <label for="qr_code">QR Code</label>
-                    <input type="text" class="form-control" id="qr_code" name="qr_code" required>
-                </div> --}}
                     <div class="form-group">
                         <label for="status">Status</label>
-                        <select class="form-control" id="status" name="status" required readonly>
+                        <select class="form-control" id="status" name="status">
                             <option value="Booked">Booked</option>
-                            {{-- <option value="Pending">Pending</option>
-                        <option value="Rejected">Rejected</option> --}}
+                            <option value="Pending">Pending</option>
+                            <option value="Rejected">Rejected</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Create</button>
