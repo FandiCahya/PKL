@@ -26,7 +26,10 @@ class _MyprofileState extends State<Myprofile> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString('name') ?? 'Guest';
-      userImage = prefs.getString('image') ?? 'assets/img/profile.jpg';
+      String imagePath = prefs.getString('image') ??
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8fXV2eeV0pxoIQx0CdAtrP_tqNuHTApyoCQ&s';
+      userImage = 'http://127.0.0.1:8000/$imagePath';
+      print('User image URL: $userImage');
     });
   }
 
@@ -204,7 +207,7 @@ class _MyprofileState extends State<Myprofile> {
                                 text: 'My',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -214,7 +217,7 @@ class _MyprofileState extends State<Myprofile> {
                                 text: ' ',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 20,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -224,7 +227,7 @@ class _MyprofileState extends State<Myprofile> {
                                 text: 'Profile',
                                 style: TextStyle(
                                   color: Color(0xFF746EBD),
-                                  fontSize: 20,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -256,16 +259,15 @@ class _MyprofileState extends State<Myprofile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                width: double.infinity,
-                                height: profileWidth,
+                                width: profileWidth, // Ensure this is defined
+                                height:
+                                    profileWidth, // Same dimension for a circle
                                 decoration: ShapeDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage(userImage),
-                                    fit: BoxFit.fill,
-                                  ),
                                   shape: CircleBorder(
                                     side: BorderSide(
-                                        width: 3, color: Color(0xFF726CBC)),
+                                      width: 3,
+                                      color: Color(0xFF726CBC),
+                                    ),
                                   ),
                                   shadows: [
                                     BoxShadow(
@@ -276,13 +278,33 @@ class _MyprofileState extends State<Myprofile> {
                                     ),
                                   ],
                                 ),
+                                child: ClipOval(
+                                  child: Image.network(
+                                    userImage,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, progress) {
+                                      if (progress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      print(
+                                          'Error loading image: $error'); // Log the error
+                                      return Center(
+                                        child: Icon(Icons.error,
+                                            color: Colors.red),
+                                      ); // Show an error icon or any placeholder
+                                    },
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 10),
                               SizedBox(
                                 width: double.infinity,
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0), 
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
                                   child: Text(
                                     userName,
                                     textAlign: TextAlign.center,

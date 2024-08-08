@@ -18,8 +18,11 @@ class _MyBookingState extends State<MyBooking> {
   DateTime _firstDate =
       DateTime.now().subtract(Duration(days: 365)); // 1 year ago
   DateTime _lastDate = DateTime.now(); // Today
+  DateTime? _startDate;
+  DateTime? _endDate;
   String userId = '';
   List<Map<String, dynamic>> bookings = [];
+  List<Map<String, dynamic>> filteredBookings = [];
 
   @override
   void initState() {
@@ -47,25 +50,92 @@ class _MyBookingState extends State<MyBooking> {
     if (response.statusCode == 200) {
       setState(() {
         bookings = List<Map<String, dynamic>>.from(jsonDecode(response.body));
+        _filterBookings();
       });
     } else {
       print('Failed to load bookings');
     }
   }
 
+  void _filterBookings() {
+    setState(() {
+      if (_startDate != null && _endDate != null) {
+        filteredBookings = bookings.where((booking) {
+          DateTime bookingDate = DateFormat('yyyy-MM-dd').parse(booking['tgl']);
+          return bookingDate.isAfter(_startDate!.subtract(Duration(days: 1))) &&
+              bookingDate.isBefore(_endDate!.add(Duration(days: 1)));
+        }).toList();
+      } else {
+        filteredBookings = bookings;
+      }
+    });
+  }
+
+  void _showDateRangePicker() async {
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+      initialDateRange: DateTimeRange(
+        start: _startDate ?? DateTime.now(),
+        end: _endDate ?? DateTime.now(),
+      ),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            primaryColor: Color.fromARGB(255, 43, 43, 47),
+            // accentColor: Colors.white,
+            datePickerTheme: DatePickerThemeData(
+              backgroundColor: Color.fromARGB(
+                  255, 43, 43, 47), // Background color of the date picker
+              headerBackgroundColor: Color.fromARGB(
+                  255, 43, 43, 47), // Background color of the header
+              dayStyle: TextStyle(color: Colors.white),
+              rangePickerBackgroundColor: Color.fromARGB(255, 43, 43, 47),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                iconColor: Colors.white, // Text color for TextButton
+              ),
+            ),
+            buttonTheme: ButtonThemeData(
+              textTheme: ButtonTextTheme.primary, // Text color for buttons
+              buttonColor: Color(0xFF746EBD), // Button color
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _startDate = picked.start;
+        _endDate = picked.end;
+        _filterBookings();
+      });
+    }
+  }
+
   void _showBookingDetailDialog({
+    required String id,
     required String date,
     required String room,
     required String time,
+    required String price,
+    required String qrcode,
     required String status,
   }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return BookingDetailDialog(
+          id: id,
           date: date,
           room: room,
           time: time,
+          price: price,
+          qrcode: qrcode,
           status: status,
         );
       },
@@ -87,7 +157,7 @@ class _MyBookingState extends State<MyBooking> {
               color: const Color.fromARGB(255, 43, 43, 47),
             ),
             Padding(
-              padding: EdgeInsets.all(screenWidth * 0.04),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -105,7 +175,7 @@ class _MyBookingState extends State<MyBooking> {
                                 text: 'My',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: screenWidth * 0.05,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -125,7 +195,7 @@ class _MyBookingState extends State<MyBooking> {
                                 text: 'Order',
                                 style: TextStyle(
                                   color: Color(0xFF746EBD),
-                                  fontSize: screenWidth * 0.05,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -144,51 +214,32 @@ class _MyBookingState extends State<MyBooking> {
                       ],
                     ),
                   ),
-                  // SizedBox(height: screenHeight * 0.02),
-                  // Center(
-                  //   child: Text(
-                  //     DateFormat.yMMMM().format(_selectedDate),
-                  //     style: TextStyle(
-                  //       color: Colors.white,
-                  //       fontSize: screenWidth * 0.045,
-                  //       fontWeight: FontWeight.bold,
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: screenHeight * 0.02),
-                  // Container(
-                  //   height: screenHeight * 0.12,
-                  //   child: Column(
-                  //     children: [
-                  //       Flexible(
-                  //         child: DatePicker(
-                  //           DateTime.now(),
-                  //           initialSelectedDate: _selectedDate,
-                  //           selectionColor: Color(0xFF746EBD),
-                  //           selectedTextColor: Colors.white,
-                  //           onDateChange: (date) {
-                  //             if (date.isBefore(_firstDate)) {
-                  //               setState(() {
-                  //                 _selectedDate = _firstDate;
-                  //               });
-                  //             } else if (date.isAfter(_lastDate)) {
-                  //               setState(() {
-                  //                 _selectedDate = _lastDate;
-                  //               });
-                  //             } else {
-                  //               setState(() {
-                  //                 _selectedDate = date;
-                  //               });
-                  //             }
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Center(
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF746EBD),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: GestureDetector(
+                        onTap: _showDateRangePicker,
+                        child: Text(
+                          'Select Date Range',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Source Sans Pro',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(height: screenHeight * 0.02),
                   Expanded(
-                    child: bookings.isEmpty
+                    child: filteredBookings.isEmpty
                         ? Center(
                             child: Text(
                               'No bookings available',
@@ -197,20 +248,26 @@ class _MyBookingState extends State<MyBooking> {
                           )
                         : SingleChildScrollView(
                             child: Column(
-                              children: bookings.map((booking) {
+                              children: filteredBookings.map((booking) {
                                 return BookingItem(
+                                  id: booking['id']?.toString() ?? '',
                                   date: booking['tgl'] ?? '',
-                                  room: booking['room_id']?.toString() ?? '',
-                                  time:
-                                      '${booking['start_time'] ?? ''} - ${booking['end_time'] ?? ''}',
+                                  room: booking['room']['nama'] ?? '',
+                                  time: booking['promotion_time'] ?? '',
+                                  price: booking['harga']?.toString() ?? '',
+                                  qrcode:
+                                      'http://127.0.0.1:8000/${booking['qrcode']}',
                                   status: booking['status'] ?? '',
                                   onTap: () {
                                     _showBookingDetailDialog(
+                                      id: booking['id']?.toString() ?? '',
                                       date: booking['tgl'] ?? '',
                                       room:
-                                          booking['room_id']?.toString() ?? '',
-                                      time:
-                                          '${booking['start_time'] ?? ''} - ${booking['end_time'] ?? ''}',
+                                          booking['room']['nama'] ?? '',
+                                      time: booking['promotion_time'] ?? '',
+                                      price: booking['harga']?.toString() ?? '',
+                                      qrcode:
+                                          'http://127.0.0.1:8000/${booking['qrcode']}',
                                       status: booking['status'] ?? '',
                                     );
                                   },
@@ -230,17 +287,23 @@ class _MyBookingState extends State<MyBooking> {
 }
 
 class BookingItem extends StatelessWidget {
+  final String id;
   final String date;
   final String room;
   final String time;
+  final String price;
+  final String qrcode;
   final String status;
   final VoidCallback onTap; // Callback for item tap
 
   const BookingItem({
     Key? key,
+    required this.id,
     required this.date,
     required this.room,
     required this.time,
+    required this.price,
+    required this.qrcode,
     required this.status,
     required this.onTap, // Initialize callback
   }) : super(key: key);
@@ -248,73 +311,76 @@ class BookingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth > 1024;
 
-    return GestureDetector(
-      onTap: onTap, // Call the callback when tapped
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(
-            vertical: screenWidth * 0.02, horizontal: screenWidth * 0.04),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white),
-          borderRadius: BorderRadius.circular(screenWidth * 0.03),
-        ),
-        margin: EdgeInsets.only(bottom: screenWidth * 0.04),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Status: $status',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: screenWidth * 0.045,
-                fontFamily: 'Source Sans Pro',
-                fontWeight: FontWeight.w600,
+    return Center(
+      child: GestureDetector(
+        onTap: onTap, // Call the callback when tapped
+        child: Container(
+          width: isLargeScreen ? screenWidth * 0.5 : double.infinity,
+          padding: EdgeInsets.symmetric(
+              vertical: screenWidth * 0.02, horizontal: screenWidth * 0.04),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white),
+            borderRadius: BorderRadius.circular(screenWidth * 0.03),
+          ),
+          margin: EdgeInsets.only(bottom: screenWidth * 0.04),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Status: $status',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20, // Mengurangi ukuran teks
+                  fontFamily: 'Source Sans Pro',
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            SizedBox(height: screenWidth * 0.02),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Room: $room',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.04,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w300,
+              SizedBox(height: screenWidth * 0.02),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Room: $room',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20, // Mengurangi ukuran teks
+                        fontFamily: 'Source Sans Pro',
+                        fontWeight: FontWeight.w300,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: screenWidth * 0.02),
-                Expanded(
-                  child: Text(
-                    'Date: $date',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.04,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w300,
+                  SizedBox(width: screenWidth * 0.02),
+                  Expanded(
+                    child: Text(
+                      'Date: $date',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20, // Mengurangi ukuran teks
+                        fontFamily: 'Source Sans Pro',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-                SizedBox(width: screenWidth * 0.02),
-                Expanded(
-                  child: Text(
-                    'Time: $time',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.04,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w300,
+                  SizedBox(width: screenWidth * 0.02),
+                  Expanded(
+                    child: Text(
+                      'Time: $time',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20, // Mengurangi ukuran teks
+                        fontFamily: 'Source Sans Pro',
+                        fontWeight: FontWeight.w300,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

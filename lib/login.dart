@@ -118,165 +118,171 @@ class LoginPage extends StatelessWidget {
           Container(
             color: Color.fromARGB(255, 43, 43, 47),
           ),
-          Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'GYM App',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF746EBD),
-                      fontSize: 39,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.20,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Container(
-                    height: 300,
-                    width: screenWidth * 0.9, // Responsive width
-                    child: SvgPicture.asset(
-                      'assets/img/Workout-amico.svg',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Container(
-                    width: textFieldWidth,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.text,
-                      child: TextField(
-                        controller: emailController,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0x1CD9D9D9),
-                          hintText: 'Email',
-                          hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.55),
-                            fontSize: 14,
-                            fontFamily: 'Source Sans Pro',
-                            fontWeight: FontWeight.w400,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 15,
-                          ),
-                          prefixIcon: Icon(Icons.email, color: Colors.white.withOpacity(0.55)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
+          // Padding(padding: padding)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'GYM App',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF746EBD),
+                        fontSize: 39,
+                        fontFamily: 'Source Sans Pro',
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.20,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 15),
-                  Container(
-                    width: textFieldWidth,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.text,
-                      child: TextField(
-                        controller: passwordController,
-                        obscureText: true,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0x1CD9D9D9),
-                          hintText: 'Password',
-                          hintStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.55),
-                            fontSize: 14,
-                            fontFamily: 'Source Sans Pro',
-                            fontWeight: FontWeight.w400,
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 15,
-                          ),
-                          prefixIcon: Icon(Icons.lock, color: Colors.white.withOpacity(0.55)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
+                    SizedBox(height: 15),
+                    Container(
+                      height: 300,
+                      width: screenWidth * 0.9, // Responsive width
+                      child: SvgPicture.asset(
+                        'assets/img/Workout-amico.svg',
+                        fit: BoxFit.contain,
                       ),
                     ),
-                  ),
-                  SizedBox(height: 25),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: loginUser,
-                      child: Container(
-                        width: textFieldWidth * 0.5, // Smaller button width
-                        height: 45, // Smaller button height
-                        decoration: BoxDecoration(
-                          color: Color(0xFF746EBD),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: Offset(0, 3),
+                    SizedBox(height: 15),
+                    Container(
+                      width: textFieldWidth,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.text,
+                        child: TextField(
+                          controller: emailController,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0x1CD9D9D9),
+                            hintText: 'Email',
+                            hintStyle: TextStyle(
+                              color: Colors.white.withOpacity(0.55),
+                              fontSize: 14,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w400,
                             ),
-                          ],
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 15,
+                            ),
+                            prefixIcon: Icon(Icons.email,
+                                color: Colors.white.withOpacity(0.55)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Sign In',
-                          textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Container(
+                      width: textFieldWidth,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.text,
+                        child: TextField(
+                          controller: passwordController,
+                          obscureText: true,
+                          style: TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0x1CD9D9D9),
+                            hintText: 'Password',
+                            hintStyle: TextStyle(
+                              color: Colors.white.withOpacity(0.55),
+                              fontSize: 14,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w400,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                              vertical: 15,
+                              horizontal: 15,
+                            ),
+                            prefixIcon: Icon(Icons.lock,
+                                color: Colors.white.withOpacity(0.55)),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 25),
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: loginUser,
+                        child: Container(
+                          width: textFieldWidth * 0.5, // Smaller button width
+                          height: 45, // Smaller button height
+                          decoration: BoxDecoration(
+                            color: Color(0xFF746EBD),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Sign In',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Not Registered yet? ',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: 'Source Sans Pro',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Not Registered yet? ',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontFamily: 'Source Sans Pro',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SignUp()),
-                          );
-                        },
-                        child: Text(
-                          'Register',
-                          style: TextStyle(
-                            color: Color(0xFF746EBD),
                             fontSize: 12,
                             fontFamily: 'Source Sans Pro',
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SignUp()),
+                            );
+                          },
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                              color: Color(0xFF746EBD),
+                              fontSize: 12,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

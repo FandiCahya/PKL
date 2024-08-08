@@ -1,3 +1,5 @@
+// lib/screens/dashboard.dart
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -5,6 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:aplikasi_booking_gym/BookingPopup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:aplikasi_booking_gym/PromotionDetail.dart';
+import 'package:aplikasi_booking_gym/promotion_service.dart'; // Import the service
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -19,38 +23,38 @@ class _DashboardState extends State<Dashboard> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   String userName = 'Guest';
-  String userImage = 'assets/img/profile.jpg';
+  String userImage =
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8fXV2eeV0pxoIQx0CdAtrP_tqNuHTApyoCQ&s';
+  final PromotionService _promotionService =
+      PromotionService(); // Initialize the service
 
   @override
   void initState() {
     super.initState();
-    fetchPromotions();
     _loadUserData();
-  }
-
-  Future<void> fetchPromotions() async {
-    try {
-      final response =
-          await http.get(Uri.parse('http://127.0.0.1:8000/api/kelolakelas'));
-      if (response.statusCode == 200) {
-        setState(() {
-          promotions = jsonDecode(response.body)['promotions'];
-        });
-        print('Promotions loaded successfully: $promotions');
-      } else {
-        print('Failed to load promotions');
-      }
-    } catch (e) {
-      print('Error fetching promotions: $e');
-    }
+    _fetchPromotions(); // Fetch promotions on init
   }
 
   Future<void> _loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString('name') ?? 'Guest';
-      userImage = prefs.getString('image') ?? 'assets/img/profile.jpg';
+      String imagePath = prefs.getString('image') ??
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8fXV2eeV0pxoIQx0CdAtrP_tqNuHTApyoCQ&s';
+      userImage = 'http://127.0.0.1:8000/$imagePath';
+      print('User image URL: $userImage');
     });
+  }
+
+  Future<void> _fetchPromotions() async {
+    try {
+      final data = await _promotionService.fetchPromotions();
+      setState(() {
+        promotions = data;
+      });
+    } catch (e) {
+      print('Failed to fetch promotions: $e');
+    }
   }
 
   void _showBookingBottomSheet(DateTime selectedDay) {
@@ -88,14 +92,17 @@ class _DashboardState extends State<Dashboard> {
                         Container(
                           width: 40,
                           height: 40,
-                          decoration: ShapeDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(userImage),
-                              fit: BoxFit.fill,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Image.network(
+                            userImage,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Icon(Icons.error, color: Colors.red),
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(width: 22),
@@ -175,10 +182,18 @@ class _DashboardState extends State<Dashboard> {
                       child: Row(
                         children: promotions.map((promo) {
                           return promoCard(
-                              promo['name'],
-                              // 'http://127.0.0.1:8000/${promo['image']}');
-                              // 'https://i.pinimg.com/736x/b9/36/9a/b9369a23e2a9097e48aca3039e2fb939.jpg',
-                              'https://picsum.photos/400/300');
+                            promo['id'].toString(),
+                            promo['name'],
+                            'http://127.0.0.1:8000/${promo['image']}',
+                            promo['deskripsi'],
+                            promo['harga'],
+                            promo['tgl'],
+                            promo['waktu'],
+                            promo['room_id'].toString(),
+                            promo['instruktur_id'].toString(),
+                            promo['room']?['nama'] ?? 'Unknown Room',
+                            promo['instruktur']?['nama'] ?? 'Unknown Instructor',
+                          );
                         }).toList(),
                       ),
                     ),
@@ -252,9 +267,7 @@ class _DashboardState extends State<Dashboard> {
                               _showBookingBottomSheet(selectedDay);
                             },
                             onPageChanged: (focusedDay) {
-                              setState(() {
-                                _focusedDay = focusedDay;
-                              });
+                              _focusedDay = focusedDay;
                             },
                           ),
                         ],
@@ -270,123 +283,83 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget promoCard(String title, String imageUrl) {
-    print('Trying to load image from: $imageUrl'); // Log URL gambar
-    return Container(
-      margin: const EdgeInsets.only(right: 16),
-      width: 300,
-      height: 170,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: CachedNetworkImage(
+  Widget promoCard(String id, String name, String imageUrl, String description,
+      String price, String date, String waktu, String room, String instruktur, String roomName, String instrukturName) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PromotionDetail(
+              promotionId: id,
+              name: name,
+              image: imageUrl,
+              deskripsi: description,
+              price: price,
+              tgl: date,
+              waktu: waktu,
+              room: room,
+              instruktur: instruktur,
+              roomName: roomName,
+              instrukturName: instrukturName,
+              
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 16),
+        width: 300,
+        height: 170,
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Stack(
+            children: [
+              CachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
-                placeholder: (context, url) => Center(
-                  child: CircularProgressIndicator(),
-                ),
-                errorWidget: (context, url, error) {
-                  print('Error loading image: $error'); // Log error
-                  return Center(
-                    child: Text(
-                      'Image failed to load',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                },
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontFamily: 'Source Sans Pro',
-                    fontWeight: FontWeight.w600,
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.7),
+                      Colors.transparent,
+                    ],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
                   ),
                 ),
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
-  // Widget promoCard(String title, String imageUrl) {
-  //   print('Trying to load image from: $imageUrl');
-  //   return Container(
-  //     margin: const EdgeInsets.only(right: 16),
-  //     width: 300,
-  //     height: 170,
-  //     child: Card(
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(10),
-  //       ),
-  //       child: Stack(
-  //         children: [
-  //           ClipRRect(
-  //             borderRadius: BorderRadius.circular(10),
-  //             child: Image.network(
-  //               imageUrl,
-  //               fit: BoxFit.cover,
-  //               width: double.infinity,
-  //               height: double.infinity,
-  //               loadingBuilder: (context, child, progress) {
-  //                 if (progress == null) return child;
-  //                 return Center(
-  //                   child: CircularProgressIndicator(),
-  //                 );
-  //               },
-  //               errorBuilder: (context, error, stackTrace) => Center(
-  //                 child: Text(
-  //                   'Image failed to load',
-  //                   style: TextStyle(color: Colors.white),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           Positioned(
-  //             top: 8,
-  //             left: 8,
-  //             child: Container(
-  //               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.black.withOpacity(0.6),
-  //                 borderRadius: BorderRadius.circular(5),
-  //               ),
-  //               child: Text(
-  //                 title,
-  //                 style: TextStyle(
-  //                   color: Colors.white,
-  //                   fontSize: 16,
-  //                   fontFamily: 'Source Sans Pro',
-  //                   fontWeight: FontWeight.w600,
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }
 
 void main() {

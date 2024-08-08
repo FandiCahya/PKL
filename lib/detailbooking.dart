@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
 class Detailbooking extends StatefulWidget {
-  const Detailbooking({super.key});
+  final String name;
+  final String room;
+  final String date;
+  final String status;
+  final String imageUrl;
+
+  const Detailbooking({
+    Key? key,
+    required this.name,
+    required this.room,
+    required this.date,
+    required this.status,
+    required this.imageUrl,
+  }) : super(key: key);
 
   @override
   State<Detailbooking> createState() => _DetailbookingState();
@@ -16,9 +29,6 @@ class _DetailbookingState extends State<Detailbooking> {
       body: SafeArea(
         child: Stack(
           children: [
-            Container(
-              color: Color.fromARGB(255, 43, 43, 47),
-            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -110,7 +120,7 @@ class _DetailbookingState extends State<Detailbooking> {
                               SizedBox(
                                 width: 183,
                                 child: Text(
-                                  'Gym',
+                                  widget.name,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.white,
@@ -141,7 +151,7 @@ class _DetailbookingState extends State<Detailbooking> {
                                           ),
                                         ),
                                         Text(
-                                          'Ferdinan',
+                                          widget.name,
                                           style: TextStyle(
                                             color: Color(0xFF746EBD),
                                             fontSize: 14,
@@ -166,7 +176,7 @@ class _DetailbookingState extends State<Detailbooking> {
                                           ),
                                         ),
                                         Text(
-                                          '1',
+                                          widget.room,
                                           style: TextStyle(
                                             color: Color(0xFF746EBD),
                                             fontSize: 14,
@@ -191,7 +201,7 @@ class _DetailbookingState extends State<Detailbooking> {
                                           ),
                                         ),
                                         Text(
-                                          '22 December 2023',
+                                          widget.date,
                                           style: TextStyle(
                                             color: Color(0xFF746EBD),
                                             fontSize: 14,
@@ -216,7 +226,7 @@ class _DetailbookingState extends State<Detailbooking> {
                                           ),
                                         ),
                                         Text(
-                                          'Booked',
+                                          widget.status,
                                           style: TextStyle(
                                             color: Color(0xFF746EBD),
                                             fontSize: 14,
@@ -243,8 +253,7 @@ class _DetailbookingState extends State<Detailbooking> {
                                       height: 150,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
-                                          image: NetworkImage(
-                                              "https://via.placeholder.com/150x150"),
+                                          image: NetworkImage(widget.imageUrl),
                                           fit: BoxFit.fill,
                                         ),
                                       ),
@@ -297,9 +306,3 @@ class _DetailbookingState extends State<Detailbooking> {
     );
   }
 }
-
-// void main() {
-//   runApp(MaterialApp(
-//     home: Detailbooking(),
-//   ));
-// }

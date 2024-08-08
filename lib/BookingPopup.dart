@@ -1,12 +1,13 @@
-// booking_bottom_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'room_api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingBottomSheet extends StatefulWidget {
   final DateTime selectedDate;
 
-  const BookingBottomSheet({Key? key, required this.selectedDate}) : super(key: key);
+  const BookingBottomSheet({Key? key, required this.selectedDate})
+      : super(key: key);
 
   @override
   _BookingBottomSheetState createState() => _BookingBottomSheetState();
@@ -14,13 +15,17 @@ class BookingBottomSheet extends StatefulWidget {
 
 class _BookingBottomSheetState extends State<BookingBottomSheet> {
   int _selectedRoom = -1;
-  String _selectedTime = '';
+  int _selectedTime = -1;
   late Future<List<Room>> _roomsFuture;
+  late Future<List<TimeSlot>> _timeSlotsFuture;
+  late ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
-    _roomsFuture = ApiService(baseUrl: 'http://127.0.0.1:8000/api').fetchRooms();
+    _apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/api');
+    _roomsFuture = _apiService.fetchRooms();
+    _timeSlotsFuture = _apiService.fetchTimeSlots();
   }
 
   void _showBookingSuccessDialog() {
@@ -67,6 +72,62 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
         },
       );
     }
+  }
+
+  void _showBookingErrorDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        backgroundColor: Color(0xFF2B2B2F),
+        title: Row(
+          children: [
+            Icon(
+              Icons.error_outline,
+              color: Colors.redAccent,
+              size: 40,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Booking Failed',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontFamily: 'Source Sans Pro',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'An error occurred while booking. Please try again.',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontFamily: 'Source Sans Pro',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'OK',
+              style: TextStyle(
+                color: Color(0xFF746EBD),
+                fontSize: 18,
+                fontFamily: 'Source Sans Pro',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -143,12 +204,27 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  timeSelectionList(),
+                  FutureBuilder<List<TimeSlot>>(
+                    future: _timeSlotsFuture,
+                    builder: (context, timeSnapshot) {
+                      if (timeSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (timeSnapshot.hasError) {
+                        return Center(child: Text('Failed to load times'));
+                      } else if (!timeSnapshot.hasData ||
+                          timeSnapshot.data!.isEmpty) {
+                        return Center(child: Text('No time slots available'));
+                      } else {
+                        return timeSelectionList(timeSnapshot.data!);
+                      }
+                    },
+                  ),
                   SizedBox(height: 40),
                   Center(
                     child: GestureDetector(
                       onTap: () {
-                        if (_selectedTime.isNotEmpty && _selectedRoom != -1) {
+                        if (_selectedTime != -1 && _selectedRoom != -1) {
                           print(
                               'Booked room $_selectedRoom at $_selectedTime on ${widget.selectedDate}');
                           _handleBooking();
@@ -156,13 +232,53 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: Text('Please select a room and time'),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              backgroundColor: Color(0xFF2C2C2C),
+                              title: Text(
+                                'Please select a room and time',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Source Sans Pro',
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Make sure to select both a room and time slot before proceeding.',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14,
+                                      fontFamily: 'Source Sans Pro',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               actions: [
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: Text('OK'),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Color(0xFF746EBD),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'OK',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontFamily: 'Source Sans Pro',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -210,9 +326,8 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
         margin: EdgeInsets.only(right: 10),
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
-          color: _selectedRoom == room.id
-              ? Color(0xFF746EBD)
-              : Color(0xFF575566),
+          color:
+              _selectedRoom == room.id ? Color(0xFF746EBD) : Color(0xFF575566),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
@@ -230,51 +345,70 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     );
   }
 
-  Widget timeSelectionList() {
-    List<String> times = ['08:00', '10:00', '12:00', '15:00', '17:00', '20:00'];
-
-    return Container(
-      height: 50,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: times.length,
-        itemBuilder: (context, index) {
-          String time = times[index];
+  Widget timeSelectionList(List<TimeSlot> timeSlots) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: timeSlots.map((timeSlot) {
           return GestureDetector(
             onTap: () {
               setState(() {
-                _selectedTime = time;
+                _selectedTime = timeSlot.id; // Store the time slot ID
               });
             },
             child: Container(
               margin: EdgeInsets.only(right: 10),
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: BoxDecoration(
-                color: _selectedTime == time
+                color: _selectedTime == timeSlot.id
                     ? Color(0xFF746EBD)
                     : Color(0xFF575566),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                time,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontFamily: 'Source Sans Pro',
-                  fontWeight: FontWeight.w700,
+              child: Center(
+                child: Text(
+                  '${timeSlot.startTime}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontFamily: 'Source Sans Pro',
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
           );
-        },
+        }).toList(),
       ),
     );
   }
 
-  void _handleBooking() {
-    Future.delayed(Duration(seconds: 2), () {
-      _showBookingSuccessDialog();
-    });
+  void _handleBooking() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? userId = prefs.getInt('id');
+
+    print('User ID: $userId');
+    print('Selected Room: $_selectedRoom');
+    print('Selected Time: $_selectedTime');
+    print(
+        'Selected Date: ${DateFormat('yyyy-MM-dd').format(widget.selectedDate)}');
+
+    if (userId != null && _selectedRoom != -1 && _selectedTime != -1) {
+      bool success = await _apiService.createBooking(
+        userId,
+        _selectedRoom,
+        DateFormat('yyyy-MM-dd').format(widget.selectedDate),
+        _selectedTime.toString(),
+      );
+
+      if (success) {
+        _showBookingSuccessDialog();
+      } else {
+        _showBookingErrorDialog();
+      }
+    } else {
+      _showBookingErrorDialog();
+    }
   }
 }
 

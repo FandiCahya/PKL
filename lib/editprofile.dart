@@ -18,12 +18,17 @@ class _EditMyProfileState extends State<EditMyProfile> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  String profileImageUrl = ''; 
+  final String baseUrl = 'http://127.0.0.1:8000/';
+
   Future<void> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
     nameController.text = prefs.getString('name') ?? '';
     emailController.text = prefs.getString('email') ?? '';
     addressController.text = prefs.getString('alamat') ?? '';
     phoneController.text = prefs.getString('no_hp') ?? '';
+    profileImageUrl = '$baseUrl${prefs.getString('image') ?? ''}'; // Load profile image URL
+    setState(() {});
   }
 
   Future<void> updateUser() async {
@@ -52,6 +57,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
       prefs.setString('email', jsonResponse['user']['email']);
       prefs.setString('alamat', jsonResponse['user']['alamat']);
       prefs.setString('no_hp', jsonResponse['user']['no_hp']);
+      prefs.setString('image', jsonResponse['user']['image']);
 
       Navigator.pushReplacement(
         context,
@@ -131,6 +137,9 @@ class _EditMyProfileState extends State<EditMyProfile> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double profileWidth = screenWidth * 0.5;
+
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
@@ -159,7 +168,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
                                 text: 'Edit',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 20,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -169,7 +178,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
                                 text: ' ',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 20,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -179,7 +188,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
                                 text: 'Profile',
                                 style: TextStyle(
                                   color: Color(0xFF746EBD),
-                                  fontSize: 20,
+                                  fontSize: 28,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                   height: 1.2,
@@ -189,16 +198,11 @@ class _EditMyProfileState extends State<EditMyProfile> {
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 5),
                         Container(
-                          width: 318,
                           height: 2,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFF726BBC),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
+                          width: double.infinity,
+                          color: Color(0xFF726BBC),
                         ),
                       ],
                     ),
@@ -213,10 +217,10 @@ class _EditMyProfileState extends State<EditMyProfile> {
                             height: 150,
                             decoration: ShapeDecoration(
                               image: DecorationImage(
-                                image: AssetImage('assets/img/profile.jpg'),
-                                fit: BoxFit.fill,
+                                image: NetworkImage(profileImageUrl),
+                                fit: BoxFit.cover,
                               ),
-                              shape: OvalBorder(
+                              shape: CircleBorder(
                                 side: BorderSide(
                                   width: 3,
                                   color: Color(0xFF726CBC),
@@ -231,6 +235,32 @@ class _EditMyProfileState extends State<EditMyProfile> {
                                 ),
                               ],
                             ),
+                            child: profileImageUrl.isNotEmpty
+                                ? ClipOval(
+                                    child: Image.network(
+                                      profileImageUrl,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, progress) {
+                                        if (progress == null) return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        print('Error loading image: $error');
+                                        return Center(
+                                          child: Icon(Icons.error,
+                                              color: Colors.red),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Center(
+                                    child: Icon(Icons.person,
+                                        size: 80, color: Colors.grey),
+                                  ),
                           ),
                         ),
                         SizedBox(height: 30),
@@ -321,8 +351,8 @@ class _EditMyProfileState extends State<EditMyProfile> {
                         ),
                         SizedBox(height: 30),
                         Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          width: profileWidth * 0.8,
+                          padding: EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
                             color: Color(0xFF746EBD),
                             borderRadius: BorderRadius.circular(8),
@@ -339,7 +369,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
                               ),
                             ),
                             style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                              padding: EdgeInsets.symmetric(vertical: 8),
                             ),
                           ),
                         ),
