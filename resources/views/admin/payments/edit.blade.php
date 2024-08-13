@@ -19,7 +19,10 @@
     <form action="{{ route('payments.update', $payment->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        
+        <div class="form-group">
+            <label for="user_id">User</label>
+            <input type="text" class="form-control" id="user_id" name="user_id" value="{{ old('user_id', $payment->user->name) }}" readonly>
+        </div>
         <div class="form-group">
             <label for="booking_id">Booking ID</label>
             <input type="text" name="booking_id" class="form-control @error('booking_id') is-invalid @enderror" value="{{ old('booking_id', $payment->booking_id) }}" required>

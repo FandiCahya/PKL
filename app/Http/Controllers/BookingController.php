@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Models\Room;
 use App\Models\Promotion;
 use Carbon\Carbon;
-use App\Models\Schedule;
 use App\Models\Logs;
 use App\Models\TimeSlot;
 use Illuminate\Support\Facades\File;

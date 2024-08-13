@@ -21,6 +21,14 @@
             <form action="{{ route('payments.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
+                    <label for="user_id">User</label>
+                    <select class="form-control" id="user_id" name="user_id" required>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="booking_id">Booking</label>
                     <select class="form-control" id="booking_id" name="booking_id" required>
                         @foreach ($bookings as $booking)

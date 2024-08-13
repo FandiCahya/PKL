@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Logs;
 
-
 class AuthController extends Controller
 {
     public function login(Request $request)
@@ -24,35 +23,42 @@ class AuthController extends Controller
                 'description' => 'Invalid login details',
                 'data' => json_encode($credentials),
             ]);
-            return response()->json([
-                'user' => null,
-                'message' => 'Invalid login details',
-                'status' => 'failed',
-            ], 401);
+            return response()->json(
+                [
+                    'user' => null,
+                    'message' => 'Invalid login details',
+                    'status' => 'failed',
+                ],
+                401,
+            );
         }
 
         $user = Auth::user();
         // $token = $user->createToken('auth_token')->plainTextToken;
+        $image = $user->image ? $user->image : null;
 
-        // Logs::create([
-        //     'user_id' => $user->id,
-        //     'action' => 'login_success',
-        //     'description' => 'User logged in successfully',
-        //     'data' => json_encode($user),
-        // ]);
+        // Log successful login
+        Logs::create([
+            'user_id' => $user->id,
+            'action' => 'login_success',
+            'description' => 'User logged in successfully',
+            'data' => json_encode(['email' => $user->email]),
+        ]);
 
-        return response()->json([
-            'id' => $user->id,
-            'email' => $user->email,
-            'name' => $user->name,
-            'alamat' => $user->alamat,
-            'no_hp' => $user->no_hp,
-            'image' => $user->image,
-            'password' => $user->password,
-            'status' => 'loggedin',
-        ], 200);
+        return response()->json(
+            [
+                'id' => $user->id,
+                'email' => $user->email,
+                'name' => $user->name,
+                'alamat' => $user->alamat,
+                'no_hp' => $user->no_hp,
+                'image' => $image,
+                'password' => $user->password,
+                'status' => 'loggedin',
+            ],
+            200,
+        );
     }
-
 
     public function register(Request $request)
     {
@@ -80,15 +86,18 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'alamat' => $request->alamat,
             'no_hp' => $request->no_hp,
+            'image' => 'default.png',
         ]);
 
         Auth::login($user);
-        // Logs::create([
-        //     'user_id' => $user->id,
-        //     'action' => 'register_success',
-        //     'description' => 'User registered successfully',
-        //     'data' => json_encode($user),
-        // ]);
+
+        // Log successful registration
+        Logs::create([
+            'user_id' => $user->id,
+            'action' => 'register_success',
+            'description' => 'User registered and logged in successfully',
+            'data' => json_encode(['email' => $user->email]),
+        ]);
 
         return response()->json(['message' => 'Registration successful', 'user' => $user]);
     }
@@ -96,7 +105,15 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         try {
+            $user = Auth::user();
             Auth::logout();
+            // Log successful logout
+            Logs::create([
+                'user_id' => $user->id,
+                'action' => 'logout_success',
+                'description' => 'User logged out successfully',
+                'data' => json_encode(['email' => $user->email]),
+            ]);
             return response()->json(['message' => 'Successfully logged out'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Logout failed'], 500);

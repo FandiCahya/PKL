@@ -8,16 +8,29 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\RoomController;
 use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\TimeController;
+use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\BlockController;
+
+
+
+Route::get('/blocked-dates', [BlockController::class, 'index']);
 
 // Route::get('detailbooking/{id}',[BookingController::class,'show']);
 Route::get('detailbooking/{user_id}', [BookingController::class, 'getBookingsByUserId']);
 Route::post('/bookings', [BookingController::class, 'store']);
+
 
 // Route::get('/detailbooking/{userId}', [BookingController::class, 'getBookingsByUserIdAndDate']);
 // Route::apiResource('rooms', RoomController::class);
 Route::get('/kelolarooms',[RoomController::class,'index']);
 
 Route::get('/kelolawaktu',[TimeController::class,'index']);
+Route::get('times/room/{roomId}', [TimeController::class, 'showByRoomId']);
+
+Route::get('/kelolapembayaran',[PaymentController::class,'index']);
+Route::post('payments', [PaymentController::class, 'store']);
+
+
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -33,7 +46,9 @@ Route::get('detailkelas/{id}', [PromoController::class, 'show'])->name('api.show
 Route::get('userlist', [UserApiController::class, 'index']);
 Route::get('detailuser/{id}', [UserApiController::class, 'show']);
 Route::post('createuser', [UserApiController::class, 'store']);
-Route::put('updateuser/{id}', [UserApiController::class, 'update']);
+Route::put('updateuser/{id}', [UserApiController::class, 'updateUser']);
 Route::delete('deleteuser/{id}', [UserApiController::class, 'destroy']);
+
+Route::post('/user/{id}', [UserApiController::class, 'updateUser']);
 
 

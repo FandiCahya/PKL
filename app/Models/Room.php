@@ -15,10 +15,6 @@ class Room extends Model
         return $this->hasMany(Booking::class);
     }
 
-    public function schedule()
-    {
-        return $this->hasMany(Schedule::class);
-    }
 
     public function promotions()
     {

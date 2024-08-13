@@ -23,7 +23,8 @@ class BookingController extends Controller
 {
     public function getBookingsByUserId($user_id)
     {
-        $bookings = Booking::where('user_id', $user_id)->get();
+        $bookings = Booking::with(['room', 'promotion', 'timeSlot'])->
+        where('user_id', $user_id)->get();
         return response()->json($bookings);
     }
 
@@ -72,6 +73,7 @@ class BookingController extends Controller
             $timeSlot = TimeSlot::findOrFail($timeSlotId);
             $startTimeString = $timeSlot->start_time;
             $endTimeString = $timeSlot->end_time;
+            $PtimeSlotId = $timeSlot->start_time;
 
             try {
                 $startTime = Carbon::parse($startTimeString);
@@ -141,4 +143,6 @@ class BookingController extends Controller
 
         return response()->json(['success' => 'Booking created successfully.', 'booking' => $booking], 201);
     }
+
+    
 }

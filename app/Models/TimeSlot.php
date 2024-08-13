@@ -12,6 +12,8 @@ class TimeSlot extends Model
     protected $fillable = [
         'start_time',
         'end_time',
+        'room_id', // Add `room_id`
+        'availability',
     ];
 
     public function bookings()
@@ -22,5 +24,9 @@ class TimeSlot extends Model
     public function blockedDates()
     {
         return $this->hasMany(BlockedDate::class);
+    }
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
     }
 }

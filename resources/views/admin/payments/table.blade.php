@@ -2,6 +2,7 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>User</th>
             <th>Booking ID</th>
             <th>Amount</th>
             <th>Proof</th>
@@ -13,6 +14,7 @@
         @foreach ($payments as $payment)
         <tr>
             <td>{{ $payment->id }}</td>
+            <td>{{ $payment->user->name }}</td>
             <td>{{ $payment->booking_id }}</td>
             <td>{{ number_format($payment->amount, 2) }}</td>
             <td>

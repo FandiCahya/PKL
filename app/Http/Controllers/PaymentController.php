@@ -7,6 +7,7 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Logs;
+use App\Models\User;
 
 class PaymentController extends Controller
 {
@@ -32,7 +33,8 @@ class PaymentController extends Controller
     {
         $profile = Auth::user();
         $bookings = Booking::all();
-        return view('admin.payments.create', compact('profile','bookings'));
+        $users = User::all();
+        return view('admin.payments.create', compact('profile','bookings','users'));
     }
 
     /**
@@ -41,7 +43,8 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'booking_id' => 'required|string|max:255',
+            'user_id' => 'required|exists:users,id',
+            'booking_id' => 'required|exists:bookings,id',
             'amount' => 'required|numeric|min:0',
             'payment_proof' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
         ]);
@@ -61,6 +64,7 @@ class PaymentController extends Controller
         $imagePath = 'pembayaran/' . $fileName;
 
         $payment = Payment::create([
+            'user_id' => $request->user_id,
             'booking_id' => $request->booking_id,
             'payment_proof' => $imagePath,
             'amount' => $request->amount,
@@ -105,6 +109,7 @@ class PaymentController extends Controller
     public function update(Request $request, Payment $payment)
     {
         $request->validate([
+            'user_id' => 'required|exists:users,id',
             'booking_id' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
             'payment_proof' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',

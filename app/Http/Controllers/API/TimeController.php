@@ -13,4 +13,15 @@ class TimeController extends Controller
         $times = TimeSlot::all();
         return response()->json($times, 200);
     }
+
+    public function showByRoomId($roomId)
+    {
+        $times = TimeSlot::where('room_id', $roomId)->get();
+
+        if ($times->isEmpty()) {
+            return response()->json(['message' => 'No time slots found for this room.'], 404);
+        }
+
+        return response()->json($times, 200);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Room;
 use App\Models\Logs;
 
 class TimeSlotController extends Controller
@@ -33,7 +34,8 @@ class TimeSlotController extends Controller
     public function create()
     {
         $profile = Auth::user();
-        return view('admin.time_slots.create', compact('profile'));
+        $rooms = Room::all();
+        return view('admin.time_slots.create', compact('profile','rooms'));
     }
 
     /**
@@ -44,6 +46,8 @@ class TimeSlotController extends Controller
         $request->validate([
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
+            'room_id' => 'nullable|exists:rooms,id',
+            'availability' => 'required|boolean',
         ]);
 
         $timeSlot = TimeSlot::create($request->all());
@@ -79,7 +83,8 @@ class TimeSlotController extends Controller
     public function edit(TimeSlot $timeSlot)
     {
         $profile = Auth::user();
-        return view('admin.time_slots.edit', compact('timeSlot', 'profile'));
+        $rooms = Room::all();
+        return view('admin.time_slots.edit', compact('timeSlot', 'profile','rooms'));
     }
 
     /**
@@ -88,8 +93,10 @@ class TimeSlotController extends Controller
     public function update(Request $request, TimeSlot $timeSlot)
     {
         $request->validate([
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+            'room_id' => 'nullable|exists:rooms,id',
+            'availability' => 'required|boolean',
         ]);
 
         $timeSlot->update($request->all());

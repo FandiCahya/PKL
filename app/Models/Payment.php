@@ -12,11 +12,17 @@ class Payment extends Model
         'booking_id',
         'payment_proof',
         'amount',
-        'status'
+        'status',
+        'user_id'
+
     ];
 
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

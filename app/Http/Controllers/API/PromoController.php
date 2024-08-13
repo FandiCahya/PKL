@@ -13,7 +13,7 @@ class PromoController extends Controller
     public function kelola_promo()
     {
 
-        $kelas = Promotion::all();
+        $kelas = Promotion::with(['room', 'instruktur'])->get();
 
         return response()->json(['promotions' => $kelas],200);
     }

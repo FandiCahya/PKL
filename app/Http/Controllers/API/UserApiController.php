@@ -8,12 +8,13 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Logs;
+use Illuminate\Support\Facades\Log;
 
 class UserApiController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(['data'=>User::latest()->get(),'Message'=>'List Users']);
+        return response()->json(['data' => User::latest()->get(), 'Message' => 'List Users']);
     }
 
     public function show($id)
@@ -70,58 +71,117 @@ class UserApiController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Find the user by ID
         $user = User::findOrFail($id);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'alamat' => 'required|string|max:255',
-            'no_hp' => 'required|string|max:15',
-            'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'nullable|in:user',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'alamat' => 'sometimes|string|max:255',
+            'no_hp' => 'sometimes|string|max:20',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'password' => 'sometimes|string|min:8',
+            'role' => 'sometimes|string|max:50',
         ]);
 
-        try {
-            $imagePath = $user->image;
-            if ($request->hasFile('image')) {
-                // Hapus gambar lama jika ada
-                if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-                    Storage::disk('public')->delete($imagePath);
-                }
+        // Update user attributes
+        if ($request->has('name')) {
+            $user->name = $validatedData['name'];
+        }
+        if ($request->has('email')) {
+            $user->email = $validatedData['email'];
+        }
+        if ($request->has('alamat')) {
+            $user->alamat = $validatedData['alamat'];
+        }
+        if ($request->has('no_hp')) {
+            $user->no_hp = $validatedData['no_hp'];
+        }
+        if ($request->has('role')) {
+            $user->role = $validatedData['role'];
+        }
 
-                // Simpan gambar baru ke storage
-                $imagePath = $request->file('image')->store('profile_images', 'public');
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($user->image && $user->image !== 'default.png' && Storage::exists('public/' . $user->image)) {
+                Storage::delete('public/' . $user->image);
             }
 
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'alamat' => $request->alamat,
-                'no_hp' => $request->no_hp,
+            // Store the new image
+            $imagePath = $request->file('image')->store('images', 'public');
+            $user->image = $imagePath;
+        }
+
+        // Handle password update
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+
+        // Save the updated user
+        $user->save();
+
+        return response()->json(['message' => 'User updated successfully', 'user' => $user]);
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+    
+        // Validate the incoming request
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $user->id,
+            'alamat' => 'sometimes|required|string|max:255',
+            'no_hp' => 'sometimes|required|string|max:15',
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'nullable|in:admin,user',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+    
+        try {
+            // $imagePath = $user->image;
+            // if ($request->hasFile('image')) {
+            //     // Delete old image if exists
+            //     if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+            //         Storage::disk('public')->delete($imagePath);
+            //     }
+    
+            //     // Save the new image to the storage
+            //     $fileName = $request->file('image')->getClientOriginalName();
+            //     $request->file('image')->move(public_path('profile_images'), $fileName);
+            //     $imagePath = 'profile_images/' . $fileName;
+            // }
+
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $destinationPath = public_path('profile_images');
+                $fileName = $image->getClientOriginalName();
+                $image->move($destinationPath, $fileName);
+                $imagePath = 'profile_images/' . $fileName;
+            }
+    
+            // Update the user with only the provided fields
+            $user->update(array_filter([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'alamat' => $request->input('alamat'),
+                'no_hp' => $request->input('no_hp'),
                 'image' => $imagePath,
-                'password' => $request->password ? bcrypt($request->password) : $user->password,
-                // 'role' => $request->role,
-            ]);
+                'password' => $request->filled('password') ? bcrypt($request->password) : null,
+                'role' => $request->input('role'),
+            ]));
 
-            // Data log
-            // $logData = [
-            //     'user_id' => Auth::id(),
-            //     'action' => 'update',
-            //     'description' => 'Updated a user: ' . $user->name,
-            //     'table_name' => 'users',
-            //     'table_id' => $user->id,
-            //     'data' => json_encode($user->toArray()),
-            // ];
-
-            // // Simpan log
-            // Logs::create($logData);
-
-            return response()->json(['message' => 'User berhasil diperbarui.', 'user' => $user]);
+            // print('hello');
+    
+            return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Gagal memperbarui pengguna: ' . $e->getMessage()], 500);
+            return response()->json(['error' => 'Failed to update user: ' . $e->getMessage()], 500);
         }
     }
+    
 
     public function destroy($id)
     {

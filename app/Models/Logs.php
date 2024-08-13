@@ -45,10 +45,6 @@ class Logs extends Model
         return $this->belongsTo(Promotion::class);
     }
 
-    public function schedule()
-    {
-        return $this->belongsTo(Schedule::class);
-    }
     public function bookings()
     {
         return $this->belongsTo(Booking::class);
