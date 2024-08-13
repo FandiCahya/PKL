@@ -17,7 +17,8 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   int _selectedRoom = -1;
   int _selectedTime = -1;
   late Future<List<Room>> _roomsFuture;
-  late Future<List<TimeSlot>> _timeSlotsFuture;
+  // late Future<List<TimeSlot>> _timeSlotsFuture;
+  Future<List<TimeSlot>>? _timeSlotsFuture;
   late ApiService _apiService;
 
   @override
@@ -25,7 +26,15 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     super.initState();
     _apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/api');
     _roomsFuture = _apiService.fetchRooms();
-    _timeSlotsFuture = _apiService.fetchTimeSlots();
+    // _timeSlotsFuture = _apiService.fetchTimeSlots(roomId);
+  }
+
+  void _onRoomSelected(int roomId) {
+    setState(() {
+      _selectedRoom = roomId;
+      _timeSlotsFuture = _apiService
+          .fetchTimeSlots(roomId); // Fetch time slots for the selected room
+    });
   }
 
   void _showBookingSuccessDialog() {
@@ -316,19 +325,43 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   }
 
   Widget roomSelectionButton(Room room) {
+    bool isSelected = _selectedRoom == room.id;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedRoom = room.id;
-        });
-      },
+      onTap: room.availability == 1 ? () => _onRoomSelected(room.id) : null,
+      // () => _onRoomSelected(room.id),
       child: Container(
         margin: EdgeInsets.only(right: 10),
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
-          color:
-              _selectedRoom == room.id ? Color(0xFF746EBD) : Color(0xFF575566),
-          borderRadius: BorderRadius.circular(10),
+          color: isSelected
+              ? Color(0xFF746EBD)
+              : Colors.white.withOpacity(room.availability == 1
+                  ? 0.1
+                  : 0.3), // Adjust opacity based on availability
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: isSelected
+                ? Color(0xFF746EBD)
+                : Colors.white.withOpacity(room.availability == 1
+                    ? 0.2
+                    : 0.4), // Adjust border color opacity based on availability
+          ),
+
+          //     _selectedRoom == room.id ? Color(0xFF746EBD) : Color(0xFF575566),
+          // borderRadius: BorderRadius.circular(10),
+
+          //     _selectedRoom == room.id
+          //         ? Color(0xFF746EBD)
+          //         : Colors.white.withOpacity(0.1),
+          // borderRadius: BorderRadius.circular(8.0),
+          // border: Border.all(
+          //   color: _selectedRoom == room.id
+          //       ? Color(0xFF746EBD)
+          //       : Colors.white.withOpacity(0.2),
+          // ),
+
+          // color: isSelected ? Color(0xFF746EBD) : Color(0xFF3A3A3D),
+          // borderRadius: BorderRadius.circular(10.0),
         ),
         child: Center(
           child: Text(
@@ -346,24 +379,44 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   }
 
   Widget timeSelectionList(List<TimeSlot> timeSlots) {
+    final availableTimeSlots =
+        timeSlots.where((slot) => slot.availability == 1).toList();
+
+    if (availableTimeSlots.isEmpty) {
+      return Center(
+          child: Text('No available time slots',
+              style: TextStyle(color: Colors.white)));
+    }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: timeSlots.map((timeSlot) {
           return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedTime = timeSlot.id; // Store the time slot ID
-              });
-            },
+            onTap: timeSlot.availability == 1
+                ? () {
+                    setState(() {
+                      _selectedTime = timeSlot.id;
+                      print(_selectedTime); // Simpan ID time slot
+                    });
+                  }
+                : null,
             child: Container(
               margin: EdgeInsets.only(right: 10),
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               decoration: BoxDecoration(
                 color: _selectedTime == timeSlot.id
                     ? Color(0xFF746EBD)
-                    : Color(0xFF575566),
-                borderRadius: BorderRadius.circular(10),
+                    : timeSlot.availability == 1
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  color: _selectedTime == timeSlot.id
+                      ? Color(0xFF746EBD)
+                      : timeSlot.availability == 0
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.grey.withOpacity(0.3),
+                ),
               ),
               child: Center(
                 child: Text(

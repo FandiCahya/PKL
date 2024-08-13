@@ -1,5 +1,3 @@
-// lib/screens/dashboard.dart
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +17,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   List<dynamic> promotions = [];
+  List<dynamic> blockedDates = [];
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -33,6 +32,7 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     _loadUserData();
     _fetchPromotions(); // Fetch promotions on init
+    _fetchBlockedDates(); // Fetch blocked dates on init
   }
 
   Future<void> _loadUserData() async {
@@ -57,6 +57,19 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  Future<void> _fetchBlockedDates() async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/blocked-dates');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        blockedDates = json.decode(response.body);
+      });
+    } else {
+      print('Failed to load blocked dates');
+    }
+  }
+
   void _showBookingBottomSheet(DateTime selectedDay) {
     showModalBottomSheet(
       context: context,
@@ -64,6 +77,64 @@ class _DashboardState extends State<Dashboard> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return BookingBottomSheet(selectedDate: selectedDay);
+      },
+    );
+  }
+
+  void _showBlockedDateDialog(String reason) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Color(0xFF2B2B2F),
+          title: Row(
+            children: [
+              Icon(Icons.block, color: Colors.red, size: 30),
+              SizedBox(width: 10),
+              Text(
+                'Date Blocked',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontFamily: 'Source Sans Pro',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            reason,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontFamily: 'Source Sans Pro',
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Color(0xFF746EBD),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontFamily: 'Source Sans Pro',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
       },
     );
   }
@@ -90,21 +161,22 @@ class _DashboardState extends State<Dashboard> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Image.network(
-                            userImage,
-                            fit: BoxFit.fill,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Center(
-                                child: Icon(Icons.error, color: Colors.red),
-                              );
-                            },
-                          ),
-                        ),
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: ClipOval(
+                              child: Image.network(
+                                userImage,
+                                fit: BoxFit.fill,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Center(
+                                    child: Icon(Icons.error, color: Colors.red),
+                                  );
+                                },
+                              ),
+                            )),
                         const SizedBox(width: 22),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,7 +264,8 @@ class _DashboardState extends State<Dashboard> {
                             promo['room_id'].toString(),
                             promo['instruktur_id'].toString(),
                             promo['room']?['nama'] ?? 'Unknown Room',
-                            promo['instruktur']?['nama'] ?? 'Unknown Instructor',
+                            promo['instruktur']?['nama'] ??
+                                'Unknown Instructor',
                           );
                         }).toList(),
                       ),
@@ -258,17 +331,65 @@ class _DashboardState extends State<Dashboard> {
                               selectedTextStyle: TextStyle(color: Colors.white),
                               weekendTextStyle: TextStyle(color: Colors.white),
                               outsideDaysVisible: false,
+                              disabledTextStyle: TextStyle(
+                                  color: Colors.red.withOpacity(0.8),
+                                  fontWeight: FontWeight.bold),
                             ),
+                            enabledDayPredicate: (date) {
+                              // Disable blocked dates
+                              for (var blocked in blockedDates) {
+                                if (DateTime.parse(blocked['blocked_date'])
+                                    .isAtSameMomentAs(date)) {
+                                  return false; // Disable this date
+                                }
+                              }
+                              return true; // Enable other dates
+                            },
                             onDaySelected: (selectedDay, focusedDay) {
-                              setState(() {
-                                _selectedDay = selectedDay;
-                                _focusedDay = focusedDay;
-                              });
-                              _showBookingBottomSheet(selectedDay);
+                              bool isBlocked = false;
+                              String reason = '';
+
+                              for (var blocked in blockedDates) {
+                                if (DateTime.parse(blocked['blocked_date'])
+                                    .isAtSameMomentAs(selectedDay)) {
+                                  isBlocked = true;
+                                  reason = blocked['reason'];
+                                  break;
+                                }
+                              }
+
+                              if (isBlocked) {
+                                _showBlockedDateDialog(reason); // Show reason for blocking
+                              } else {
+                                setState(() {
+                                  _selectedDay = selectedDay;
+                                  _focusedDay = focusedDay;
+                                });
+                                _showBookingBottomSheet(selectedDay);
+                              }
                             },
                             onPageChanged: (focusedDay) {
                               _focusedDay = focusedDay;
                             },
+                            calendarBuilders: CalendarBuilders(
+                              defaultBuilder: (context, date, _) {
+                                for (var blocked in blockedDates) {
+                                  if (DateTime.parse(blocked['blocked_date'])
+                                      .isAtSameMomentAs(date)) {
+                                    return Center(
+                                      child: Text(
+                                        '${date.day}',
+                                        style: TextStyle(
+                                          color: Colors.red.withOpacity(0.8),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                                return null; // No special style for non-blocked dates
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -283,8 +404,18 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget promoCard(String id, String name, String imageUrl, String description,
-      String price, String date, String waktu, String room, String instruktur, String roomName, String instrukturName) {
+  Widget promoCard(
+      String id,
+      String name,
+      String imageUrl,
+      String description,
+      String price,
+      String date,
+      String waktu,
+      String room,
+      String instruktur,
+      String roomName,
+      String instrukturName) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -302,7 +433,6 @@ class _DashboardState extends State<Dashboard> {
               instruktur: instruktur,
               roomName: roomName,
               instrukturName: instrukturName,
-              
             ),
           ),
         );

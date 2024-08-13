@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'bottom_navigation_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class EditMyProfile extends StatefulWidget {
   const EditMyProfile({super.key});
@@ -18,8 +20,9 @@ class _EditMyProfileState extends State<EditMyProfile> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  String profileImageUrl = ''; 
+  String profileImageUrl = '';
   final String baseUrl = 'http://127.0.0.1:8000/';
+  File? _image;
 
   Future<void> loadUserData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -27,7 +30,8 @@ class _EditMyProfileState extends State<EditMyProfile> {
     emailController.text = prefs.getString('email') ?? '';
     addressController.text = prefs.getString('alamat') ?? '';
     phoneController.text = prefs.getString('no_hp') ?? '';
-    profileImageUrl = '$baseUrl${prefs.getString('image') ?? ''}'; // Load profile image URL
+    profileImageUrl =
+        '$baseUrl${prefs.getString('image') ?? ''}'; // Load profile image URL
     setState(() {});
   }
 
@@ -35,37 +39,49 @@ class _EditMyProfileState extends State<EditMyProfile> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('id');
 
-    final response = await http.put(
-      Uri.parse('http://127.0.0.1:8000/api/updateuser/$userId'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'name': nameController.text,
-        'email': emailController.text,
-        'alamat': addressController.text,
-        'no_hp': phoneController.text,
-        'password': passwordController.text,
-      }),
-    );
-
-    final jsonResponse = jsonDecode(response.body);
-
-    if (response.statusCode == 200) {
-      // Save updated user data to SharedPreferences
-      prefs.setString('name', jsonResponse['user']['name']);
-      prefs.setString('email', jsonResponse['user']['email']);
-      prefs.setString('alamat', jsonResponse['user']['alamat']);
-      prefs.setString('no_hp', jsonResponse['user']['no_hp']);
-      prefs.setString('image', jsonResponse['user']['image']);
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => BottomNavigation(),
-        ),
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse('http://127.0.0.1:8000/api/user/$userId'),
       );
-    } else {
+
+      request.fields['name'] = nameController.text;
+      request.fields['email'] = emailController.text;
+      request.fields['alamat'] = addressController.text;
+      request.fields['no_hp'] = phoneController.text;
+
+      if (passwordController.text.isNotEmpty) {
+        request.fields['password'] = passwordController.text;
+      }
+
+      if (_image != null) {
+        request.files
+            .add(await http.MultipartFile.fromPath('image', _image!.path));
+      }
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        var responseData = await http.Response.fromStream(response);
+        var jsonResponse = jsonDecode(responseData.body);
+
+        // Update the SharedPreferences with the new user data
+        prefs.setString('name', jsonResponse['user']['name']);
+        prefs.setString('email', jsonResponse['user']['email']);
+        prefs.setString('alamat', jsonResponse['user']['alamat']);
+        prefs.setString('no_hp', jsonResponse['user']['no_hp']);
+        prefs.setString('image', jsonResponse['user']['image']);
+
+        // Navigate to the main screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BottomNavigation(),
+          ),
+        );
+      } else {
+        throw Exception('Failed to update user');
+      }
+    } catch (e) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -91,7 +107,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
               ],
             ),
             content: Text(
-              jsonResponse['error'] ?? 'An error occurred',
+              e.toString(),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -105,8 +121,7 @@ class _EditMyProfileState extends State<EditMyProfile> {
                   Navigator.of(context).pop();
                 },
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: Color(0xFF746EBD),
                     borderRadius: BorderRadius.circular(10),
@@ -126,6 +141,17 @@ class _EditMyProfileState extends State<EditMyProfile> {
           );
         },
       );
+    }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
     }
   }
 
@@ -154,6 +180,12 @@ class _EditMyProfileState extends State<EditMyProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                   Container(
                     width: double.infinity,
                     height: 60,
@@ -212,55 +244,91 @@ class _EditMyProfileState extends State<EditMyProfile> {
                       children: [
                         SizedBox(height: 20),
                         Center(
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            decoration: ShapeDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(profileImageUrl),
-                                fit: BoxFit.cover,
-                              ),
-                              shape: CircleBorder(
-                                side: BorderSide(
-                                  width: 3,
-                                  color: Color(0xFF726CBC),
-                                ),
-                              ),
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0x3F000000),
-                                  blurRadius: 4,
-                                  offset: Offset(0, 4),
-                                  spreadRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: profileImageUrl.isNotEmpty
-                                ? ClipOval(
-                                    child: Image.network(
-                                      profileImageUrl,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder:
-                                          (context, child, progress) {
-                                        if (progress == null) return child;
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        print('Error loading image: $error');
-                                        return Center(
-                                          child: Icon(Icons.error,
-                                              color: Colors.red),
-                                        );
-                                      },
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: 150,
+                                height: 150,
+                                decoration: ShapeDecoration(
+                                  image: _image == null &&
+                                          profileImageUrl.isNotEmpty
+                                      ? DecorationImage(
+                                          image: NetworkImage(profileImageUrl),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : _image != null
+                                          ? DecorationImage(
+                                              image: FileImage(_image!),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                  shape: CircleBorder(
+                                    side: BorderSide(
+                                      width: 3,
+                                      color: Color(0xFF726CBC),
                                     ),
-                                  )
-                                : Center(
-                                    child: Icon(Icons.person,
-                                        size: 80, color: Colors.grey),
                                   ),
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Color(0x3F000000),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 4),
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: _image == null && profileImageUrl.isEmpty
+                                    ? Center(
+                                        child: Icon(Icons.person,
+                                            size: 80, color: Colors.grey),
+                                      )
+                                    : null,
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: IconButton(
+                                  icon: Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: 100,
+                                          child: Column(
+                                            children: [
+                                              ListTile(
+                                                leading:
+                                                    Icon(Icons.photo_library),
+                                                title:
+                                                    Text('Choose from Gallery'),
+                                                onTap: () {
+                                                  _pickImage(
+                                                      ImageSource.gallery);
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                              ListTile(
+                                                leading: Icon(Icons.camera_alt),
+                                                title: Text('Take a Picture'),
+                                                onTap: () {
+                                                  _pickImage(
+                                                      ImageSource.camera);
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         SizedBox(height: 30),

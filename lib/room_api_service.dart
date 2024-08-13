@@ -35,8 +35,8 @@ class ApiService {
         }),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
 
       if (response.statusCode == 201) {
         return true;
@@ -51,8 +51,7 @@ class ApiService {
     }
   }
 
-  Future<bool> createBooking2(
-      int userId, int promotionId) async {
+  Future<bool> createBooking2(int userId, int promotionId) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/bookings'),
@@ -67,8 +66,8 @@ class ApiService {
         }),
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response status: ${response.statusCode}');
+      // print('Response body: ${response.body}');
 
       if (response.statusCode == 201) {
         return true;
@@ -83,8 +82,8 @@ class ApiService {
     }
   }
 
-  Future<List<TimeSlot>> fetchTimeSlots() async {
-    final response = await http.get(Uri.parse('$baseUrl/kelolawaktu'));
+  Future<List<TimeSlot>> fetchTimeSlots(int roomId) async {
+    final response = await http.get(Uri.parse('$baseUrl/times/room/$roomId'));
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -98,16 +97,19 @@ class ApiService {
 class Room {
   final int id;
   final String nama;
+  final int availability;
 
   Room({
     required this.id,
     required this.nama,
+    required this.availability,
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
       id: json['id'],
       nama: json['nama'],
+      availability: json['availability'],
     );
   }
 }
@@ -116,14 +118,21 @@ class TimeSlot {
   final int id;
   final String startTime;
   final String endTime;
+  final int availability;
 
-  TimeSlot({required this.id, required this.startTime, required this.endTime});
+  TimeSlot({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.availability,
+  });
 
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
     return TimeSlot(
       id: json['id'],
       startTime: json['start_time'],
       endTime: json['end_time'],
+      availability: json['availability'],
     );
   }
 }

@@ -57,14 +57,14 @@ class _PromotionDetailState extends State<PromotionDetail> {
     bool success =
         await _apiService.createBooking2(userId, int.parse(widget.promotionId));
     if (success) {
-      print('Booking successful');
-      print(userId);
-      print(int.parse(widget.promotionId));
+      // print('Booking successful');
+      // print(userId);
+      // print(int.parse(widget.promotionId));
       _showBookingSuccessDialog();
     } else {
-      print('Booking failed');
-      print(userId);
-      print(int.parse(widget.promotionId));
+      // print('Booking failed');
+      // print(userId);
+      // print(int.parse(widget.promotionId));
       _showBookingErrorDialog();
     }
   }
