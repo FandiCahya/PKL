@@ -4,7 +4,7 @@
     <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Data Booking Room</h1>
+        <h1 class="h3 mb-2 text-gray-800">Data Booking</h1>
 
         @if (session('success'))
             <div class="alert alert-success">
@@ -17,7 +17,7 @@
             <div class="col-lg-6">
                 <form class="form-inline">
                     <div class="input-group"> <input type="text" name="search" id="search" 
-                            class="form-control" value="{{ request('search') }}" placeholder="Search User and Room">
+                            class="form-control" value="{{ request('search') }}" placeholder="Search">
                         {{-- <button type="submit" class="btn btn-primary">Search</button> --}}
                         <div class="input-group-append">
                             <span class="input-group-text"><i class="fa fa-search"></i></span>
@@ -27,7 +27,7 @@
                 </form>
             </div>
             <div class="col-lg-6 text-right">
-                <a href="{{ route('tambah_booking') }}" class="btn btn-success">Create Booking Room</a>
+                <a href="{{ route('tambah_booking') }}" class="btn btn-success">Create Booking</a>
             </div>
         </div>
 

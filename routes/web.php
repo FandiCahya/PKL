@@ -62,7 +62,7 @@ Route::middleware(['admin'])->group(function () {
     });
 
     Route::prefix('booking')->group(function () {
-        Route::get('/kelola', [BookingController::class, 'kelola_booking'])->name('kelola_booking');
+        Route::get('/kelola/{id?}', [BookingController::class, 'kelola_booking'])->name('kelola_booking');
         Route::get('/tambah', [BookingController::class, 'tambahBooking'])->name('tambah_booking');
         Route::post('/simpan', [BookingController::class, 'simpanBooking'])->name('simpan_booking');
         Route::get('/edit/{id}', [BookingController::class, 'editBooking'])->name('edit_booking');

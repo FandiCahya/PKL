@@ -23,8 +23,9 @@ class BookingController extends Controller
 {
     public function getBookingsByUserId($user_id)
     {
-        $bookings = Booking::with(['room', 'promotion', 'timeSlot'])->
-        where('user_id', $user_id)->get();
+        $bookings = Booking::with(['room', 'promotion', 'timeSlot'])
+            ->where('user_id', $user_id)
+            ->get();
         return response()->json($bookings);
     }
 
@@ -124,6 +125,21 @@ class BookingController extends Controller
             'qrcode' => $status === 'Pending' ? '' : null,
         ]);
 
+        // Ubah availability dari TimeSlot menjadi false setelah booking
+        if ($timeSlotId) {
+            $timeSlot = TimeSlot::findOrFail($timeSlotId);
+            $timeSlot->update(['availability' => false]);
+        }
+        // Log creation of the booking
+        Logs::create([
+            'user_id' => $request->user_id,
+            'action' => 'create',
+            'description' => 'Created a new booking for user ID: ' . $request->user_id,
+            'table_name' => 'bookings',
+            'table_id' => $booking->id,
+            'data' => json_encode($booking->toArray()),
+        ]);
+
         if ($booking->status === 'Booked') {
             // Generate the QR code
             if ($bookingType == 'room') {
@@ -143,6 +159,4 @@ class BookingController extends Controller
 
         return response()->json(['success' => 'Booking created successfully.', 'booking' => $booking], 201);
     }
-
-    
 }

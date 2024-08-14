@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\BlockedDate;
 use App\Models\BlockedTgl;
 use Illuminate\Http\Request;
 
@@ -15,5 +16,11 @@ class BlockController extends Controller
 
         // Return the data as a JSON response
         return response()->json($blockedDates);
+    }
+
+    public function index2(){
+        $blockdatetimes = BlockedDate::all();
+
+        return response()->json($blockdatetimes);
     }
 }

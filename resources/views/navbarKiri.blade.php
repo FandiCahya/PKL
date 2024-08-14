@@ -99,8 +99,8 @@
                 <div id="collapseBlocking" class="collapse" aria-labelledby="headingBlocking"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="{{ route('blocked_dates.index') }}">Date</a>
-                        <a class="collapse-item" href="{{ route('blocked_tgl.index') }}">Date & Time</a>
+                        <a class="collapse-item" href="{{ route('blocked_dates.index') }}">Date & Time</a>
+                        <a class="collapse-item" href="{{ route('blocked_tgl.index') }}">Date</a>
                     </div>
                 </div>
             </li>

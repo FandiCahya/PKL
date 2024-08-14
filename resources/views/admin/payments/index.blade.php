@@ -72,4 +72,11 @@
         });
     });
 </script>
+
+<!-- Custom Script to Show Image in Modal -->
+<script>
+    function showImage(src) {
+        document.getElementById('modalImage').src = src;
+    }
+    </script>
 @endsection

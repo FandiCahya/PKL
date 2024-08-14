@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\Logs;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -49,17 +50,18 @@ class PaymentController extends Controller
             'amount' => $amount,
         ]);
 
+        $userId = $request->user_id;
         // Data log
-        // $logData = [
-        //     'user_id' => Auth::id(),
-        //     'action' => 'create',
-        //     'description' => 'Created a new payment for booking ID: ' . $payment->booking_id,
-        //     'table_name' => 'payments',
-        //     'table_id' => $payment->id,
-        //     'data' => json_encode($payment->toArray()),
-        // ];
+        $logData = [
+            'user_id' => $userId,
+            'action' => 'create',
+            'description' => 'Created a new payment for booking ID: ' . $payment->booking_id,
+            'table_name' => 'payments',
+            'table_id' => $payment->id,
+            'data' => json_encode($payment->toArray()),
+        ];
 
-        // Logs::create($logData);
+        Logs::create($logData);
 
         return response()->json([
             'success' => 'Payment created successfully.',

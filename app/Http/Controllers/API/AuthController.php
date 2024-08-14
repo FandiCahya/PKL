@@ -42,6 +42,8 @@ class AuthController extends Controller
             'user_id' => $user->id,
             'action' => 'login_success',
             'description' => 'User logged in successfully',
+            'table_name' => 'users',
+            'table_id' => $user->id,
             'data' => json_encode(['email' => $user->email]),
         ]);
 
@@ -96,6 +98,8 @@ class AuthController extends Controller
             'user_id' => $user->id,
             'action' => 'register_success',
             'description' => 'User registered and logged in successfully',
+            'table_name' => 'users',
+            'table_id' => $user->id,
             'data' => json_encode(['email' => $user->email]),
         ]);
 
@@ -108,12 +112,14 @@ class AuthController extends Controller
             $user = Auth::user();
             Auth::logout();
             // Log successful logout
-            Logs::create([
-                'user_id' => $user->id,
-                'action' => 'logout_success',
-                'description' => 'User logged out successfully',
-                'data' => json_encode(['email' => $user->email]),
-            ]);
+            // Logs::create([
+            //     'user_id' => $user->id,
+            //     'action' => 'logout_success',
+            //     'description' => 'User logged out successfully',
+            //     'table_name' => 'users',
+            //     'table_id' => $user->id,
+            //     'data' => json_encode(['email' => $user->email]),
+            // ]);
             return response()->json(['message' => 'Successfully logged out'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Logout failed'], 500);

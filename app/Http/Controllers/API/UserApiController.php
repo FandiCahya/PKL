@@ -141,18 +141,6 @@ class UserApiController extends Controller
         ]);
     
         try {
-            // $imagePath = $user->image;
-            // if ($request->hasFile('image')) {
-            //     // Delete old image if exists
-            //     if ($imagePath && Storage::disk('public')->exists($imagePath)) {
-            //         Storage::disk('public')->delete($imagePath);
-            //     }
-    
-            //     // Save the new image to the storage
-            //     $fileName = $request->file('image')->getClientOriginalName();
-            //     $request->file('image')->move(public_path('profile_images'), $fileName);
-            //     $imagePath = 'profile_images/' . $fileName;
-            // }
 
             $imagePath = null;
             if ($request->hasFile('image')) {
@@ -175,9 +163,26 @@ class UserApiController extends Controller
             ]));
 
             // print('hello');
+                    // Log the update
+        Logs::create([
+            'user_id' => $user->id, // The ID of the user making the update
+            'action' => 'update',
+            'description' => 'Updated user ID: ' . $user->id,
+            'table_name' => 'users',
+            'table_id' => $user->id,
+            'data' => json_encode($user),
+        ]);
     
             return response()->json(['message' => 'User updated successfully', 'user' => $user], 200);
         } catch (\Exception $e) {
+            Logs::create([
+                'user_id' => $user->id, // The ID of the user making the update
+                'action' => 'update_failed',
+                'description' => 'Failed to update user ID: ' . $user->id,
+                'table_name' => 'users',
+                'table_id' => $user->id,
+                'data' => json_encode(['error' => $e->getMessage()]),
+            ]);
             return response()->json(['error' => 'Failed to update user: ' . $e->getMessage()], 500);
         }
     }

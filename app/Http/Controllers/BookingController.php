@@ -19,15 +19,31 @@ use Illuminate\Support\Facades\File;
 
 class BookingController extends Controller
 {
-    public function kelola_booking(Request $request)
+    public function kelola_booking(Request $request, $id = null)
     {
         $search = $request->get('search');
         $profile = Auth::user();
         $query = Booking::with('user', 'room', 'timeSlot', 'promotion');
 
-        if ($search) {
+        // if ($search) {
+        //     $query
+        //         ->where('id', $search) // Search by booking ID
+        //         ->orWhereHas('user', function ($q) use ($search) {
+        //             $q->where('name', 'like', '%' . $search . '%');
+        //         })
+        //         ->orWhereHas('room', function ($q) use ($search) {
+        //             $q->where('nama', 'like', '%' . $search . '%');
+        //         });
+        // }
+
+        if ($id) {
+            // Jika ID disediakan, filter hanya booking yang sesuai
+            $query->where('id', $id);
+        } elseif ($search) {
+            // Jika search query disediakan, cari berdasarkan id, user name, atau room name
             $query
-                ->whereHas('user', function ($q) use ($search) {
+                ->where('id', $search) // Search by booking ID
+                ->orWhereHas('user', function ($q) use ($search) {
                     $q->where('name', 'like', '%' . $search . '%');
                 })
                 ->orWhereHas('room', function ($q) use ($search) {
@@ -37,6 +53,7 @@ class BookingController extends Controller
 
         $bookings = $query->orderBy('created_at', 'desc')->paginate(10);
 
+        // Jika ID disediakan, cari booking yang sesuai
         if ($request->ajax()) {
             return view('admin.bookings_table', compact('bookings'))->render();
         }
@@ -44,6 +61,13 @@ class BookingController extends Controller
         return view('admin.kelola_booking', compact('bookings', 'profile'));
     }
 
+    public function showBooking($id)
+    {
+        $booking = Booking::with('user', 'room', 'timeSlot', 'promotion')->findOrFail($id);
+        $profile = Auth::user();
+
+        return view('admin.show.booking', compact('booking', 'profile'));
+    }
     public function tambahBooking()
     {
         // Fetch data from related tables
@@ -67,7 +91,7 @@ class BookingController extends Controller
             'time_slot_id' => 'required_if:promotion_id,null|exists:time_slots,id',
             'status' => 'nullable|in:Booked,Pending,Rejected',
         ]);
-    
+
         // Determine the booking type
         if ($request->room_id) {
             $bookingType = 'room';
@@ -76,7 +100,7 @@ class BookingController extends Controller
         } else {
             return response()->json(['error' => 'Either room_id or promotion_id must be provided.'], 400);
         }
-    
+
         // Set default status to 'Pending' if not provided
         $status = $request->status ?? 'Pending';
 
@@ -85,11 +109,11 @@ class BookingController extends Controller
         $PtimeSlotId = null;
         $price = 0;
         $room_id = null;
-    
+
         // Fetch promotion details if booking type is 'class'
         if ($bookingType == 'class') {
             $promotion = Promotion::findOrFail($request->promotion_id);
-    
+
             $tgl = $promotion->tgl;
             $PtimeSlotId = $promotion->waktu;
             $room_id = $promotion->room_id;
@@ -97,49 +121,49 @@ class BookingController extends Controller
         } else {
             $tgl = $request->tgl;
             $timeSlotId = $request->time_slot_id;
-    
+
             // Fetch time slot details
             $timeSlot = TimeSlot::findOrFail($timeSlotId);
             $startTimeString = $timeSlot->start_time;
             $endTimeString = $timeSlot->end_time;
-    
+
             try {
                 $startTime = Carbon::parse($startTimeString);
                 $endTime = Carbon::parse($endTimeString);
             } catch (\Carbon\Exceptions\InvalidFormatException $e) {
                 return response()->json(['error' => 'Error parsing time: ' . $e->getMessage()], 400);
             }
-    
+
             $duration = $startTime->diffInMinutes($endTime);
             $price = ($duration / 60) * 25000; // Price per hour
             $room_id = $request->room_id;
         }
-    
+
         $blockedDate = BlockedDate::where('blocked_date', $tgl)
             ->where(function ($query) use ($timeSlotId) {
                 $query->where('time_slot_id', $timeSlotId);
             })
             ->first();
-    
+
         if ($blockedDate) {
             return response()->json(['error' => 'The selected date is blocked: ' . $blockedDate->reason], 400);
         }
-    
+
         $blockedTgl = BlockedTgl::where('blocked_date', $tgl)->first();
-    
+
         if ($blockedTgl) {
             return response()->json(['error' => 'The selected date is blocked: ' . $blockedTgl->reason], 400);
         }
-    
+
         if ($bookingType == 'room') {
             $room = Room::findOrFail($room_id);
-    
+
             // Validate room availability
             if (!$room->availability) {
                 return response()->json(['error' => 'The selected room is not available for booking.'], 400);
             }
         }
-    
+
         // Insert the booking record
         $booking = Booking::create([
             'user_id' => $request->user_id,
@@ -153,13 +177,13 @@ class BookingController extends Controller
             'status' => $status,
             'qrcode' => $status === 'Pending' ? '' : null,
         ]);
-    
+
         if ($booking->status === 'Booked') {
             // Generate the QR code
             if ($bookingType == 'room') {
                 $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: ' . $booking->timeSlot->start_time . ' - ' . $booking->timeSlot->end_time;
             } else {
-                $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name .', Class: ' . $booking->promotion->name .', Room: ' . $booking->promotion->room->nama . ', Tanggal: ' . $booking->promotion->tgl . ', Waktu: ' . $booking->promotion->waktu;
+                $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Class: ' . $booking->promotion->name . ', Room: ' . $booking->promotion->room->nama . ', Tanggal: ' . $booking->promotion->tgl . ', Waktu: ' . $booking->promotion->waktu;
             }
             $qrCode = QrCode::format('png')->generate($qrContent);
             $fileName = uniqid() . '.png';
@@ -168,8 +192,8 @@ class BookingController extends Controller
             $booking->qrcode = 'qr_codes/' . $fileName;
             $booking->save();
         }
-    
-            $room->reduceCapacity();
+
+        $room->reduceCapacity();
 
         // Log data
         $logData = [
@@ -215,7 +239,7 @@ class BookingController extends Controller
         } else {
             return response()->json(['error' => 'Either room_id or promotion_id must be provided.'], 400);
         }
-    
+
         // Set default status to 'Pending' if not provided
         $status = $request->status ?? 'Pending';
 
@@ -228,7 +252,7 @@ class BookingController extends Controller
         // Fetch promotion details if booking type is 'class'
         if ($bookingType == 'class') {
             $promotion = Promotion::findOrFail($request->promotion_id);
-    
+
             $tgl = $promotion->tgl;
             $PtimeSlotId = $promotion->waktu;
             $room_id = $promotion->room_id;
@@ -236,19 +260,19 @@ class BookingController extends Controller
         } else {
             $tgl = $request->tgl;
             $timeSlotId = $request->time_slot_id;
-    
+
             // Fetch time slot details
             $timeSlot = TimeSlot::findOrFail($timeSlotId);
             $startTimeString = $timeSlot->start_time;
             $endTimeString = $timeSlot->end_time;
-    
+
             try {
                 $startTime = Carbon::parse($startTimeString);
                 $endTime = Carbon::parse($endTimeString);
             } catch (\Carbon\Exceptions\InvalidFormatException $e) {
                 return response()->json(['error' => 'Error parsing time: ' . $e->getMessage()], 400);
             }
-    
+
             $duration = $startTime->diffInMinutes($endTime);
             $price = ($duration / 60) * 25000; // Price per hour
             $room_id = $request->room_id;
@@ -398,7 +422,7 @@ class BookingController extends Controller
             'status' => $request->status,
             'qrcode' => $request->status === 'Booked',
         ]);
-        
+
         $bookingType = $booking->booking_type;
 
         if ($booking->status === 'Booked') {

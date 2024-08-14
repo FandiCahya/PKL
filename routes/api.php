@@ -14,6 +14,7 @@ use App\Http\Controllers\API\BlockController;
 
 
 Route::get('/blocked-dates', [BlockController::class, 'index']);
+Route::get('/blocked-datestimes', [BlockController::class, 'index2']);
 
 // Route::get('detailbooking/{id}',[BookingController::class,'show']);
 Route::get('detailbooking/{user_id}', [BookingController::class, 'getBookingsByUserId']);

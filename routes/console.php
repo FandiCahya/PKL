@@ -12,3 +12,5 @@ Artisan::command('inspire', function () {
 Schedule::call(function(){
     (new BookingController())->checkAndUpdateRoomAvailability();
 })->everyMinute();
+
+Schedule::command('timeslot:update-availability')->everyMinute();
