@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
 
 class ApiService {
   final String baseUrl;
@@ -92,6 +94,20 @@ class ApiService {
       throw Exception('Failed to load time slots');
     }
   }
+
+  Future<List<BlockedTimeSlot>> fetchBlockedTimeSlots(
+      DateTime selectedDate) async {
+    final url =
+        '$baseUrl/blocked-datestimes?date=${DateFormat('yyyy-MM-dd').format(selectedDate)}';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((json) => BlockedTimeSlot.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load blocked time slots');
+    }
+  }
 }
 
 class Room {
@@ -133,6 +149,29 @@ class TimeSlot {
       startTime: json['start_time'],
       endTime: json['end_time'],
       availability: json['availability'],
+    );
+  }
+}
+
+class BlockedTimeSlot {
+  final int id;
+  final DateTime blockedDate;
+  final int timeSlotId;
+  final String reason;
+
+  BlockedTimeSlot({
+    required this.id,
+    required this.blockedDate,
+    required this.timeSlotId,
+    required this.reason,
+  });
+
+  factory BlockedTimeSlot.fromJson(Map<String, dynamic> json) {
+    return BlockedTimeSlot(
+      id: json['id'],
+      blockedDate: DateTime.parse(json['blocked_date']),
+      timeSlotId: json['time_slot_id'],
+      reason: json['reason'],
     );
   }
 }

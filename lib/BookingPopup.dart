@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'room_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:collection/collection.dart';
 
 class BookingBottomSheet extends StatefulWidget {
   final DateTime selectedDate;
@@ -17,7 +18,6 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   int _selectedRoom = -1;
   int _selectedTime = -1;
   late Future<List<Room>> _roomsFuture;
-  // late Future<List<TimeSlot>> _timeSlotsFuture;
   Future<List<TimeSlot>>? _timeSlotsFuture;
   late ApiService _apiService;
 
@@ -26,15 +26,69 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     super.initState();
     _apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/api');
     _roomsFuture = _apiService.fetchRooms();
-    // _timeSlotsFuture = _apiService.fetchTimeSlots(roomId);
   }
 
   void _onRoomSelected(int roomId) {
     setState(() {
       _selectedRoom = roomId;
-      _timeSlotsFuture = _apiService
-          .fetchTimeSlots(roomId); // Fetch time slots for the selected room
+      _timeSlotsFuture = _apiService.fetchTimeSlots(roomId);
     });
+  }
+
+  void _showBlockedSlotDialog(String reason) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        backgroundColor: Color(0xFF2B2B2F),
+        title: Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              color: Colors.orangeAccent,
+              size: 40,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Time Slot Blocked',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontFamily: 'Source Sans Pro',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          reason,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontFamily: 'Source Sans Pro',
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'OK',
+              style: TextStyle(
+                color: Color(0xFF746EBD),
+                fontSize: 18,
+                fontFamily: 'Source Sans Pro',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showBookingSuccessDialog() {
@@ -328,40 +382,19 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
     bool isSelected = _selectedRoom == room.id;
     return GestureDetector(
       onTap: room.availability == 1 ? () => _onRoomSelected(room.id) : null,
-      // () => _onRoomSelected(room.id),
       child: Container(
         margin: EdgeInsets.only(right: 10),
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
               ? Color(0xFF746EBD)
-              : Colors.white.withOpacity(room.availability == 1
-                  ? 0.1
-                  : 0.3), // Adjust opacity based on availability
+              : Colors.white.withOpacity(room.availability == 1 ? 0.1 : 0.3),
           borderRadius: BorderRadius.circular(8.0),
           border: Border.all(
             color: isSelected
                 ? Color(0xFF746EBD)
-                : Colors.white.withOpacity(room.availability == 1
-                    ? 0.2
-                    : 0.4), // Adjust border color opacity based on availability
+                : Colors.white.withOpacity(room.availability == 1 ? 0.2 : 0.4),
           ),
-
-          //     _selectedRoom == room.id ? Color(0xFF746EBD) : Color(0xFF575566),
-          // borderRadius: BorderRadius.circular(10),
-
-          //     _selectedRoom == room.id
-          //         ? Color(0xFF746EBD)
-          //         : Colors.white.withOpacity(0.1),
-          // borderRadius: BorderRadius.circular(8.0),
-          // border: Border.all(
-          //   color: _selectedRoom == room.id
-          //       ? Color(0xFF746EBD)
-          //       : Colors.white.withOpacity(0.2),
-          // ),
-
-          // color: isSelected ? Color(0xFF746EBD) : Color(0xFF3A3A3D),
-          // borderRadius: BorderRadius.circular(10.0),
         ),
         child: Center(
           child: Text(
@@ -387,17 +420,31 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
           child: Text('No available time slots',
               style: TextStyle(color: Colors.white)));
     }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: timeSlots.map((timeSlot) {
           return GestureDetector(
             onTap: timeSlot.availability == 1
-                ? () {
-                    setState(() {
-                      _selectedTime = timeSlot.id;
-                      print(_selectedTime); // Simpan ID time slot
-                    });
+                ? () async {
+                    List<BlockedTimeSlot> blockedSlots = await _apiService
+                        .fetchBlockedTimeSlots(widget.selectedDate);
+
+                    BlockedTimeSlot? blockedSlot =
+                        blockedSlots.firstWhereOrNull(
+                      (slot) => slot.timeSlotId == timeSlot.id,
+                    );
+
+                    if (blockedSlot != null) {
+                      // Jika slot diblokir, tampilkan alasan
+                      _showBlockedSlotDialog(blockedSlot.reason);
+                    } else {
+                      // Jika tidak diblokir, izinkan pemilihan
+                      setState(() {
+                        _selectedTime = timeSlot.id;
+                      });
+                    }
                   }
                 : null,
             child: Container(
