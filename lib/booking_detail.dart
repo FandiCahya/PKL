@@ -7,6 +7,7 @@ import 'api_service.dart';
 
 class BookingDetailDialog extends StatefulWidget {
   final String id;
+  final String kelas;
   final String date;
   final String room;
   final String time;
@@ -17,6 +18,7 @@ class BookingDetailDialog extends StatefulWidget {
   const BookingDetailDialog({
     Key? key,
     required this.id,
+    required this.kelas,
     required this.date,
     required this.room,
     required this.time,
@@ -162,6 +164,8 @@ class _BookingDetailDialogState extends State<BookingDetailDialog> {
               ),
             ),
             const SizedBox(height: 20),
+            _buildDetailRow('Class', widget.kelas),
+            const SizedBox(height: 20),
             _buildDetailRow('Time', widget.time),
             const SizedBox(height: 12),
             _buildDetailRow('Room', widget.room),
@@ -241,6 +245,12 @@ class _BookingDetailDialogState extends State<BookingDetailDialog> {
   }
 
   Widget _buildActionButtons() {
+      // Kondisi untuk memeriksa status booking
+  if (widget.status == 'Booked') {
+    // Jika status Booked, kembalikan Container kosong atau SizedBox
+    return SizedBox.shrink();
+  }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

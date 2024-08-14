@@ -62,6 +62,7 @@ class _DashboardState extends State<Dashboard> {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
+      print('Blocked Dates API Response: ${response.body}');
       setState(() {
         blockedDates = json.decode(response.body);
       });
@@ -332,26 +333,20 @@ class _DashboardState extends State<Dashboard> {
                               weekendTextStyle: TextStyle(color: Colors.white),
                               outsideDaysVisible: false,
                               disabledTextStyle: TextStyle(
-                                  color: Colors.red.withOpacity(0.8),
-                                  fontWeight: FontWeight.bold),
+                                color: Colors.red.withOpacity(0.8),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            enabledDayPredicate: (date) {
-                              // Disable blocked dates
-                              for (var blocked in blockedDates) {
-                                if (DateTime.parse(blocked['blocked_date'])
-                                    .isAtSameMomentAs(date)) {
-                                  return false; // Disable this date
-                                }
-                              }
-                              return true; // Enable other dates
-                            },
                             onDaySelected: (selectedDay, focusedDay) {
                               bool isBlocked = false;
                               String reason = '';
 
                               for (var blocked in blockedDates) {
-                                if (DateTime.parse(blocked['blocked_date'])
-                                    .isAtSameMomentAs(selectedDay)) {
+                                DateTime blockedDate =
+                                    DateTime.parse(blocked['blocked_date']);
+                                if (blockedDate.year == selectedDay.year &&
+                                    blockedDate.month == selectedDay.month &&
+                                    blockedDate.day == selectedDay.day) {
                                   isBlocked = true;
                                   reason = blocked['reason'];
                                   break;
@@ -359,7 +354,8 @@ class _DashboardState extends State<Dashboard> {
                               }
 
                               if (isBlocked) {
-                                _showBlockedDateDialog(reason); // Show reason for blocking
+                                _showBlockedDateDialog(
+                                    reason); // Show reason for blocking
                               } else {
                                 setState(() {
                                   _selectedDay = selectedDay;
@@ -369,23 +365,45 @@ class _DashboardState extends State<Dashboard> {
                               }
                             },
                             onPageChanged: (focusedDay) {
-                              _focusedDay = focusedDay;
+                              setState(() {
+                                _focusedDay = focusedDay;
+                              });
                             },
                             calendarBuilders: CalendarBuilders(
                               defaultBuilder: (context, date, _) {
+                                bool isBlocked = false;
+
                                 for (var blocked in blockedDates) {
-                                  if (DateTime.parse(blocked['blocked_date'])
-                                      .isAtSameMomentAs(date)) {
-                                    return Center(
+                                  DateTime blockedDate =
+                                      DateTime.parse(blocked['blocked_date']);
+                                  if (blockedDate.year == date.year &&
+                                      blockedDate.month == date.month &&
+                                      blockedDate.day == date.day) {
+                                    isBlocked = true;
+                                    break;
+                                  }
+                                }
+
+                                if (isBlocked) {
+                                  return Center(
+                                    child: Container(
+                                      width: 40, // Adjust size as needed
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.withOpacity(
+                                            0.8), // Red background color
+                                        shape: BoxShape.circle, // Oval shape
+                                      ),
+                                      alignment: Alignment.center,
                                       child: Text(
                                         '${date.day}',
                                         style: TextStyle(
-                                          color: Colors.red.withOpacity(0.8),
+                                          color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    );
-                                  }
+                                    ),
+                                  );
                                 }
                                 return null; // No special style for non-blocked dates
                               },

@@ -119,6 +119,7 @@ class _MyBookingState extends State<MyBooking> {
 
   void _showBookingDetailDialog({
     required String id,
+    required String kelas,
     required String date,
     required String room,
     required String time,
@@ -131,6 +132,7 @@ class _MyBookingState extends State<MyBooking> {
       builder: (BuildContext context) {
         return BookingDetailDialog(
           id: id,
+          kelas: kelas,
           date: date,
           room: room,
           time: time,
@@ -251,6 +253,7 @@ class _MyBookingState extends State<MyBooking> {
                               children: filteredBookings.map((booking) {
                                 return BookingItem(
                                   id: booking['id']?.toString() ?? '',
+                                  kelas: booking['promotion']?['name'] ?? '',
                                   date: booking['tgl'] ?? '',
                                   room: booking['room']['nama'] ?? '',
                                   time: booking['promotion_time'] ?? '',
@@ -261,9 +264,10 @@ class _MyBookingState extends State<MyBooking> {
                                   onTap: () {
                                     _showBookingDetailDialog(
                                       id: booking['id']?.toString() ?? '',
+                                      kelas:
+                                          booking['promotion']?['name'] ?? '',
                                       date: booking['tgl'] ?? '',
-                                      room:
-                                          booking['room']['nama'] ?? '',
+                                      room: booking['room']['nama'] ?? '',
                                       time: booking['promotion_time'] ?? '',
                                       price: booking['harga']?.toString() ?? '',
                                       qrcode:
@@ -288,6 +292,7 @@ class _MyBookingState extends State<MyBooking> {
 
 class BookingItem extends StatelessWidget {
   final String id;
+  final String kelas;
   final String date;
   final String room;
   final String time;
@@ -299,6 +304,7 @@ class BookingItem extends StatelessWidget {
   const BookingItem({
     Key? key,
     required this.id,
+    required this.kelas,
     required this.date,
     required this.room,
     required this.time,
@@ -337,7 +343,17 @@ class BookingItem extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: screenWidth * 0.02),
+              SizedBox(height: screenWidth * 0.02), // Add some spacing
+              Text(
+                'Class: $kelas',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18, // Ukuran teks untuk kelas
+                  fontFamily: 'Source Sans Pro',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: screenWidth * 0.01),
               Row(
                 children: [
                   Expanded(
