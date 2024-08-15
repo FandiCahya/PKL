@@ -176,7 +176,7 @@ class _BookingDetailDialogState extends State<BookingDetailDialog> {
             const SizedBox(height: 12),
             _buildDetailRow('Status', widget.status),
             const SizedBox(height: 20),
-            _buildQrCode(screenWidth),
+            if (widget.status == 'Booked') _buildQrCode(screenWidth),
             const SizedBox(height: 20),
             if (_imageFile != null) _buildUploadedImage(screenWidth),
             const SizedBox(height: 12),
@@ -245,47 +245,68 @@ class _BookingDetailDialogState extends State<BookingDetailDialog> {
   }
 
   Widget _buildActionButtons() {
-      // Kondisi untuk memeriksa status booking
-  if (widget.status == 'Booked') {
-    // Jika status Booked, kembalikan Container kosong atau SizedBox
-    return SizedBox.shrink();
-  }
+    // Kondisi untuk memeriksa status booking
+    if (widget.status == 'Booked') {
+      // Jika status Booked, kembalikan Container kosong atau SizedBox
+      return SizedBox.shrink();
+    }
+
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        Flexible(
           child: GestureDetector(
             onTap: _pickImage,
-            child: Text(
-              'Upload Payment',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: screenWidth * 0.03, // Padding vertikal disesuaikan
+                horizontal:
+                    screenWidth * 0.04, // Padding horizontal disesuaikan
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  'Upload',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenWidth * 0.04, // Ukuran font disesuaikan
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Color(0xFF746EBD),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        SizedBox(width: 10), // Space between buttons
+        Flexible(
           child: GestureDetector(
             onTap: _payNow,
-            child: Text(
-              'Pay Now',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                vertical: screenWidth * 0.03, // Padding vertikal disesuaikan
+                horizontal:
+                    screenWidth * 0.04, // Padding horizontal disesuaikan
+              ),
+              decoration: BoxDecoration(
+                color: Color(0xFF746EBD),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  'Pay Now',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: screenWidth * 0.04, // Ukuran font disesuaikan
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
           ),

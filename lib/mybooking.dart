@@ -42,7 +42,7 @@ class _MyBookingState extends State<MyBooking> {
 
   Future<void> fetchBookings() async {
     final response = await http
-        .get(Uri.parse('http://127.0.0.1:8000/api/detailbooking/$userId'));
+        .get(Uri.parse('http://192.168.100.97:8000/api/detailbooking/$userId'));
 
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
@@ -259,7 +259,7 @@ class _MyBookingState extends State<MyBooking> {
                                   time: booking['promotion_time'] ?? '',
                                   price: booking['harga']?.toString() ?? '',
                                   qrcode:
-                                      'http://127.0.0.1:8000/${booking['qrcode']}',
+                                      'http://192.168.100.97:8000/${booking['qrcode']}',
                                   status: booking['status'] ?? '',
                                   onTap: () {
                                     _showBookingDetailDialog(
@@ -271,7 +271,7 @@ class _MyBookingState extends State<MyBooking> {
                                       time: booking['promotion_time'] ?? '',
                                       price: booking['harga']?.toString() ?? '',
                                       qrcode:
-                                          'http://127.0.0.1:8000/${booking['qrcode']}',
+                                          'http://192.168.100.97:8000/${booking['qrcode']}',
                                       status: booking['status'] ?? '',
                                     );
                                   },

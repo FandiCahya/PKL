@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class PromotionService {
   Future<List<dynamic>> fetchPromotions() async {
     final response =
-        await http.get(Uri.parse('http://127.0.0.1:8000/api/kelolakelas'));
+        await http.get(Uri.parse('http://192.168.100.97:8000/api/kelolakelas'));
     // print("Hello");
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

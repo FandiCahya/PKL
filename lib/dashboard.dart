@@ -41,7 +41,7 @@ class _DashboardState extends State<Dashboard> {
       userName = prefs.getString('name') ?? 'Guest';
       String imagePath = prefs.getString('image') ??
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8fXV2eeV0pxoIQx0CdAtrP_tqNuHTApyoCQ&s';
-      userImage = 'http://127.0.0.1:8000/$imagePath';
+      userImage = 'http://192.168.100.97:8000/$imagePath';
       print('User image URL: $userImage');
     });
   }
@@ -58,7 +58,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _fetchBlockedDates() async {
-    final url = Uri.parse('http://127.0.0.1:8000/api/blocked-dates');
+    final url = Uri.parse('http://192.168.100.97:8000/api/blocked-dates');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -71,13 +71,27 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  // void _showBookingBottomSheet(DateTime selectedDay) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.transparent,
+  //     builder: (BuildContext context) {
+  //       // heightFactor:0.75;
+  //       return BookingBottomSheet(selectedDate: selectedDay);
+  //     },
+  //   );
+  // }
   void _showBookingBottomSheet(DateTime selectedDay) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return BookingBottomSheet(selectedDate: selectedDay);
+        return FractionallySizedBox(
+          heightFactor: 0.75, // Mengatur tinggi menjadi 3/4 layar
+          child: BookingBottomSheet(selectedDate: selectedDay),
+        );
       },
     );
   }
@@ -118,7 +132,8 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.of(context).pop();
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: Color(0xFF746EBD),
                   borderRadius: BorderRadius.circular(10),
@@ -162,22 +177,52 @@ class _DashboardState extends State<Dashboard> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
+                          width:
+                              40, // Lebih besar untuk tampilan yang lebih baik
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle, // Menggunakan bentuk bulat
+                            border: Border.all(
+                              color:
+                                  Color(0xFF726BBC), // Border warna abu-abu
+                              width: 1.5, // Lebar border
                             ),
-                            child: ClipOval(
-                              child: Image.network(
-                                userImage,
-                                fit: BoxFit.fill,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Center(
-                                    child: Icon(Icons.error, color: Colors.red),
-                                  );
-                                },
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black
+                                    .withOpacity(0.2), // Bayangan hitam lembut
+                                blurRadius: 6, // Radius blur
+                                offset: Offset(0, 2), // Posisi bayangan
                               ),
-                            )),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: Image.network(
+                              userImage,
+                              fit: BoxFit
+                                  .cover, // Memastikan gambar mengisi Container
+                              loadingBuilder: (context, child, progress) {
+                                if (progress == null) {
+                                  return child;
+                                } else {
+                                  return Center(
+                                    child:
+                                        CircularProgressIndicator(), // Loader saat gambar dimuat
+                                  );
+                                }
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Center(
+                                  child: Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                    size: 24,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                         const SizedBox(width: 22),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,13 +249,13 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     Container(
                       height: 2,
                       width: double.infinity,
                       color: Color(0xFF726BBC),
                     ),
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 15),
                     Text.rich(
                       TextSpan(
                         children: [
@@ -236,7 +281,7 @@ class _DashboardState extends State<Dashboard> {
                       ),
                       textAlign: TextAlign.start,
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -249,7 +294,7 @@ class _DashboardState extends State<Dashboard> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -257,7 +302,7 @@ class _DashboardState extends State<Dashboard> {
                           return promoCard(
                             promo['id'].toString(),
                             promo['name'],
-                            'http://127.0.0.1:8000/${promo['image']}',
+                            'http://192.168.100.97:8000/${promo['image']}',
                             promo['deskripsi'],
                             promo['harga'],
                             promo['tgl'],
@@ -271,7 +316,7 @@ class _DashboardState extends State<Dashboard> {
                         }).toList(),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     Align(
                       alignment: Alignment.topCenter,
                       child: Column(
@@ -456,25 +501,30 @@ class _DashboardState extends State<Dashboard> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(right: 16),
+        margin: const EdgeInsets.only(right: 10),
         width: 300,
         height: 170,
         child: Card(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(10), // Buat sudut lebih halus
           ),
           child: Stack(
             children: [
-              CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                errorWidget: (context, url, error) => Icon(Icons.error),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    10), // Terapkan border radius pada gambar juga
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
               ),
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(
+                      10), // Sesuaikan border radius pada gradient
                   gradient: LinearGradient(
                     colors: [
                       Colors.black.withOpacity(0.7),
@@ -490,12 +540,22 @@ class _DashboardState extends State<Dashboard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(
+                            0.5), // Latar belakang solid untuk nama
+                        borderRadius: BorderRadius.circular(
+                            8), // Membuat sudut kotak nama lebih halus
+                      ),
+                      child: Text(
+                        name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 8),

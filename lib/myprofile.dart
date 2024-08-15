@@ -28,7 +28,7 @@ class _MyprofileState extends State<Myprofile> {
       userName = prefs.getString('name') ?? 'Guest';
       String imagePath = prefs.getString('image') ??
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8fXV2eeV0pxoIQx0CdAtrP_tqNuHTApyoCQ&s';
-      userImage = 'http://127.0.0.1:8000/$imagePath';
+      userImage = 'http://192.168.100.97:8000/$imagePath';
       print('User image URL: $userImage');
     });
   }
@@ -37,7 +37,7 @@ class _MyprofileState extends State<Myprofile> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // Clear all stored preferences
 
-    final url = Uri.parse('http://localhost:8000/api/auth/logout');
+    final url = Uri.parse('http://192.168.100.97:8000/api/auth/logout');
     try {
       final response = await http.post(
         url,
@@ -188,132 +188,166 @@ class _MyprofileState extends State<Myprofile> {
             Container(
               color: Color.fromARGB(255, 43, 43, 47),
             ),
-            SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 60,
-                    alignment: Alignment.center,
+            Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'My',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 28,
-                                  fontFamily: 'Source Sans Pro',
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2,
-                                ),
-                              ),
-                              TextSpan(
-                                text: ' ',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 28,
-                                  fontFamily: 'Source Sans Pro',
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2,
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'Profile',
-                                style: TextStyle(
-                                  color: Color(0xFF746EBD),
-                                  fontSize: 28,
-                                  fontFamily: 'Source Sans Pro',
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2,
-                                ),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 5),
                         Container(
-                          height: 2,
                           width: double.infinity,
-                          color: Color(0xFF726BBC),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 15), // Add some spacing
-                  Center(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: profileWidth,
-                          height: profileHeight,
+                          height: 60,
+                          alignment: Alignment.center,
                           child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                width: profileWidth, // Ensure this is defined
-                                height:
-                                    profileWidth, // Same dimension for a circle
-                                decoration: ShapeDecoration(
-                                  shape: CircleBorder(
-                                    side: BorderSide(
-                                      width: 3,
-                                      color: Color(0xFF726CBC),
+                              Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'My',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 28,
+                                        fontFamily: 'Source Sans Pro',
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.2,
+                                      ),
                                     ),
-                                  ),
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Color(0x3F000000),
-                                      blurRadius: 4,
-                                      offset: Offset(0, 4),
-                                      spreadRadius: 0,
+                                    TextSpan(
+                                      text: ' ',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 28,
+                                        fontFamily: 'Source Sans Pro',
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.2,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: 'Profile',
+                                      style: TextStyle(
+                                        color: Color(0xFF746EBD),
+                                        fontSize: 28,
+                                        fontFamily: 'Source Sans Pro',
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.2,
+                                      ),
                                     ),
                                   ],
                                 ),
-                                child: ClipOval(
-                                  child: Image.network(
-                                    userImage,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, progress) {
-                                      if (progress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      print(
-                                          'Error loading image: $error'); // Log the error
-                                      return Center(
-                                        child: Icon(Icons.error,
-                                            color: Colors.red),
-                                      ); // Show an error icon or any placeholder
-                                    },
-                                  ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 5),
+                              Container(
+                                height: 2,
+                                width: double.infinity,
+                                color: Color(0xFF726BBC),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 15), // Add some spacing
+                        Center(
+                          child: Column(
+                            children: [
+                              Container(
+                                width: profileWidth,
+                                height: profileHeight,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: profileWidth, // Ensure this is defined
+                                      height:
+                                          profileWidth, // Same dimension for a circle
+                                      decoration: ShapeDecoration(
+                                        shape: CircleBorder(
+                                          side: BorderSide(
+                                            width: 3,
+                                            color: Color(0xFF726CBC),
+                                          ),
+                                        ),
+                                        shadows: [
+                                          BoxShadow(
+                                            color: Color(0x3F000000),
+                                            blurRadius: 4,
+                                            offset: Offset(0, 4),
+                                            spreadRadius: 0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          userImage,
+                                          fit: BoxFit.cover,
+                                          loadingBuilder: (context, child, progress) {
+                                            if (progress == null) return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(),
+                                            );
+                                          },
+                                          errorBuilder: (context, error, stackTrace) {
+                                            print(
+                                                'Error loading image: $error'); // Log the error
+                                            return Center(
+                                              child: Icon(Icons.error,
+                                                  color: Colors.red),
+                                            ); // Show an error icon or any placeholder
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.symmetric(vertical: 4.0),
+                                        child: Text(
+                                          userName,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 23,
+                                            fontFamily: 'Source Sans Pro',
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.2, // Adjusted line height
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              SizedBox(
-                                width: double.infinity,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4.0),
+                              const SizedBox(height: 15),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => EditMyProfile()),
+                                  );
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  width: profileWidth * 0.6, // Adjusted width
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF726CBC),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                   child: Text(
-                                    userName,
+                                    'Edit Profile',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 23,
+                                      fontSize: 18,
                                       fontFamily: 'Source Sans Pro',
                                       fontWeight: FontWeight.w600,
-                                      height: 1.2, // Adjusted line height
                                     ),
                                   ),
                                 ),
@@ -321,66 +355,39 @@ class _MyprofileState extends State<Myprofile> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 15),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditMyProfile()),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            width: profileWidth * 0.5, // Adjusted width
-                            decoration: BoxDecoration(
-                              color: Color(0xFF726CBC),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              'Edit Profile',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontFamily: 'Source Sans Pro',
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
+                        SizedBox(height: 20),
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: // Add some spacing
-                        GestureDetector(
-                      onTap: () {
-                        _showLogoutConfirmation();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        width: profileWidth * 0.8, // Adjusted width
-                        decoration: BoxDecoration(
-                          color: Color(0xFF726CBC),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'Sign Out',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: 'Source Sans Pro',
-                            fontWeight: FontWeight.w600,
-                          ),
+                ),
+                // Spacer untuk mendorong tombol Sign Out ke bagian bawah layar
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      _showLogoutConfirmation();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      width: screenWidth * 0.8, // Adjusted width
+                      decoration: BoxDecoration(
+                        color: Color(0xFF726CBC),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Sign Out',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: 'Source Sans Pro',
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

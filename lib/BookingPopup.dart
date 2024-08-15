@@ -24,7 +24,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/api');
+    _apiService = ApiService(baseUrl: 'http://192.168.100.97:8000/api');
     _roomsFuture = _apiService.fetchRooms();
   }
 
@@ -433,7 +433,11 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
 
                     BlockedTimeSlot? blockedSlot =
                         blockedSlots.firstWhereOrNull(
-                      (slot) => slot.timeSlotId == timeSlot.id,
+                      (slot) =>
+                          slot.timeSlotId == timeSlot.id &&
+                          slot.blockedDate.year == widget.selectedDate.year &&
+                          slot.blockedDate.month == widget.selectedDate.month &&
+                          slot.blockedDate.day == widget.selectedDate.day,
                     );
 
                     if (blockedSlot != null) {
@@ -454,15 +458,15 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                 color: _selectedTime == timeSlot.id
                     ? Color(0xFF746EBD)
                     : timeSlot.availability == 1
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.grey.withOpacity(0.3),
+                        ? Color(0xFF424242).withOpacity(0.5)
+                        : Color(0xFFBDBDBD).withOpacity(0.5),
                 borderRadius: BorderRadius.circular(8.0),
                 border: Border.all(
                   color: _selectedTime == timeSlot.id
                       ? Color(0xFF746EBD)
                       : timeSlot.availability == 0
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.grey.withOpacity(0.3),
+                          ? Color(0xFFE0E0E0).withOpacity(0.3)
+                          : Color(0xFF757575).withOpacity(0.3),
                 ),
               ),
               child: Center(
