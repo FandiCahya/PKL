@@ -92,18 +92,20 @@
             <!-- Nav Item - Blocking -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBlocking"
-                    aria-expanded="true" aria-controls="collapseBlocking">
+                    aria-expanded="false" aria-controls="collapseBlocking">
                     <i class="fas fa-fw fa-ban"></i>
                     <span>Blocking</span>
                 </a>
-                <div id="collapseBlocking" class="collapse" aria-labelledby="headingBlocking"
-                    data-parent="#accordionSidebar">
+                <div id="collapseBlocking" class="collapse" aria-labelledby="headingBlocking" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Manage Blocking:</h6>
                         <a class="collapse-item" href="{{ route('blocked_dates.index') }}">Date & Time</a>
-                        <a class="collapse-item" href="{{ route('blocked_tgl.index') }}">Date</a>
+                        <a class="collapse-item" href="{{ route('blocked_tgl.index') }}">Date Only</a>
                     </div>
                 </div>
             </li>
+            
+            
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

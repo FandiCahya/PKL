@@ -82,27 +82,27 @@
         </div>
     </div>
 
-    <!-- Card Schedule -->
-    {{-- <div class="col-xl-3 col-md-6 mb-4">
+    <!-- Card Payments -->
+    <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-secondary shadow h-100 py-2">
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Schedule
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Payments
                         </div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $jumlahSchedule }}</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $jumlahPayments }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-auto">
-                        <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        <i class="fas fa-wallet fa-2x text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
-    </div> --}}
+    </div>
 
     <!-- Card Bookings -->
     <div class="col-xl-3 col-md-6 mb-4">

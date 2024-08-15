@@ -93,9 +93,13 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
         Route::put('/{payment}', [PaymentController::class, 'update'])->name('payments.update');
         Route::delete('/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+        Route::post('/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');
+        Route::post('/reject', [PaymentController::class, 'reject'])->name('payments.reject');
+        Route::get('/validate/{id}', [PaymentController::class, 'getBookingDetails'])->name('payment.getBookingDetails');
     });
     
 
+    
 
     Route::put('bookings/{id}/validate', [BookingController::class, 'validateBooking'])->name('validate_booking');
 

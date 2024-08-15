@@ -10,7 +10,7 @@
             <th style="width: 5%;">Status</th>
             <th style="width: 10%;">QR Code</th>
             {{-- <th>Action</th> --}}
-            <th style="width: 15%;">Validate</th> <!-- Added this column for the validation button -->
+            {{-- <th style="width: 15%;">Validate</th> <!-- Added this column for the validation button --> --}}
         </tr>
     </thead>
     <tbody>
@@ -66,7 +66,7 @@
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td> --}}
-                <td>
+                {{-- <td>
                     @if ($booking->status === 'Pending')
                         <!-- Display validation buttons if status is 'Pending' -->
                         <form action="{{ route('validate_booking', $booking->id) }}" method="POST"
@@ -99,7 +99,7 @@
                         </form>
                     @endif
 
-                </td>
+                </td> --}}
             </tr>
         @endforeach
     </tbody>

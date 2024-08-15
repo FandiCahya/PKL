@@ -137,7 +137,7 @@ class UserApiController extends Controller
             'no_hp' => 'sometimes|required|string|max:15',
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'nullable|in:admin,user',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:5048',
         ]);
     
         try {

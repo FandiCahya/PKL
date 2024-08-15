@@ -34,7 +34,7 @@ class PaymentController extends Controller
         $profile = Auth::user();
         $bookings = Booking::all();
         $users = User::all();
-        return view('admin.payments.create', compact('profile','bookings','users'));
+        return view('admin.payments.create', compact('profile', 'bookings', 'users'));
     }
 
     /**
@@ -120,7 +120,7 @@ class PaymentController extends Controller
             // $imagePath = $request->file('image')->store('promotions', 'public');
             $fileName = $request->file('payment_proof')->getClientOriginalName();
             $request->file('payment_proof')->move(public_path('pembayaran'), $fileName);
-            $imagePath = 'pembayaran/'.$fileName;
+            $imagePath = 'pembayaran/' . $fileName;
         }
 
         $payment->update($request->except('payment_proof'));
@@ -165,5 +165,73 @@ class PaymentController extends Controller
         $payment->delete();
 
         return redirect()->route('payments.index')->with('success', 'Payment deleted successfully.');
+    }
+    public function confirm(Request $request)
+    {
+        $payment = Payment::find($request->payment_id);
+        if ($payment) {
+            $payment->status = 'confirmed';
+            $payment->save();
+
+            $booking = Booking::find($payment->booking_id);
+            if ($booking) {
+                $booking->status = 'booked';
+                $booking->save();
+            }
+
+            // Log the confirmation action
+            Logs::create([
+                'user_id' => Auth::id(),
+                'action' => 'confirm',
+                'description' => 'Confirmed payment for booking ID: ' . $booking->id,
+                'table_name' => 'payments',
+                'table_id' => $payment->id,
+                'data' => json_encode($payment->toArray()),
+            ]);
+
+            return redirect()->route('payments.index')->with('success', 'Payment Confirmed successfully.');
+        }
+
+        return redirect()->route('payments.index')->with('error', 'Payment not found.');
+    }
+
+    public function reject(Request $request)
+    {
+        $payment = Payment::find($request->payment_id);
+        if ($payment) {
+            $payment->status = 'rejected';
+            $payment->save();
+
+            $booking = Booking::find($payment->booking_id);
+            if ($booking) {
+                $booking->status = 'rejected';
+                $booking->save();
+            }
+
+            // Log the rejection action
+            Logs::create([
+                'user_id' => Auth::id(),
+                'action' => 'reject',
+                'description' => 'Rejected payment for booking ID: ' . $booking->id,
+                'table_name' => 'payments',
+                'table_id' => $payment->id,
+                'data' => json_encode($payment->toArray()),
+            ]);
+
+            return redirect()->route('payments.index')->with('success', 'Payment Rejected successfully.');
+        }
+
+        return redirect()->route('payments.index')->with('error', 'Payment not found.');
+    }
+
+    public function getBookingDetails($id)
+    {
+        $payment = Payment::with(['booking.user', 'booking.room', 'booking.timeSlot', 'booking.promotion'])->find($id);
+
+        if (!$payment) {
+            return response()->json(['error' => 'Payment not found'], 404);
+        }
+
+        return response()->json($payment);
     }
 }
