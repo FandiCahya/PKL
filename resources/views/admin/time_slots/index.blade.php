@@ -4,7 +4,12 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Data Time Slots</h1>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Manage Time Slots</h1>
+        <a href="{{ route('time-slots.create') }}" class="btn btn-success">
+            <i class="fas fa-plus-circle"></i> Create Time Slot
+        </a>
+    </div>
 
     @if (session('success'))
     <div class="alert alert-success">
@@ -14,27 +19,25 @@
 
     <!-- Search Form -->
     <div class="row mb-4">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <form class="form-inline">
+                <label for="search" class="sr-only">Search Time Slots</label>
                 <div class="input-group">
                     <input type="text" name="search" id="search" class="form-control" placeholder="Search by start time or end time" value="{{ request('search') }}">
                     <div class="input-group-append">
-                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="col-lg-6 text-right">
-            <a href="{{ route('time-slots.create') }}" class="btn btn-success">
-                Create Time Slot
-            </a>
         </div>
     </div>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-            <h6 class="m-0 font-weight-bold text-primary">Data Time Slots</h6>
+            <h6 class="m-0 font-weight-bold text-primary">List of Time Slots</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive" id="time-slots-table">

@@ -23,7 +23,7 @@ class BlockedDateController extends Controller
             $query->where('blocked_date', 'LIKE', "%{$search}%")->orWhere('reason', 'LIKE', "%{$search}%");
         }
 
-        $blockedDates = $query->orderBy('created_at', 'desc')->get();
+        $blockedDates = $query->orderBy('created_at', 'desc')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.blocked_dates_table', compact('blockedDates'))->render();

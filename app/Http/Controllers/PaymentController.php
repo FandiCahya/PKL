@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Logs;
 use App\Models\User;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\File;
 
 class PaymentController extends Controller
 {
@@ -20,7 +22,7 @@ class PaymentController extends Controller
             ->paginate(10);
 
         if ($request->ajax()) {
-            return view('admin.payments.index', compact('payments'))->render();
+            return view('admin.payments.table', compact('payments'))->render();
         }
 
         return view('admin.payments.index', compact('payments', 'profile', 'search'));
@@ -174,8 +176,24 @@ class PaymentController extends Controller
             $payment->save();
 
             $booking = Booking::find($payment->booking_id);
+            // $bookingType = Booking::find($payment->booking());
             if ($booking) {
-                $booking->status = 'booked';
+                $booking->status = 'Booked';
+                $booking->save();
+            }
+            
+            if ($booking->status === 'Booked') {
+                // Generate the QR code
+                if ($booking->booking_type === 'room') {
+                    $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Room: ' . $booking->room->nama . ', Tanggal: ' . $booking->tgl . ', Waktu: ' . $booking->timeSlot->start_time . ' - ' . $booking->timeSlot->end_time;
+                } else {
+                    $qrContent = 'Booking ID: ' . $booking->id . ', User: ' . $booking->user->name . ', Class: ' . $booking->promotion->name . ', Room: ' . $booking->promotion->room->nama . ', Tanggal: ' . $booking->promotion->tgl . ', Waktu: ' . $booking->promotion->waktu;
+                }
+                $qrCode = QrCode::format('png')->generate($qrContent);
+                $fileName = uniqid() . '.png';
+                $destinationPath = public_path('qr_codes/' . $fileName);
+                File::put($destinationPath, $qrCode);
+                $booking->qrcode = 'qr_codes/' . $fileName;
                 $booking->save();
             }
 
@@ -204,7 +222,7 @@ class PaymentController extends Controller
 
             $booking = Booking::find($payment->booking_id);
             if ($booking) {
-                $booking->status = 'rejected';
+                $booking->status = 'Rejected';
                 $booking->save();
             }
 

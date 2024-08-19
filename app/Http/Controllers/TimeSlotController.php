@@ -18,15 +18,17 @@ class TimeSlotController extends Controller
         $search = $request->get('search');
         $profile = Auth::user();
         $timeSlots = TimeSlot::where('start_time', 'like', "%{$search}%")
-            ->orWhere('end_time', 'like', "%{$search}%")->orderBy('created_at','desc')
-            ->paginate(10);
-
+            ->orWhere('end_time', 'like', "%{$search}%")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); // Menggunakan paginasi
+    
         if ($request->ajax()) {
-            return view('admin.time_slots.index', compact('timeSlots'))->render();
+            return view('admin.time_slots.table', compact('timeSlots'))->render();
         }
-
+    
         return view('admin.time_slots.index', compact('timeSlots', 'profile', 'search'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
@@ -35,7 +37,7 @@ class TimeSlotController extends Controller
     {
         $profile = Auth::user();
         $rooms = Room::all();
-        return view('admin.time_slots.create', compact('profile','rooms'));
+        return view('admin.time_slots.create', compact('profile', 'rooms'));
     }
 
     /**
@@ -50,21 +52,33 @@ class TimeSlotController extends Controller
             'availability' => 'required|boolean',
         ]);
 
-        $timeSlot = TimeSlot::create($request->all());
+        // $timeSlot = TimeSlot::create($request->all());
+        $startTime = \Carbon\Carbon::createFromFormat('H:i', $request->start_time);
+        $endTime = \Carbon\Carbon::createFromFormat('H:i', $request->end_time);
 
-        // Data log
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'create',
-            'description' => 'Created a new time slot: ' . $timeSlot->start_time . ' - ' . $timeSlot->end_time,
-            'table_name' => 'time_slots',
-            'table_id' => $timeSlot->id,
-            'data' => json_encode($timeSlot->toArray()),
-        ];
+        while ($startTime->lessThan($endTime)) {
+            // Buat TimeSlot baru untuk setiap jam
+            $timeSlot = TimeSlot::create([
+                'start_time' => $startTime->format('H:i'),
+                'end_time' => $startTime->copy()->addHour()->format('H:i'),
+                'room_id' => $request->room_id,
+                'availability' => $request->availability,
+            ]);
 
-        // Save log
-        Logs::create($logData);
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'create',
+                'description' => 'Created a new time slot: ' . $timeSlot->start_time . ' - ' . $timeSlot->end_time,
+                'table_name' => 'time_slots',
+                'table_id' => $timeSlot->id,
+                'data' => json_encode($timeSlot->toArray()),
+            ];
 
+            // Save log
+            Logs::create($logData);
+            $startTime->addHour();
+        }
         return redirect()->route('time-slots.index')->with('success', 'Time slot created successfully.');
     }
 
@@ -84,7 +98,7 @@ class TimeSlotController extends Controller
     {
         $profile = Auth::user();
         $rooms = Room::all();
-        return view('admin.time_slots.edit', compact('timeSlot', 'profile','rooms'));
+        return view('admin.time_slots.edit', compact('timeSlot', 'profile', 'rooms'));
     }
 
     /**
