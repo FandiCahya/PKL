@@ -16,10 +16,7 @@ class Instruktur extends Model
         'email',
     ];
 
-    public function schedule()
-    {
-        return $this->hasMany(Schedule::class);
-    }
+
 
     public function promotions()
     {

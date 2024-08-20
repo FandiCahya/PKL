@@ -187,7 +187,6 @@ class UserApiController extends Controller
         }
     }
     
-
     public function destroy($id)
     {
         $user = User::findOrFail($id);

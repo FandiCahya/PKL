@@ -6,6 +6,7 @@
             <th style="width: 10%;">Booking ID</th>
             <th style="width: 10%;">Amount</th>
             <th style="width: 15%;">Proof</th>
+            <th style="width: 10%;">Status</th>
             <th style="width: 15%;">Uploaded At</th>
             <th style="width: 20%;">Actions</th>
         </tr>
@@ -30,6 +31,7 @@
                         style="max-width: 150px; cursor: pointer;" data-toggle="modal" data-target="#paymentProofModal"
                         onclick="showImage('{{ asset($payment->payment_proof) }}')">
                 </td>
+                <td>{{ $payment->status }}</td>
                 <td>{{ $payment->created_at->format('d M Y H:i') }}</td>
                 <td>
                     {{-- <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-warning btn-sm">Edit</a> --}}

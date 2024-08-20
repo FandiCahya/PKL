@@ -20,10 +20,7 @@ class Promotion extends Model
         'instruktur_id'
     ];
 
-    public function schedule()
-    {
-        return $this->hasMany(Schedule::class);
-    }
+
 
     public function instruktur()
     {
