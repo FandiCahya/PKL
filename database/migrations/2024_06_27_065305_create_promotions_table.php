@@ -21,10 +21,11 @@ return new class extends Migration
             $table->unsignedBigInteger('room_id');
             $table->unsignedBigInteger('instruktur_id');
             $table->timestamps();
+            $table->softDeletes();
 
             // Adding foreign key constraints
-            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-            $table->foreign('instruktur_id')->references('id')->on('instrukturs')->onDelete('cascade');
+            $table->foreign('room_id')->references('id')->on('rooms');
+            $table->foreign('instruktur_id')->references('id')->on('instrukturs');
         });
     }
 

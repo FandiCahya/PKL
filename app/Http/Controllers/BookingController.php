@@ -48,6 +48,9 @@ class BookingController extends Controller
                 })
                 ->orWhereHas('room', function ($q) use ($search) {
                     $q->where('nama', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('promotion', function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%');
                 });
         }
 

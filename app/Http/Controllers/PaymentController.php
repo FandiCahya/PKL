@@ -17,7 +17,11 @@ class PaymentController extends Controller
     {
         $search = $request->get('search');
         $profile = Auth::user();
-        $payments = Payment::where('booking_id', 'like', "%{$search}%")
+        $payments = Payment::with('user') // Load the associated user
+            ->where('booking_id', 'like', "%{$search}%")
+            ->orWhereHas('user', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -181,7 +185,7 @@ class PaymentController extends Controller
                 $booking->status = 'Booked';
                 $booking->save();
             }
-            
+
             if ($booking->status === 'Booked') {
                 // Generate the QR code
                 if ($booking->booking_type === 'room') {

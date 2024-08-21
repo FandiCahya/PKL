@@ -28,17 +28,18 @@
                 <td>{{ $promotion->tgl }}</td>
                 <td>{{ $promotion->waktu }}</td>
                 <td>{{ $promotion->harga }}</td>
-                <td>{{ $promotion->room->nama }}</td>
-                <td>{{ $promotion->instruktur->nama }}</td>
+                <td>{{ $promotion->room->nama ?? '-' }}</td>
+                <td>{{ $promotion->instruktur->nama ?? '-' }}</td>
+                
                 <td>
                     <a href="{{ route('edit_promo', $promotion->id) }}" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Update" style="margin: 5px;">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-edit"></i> Update
                     </a>
-                    <form action="{{ route('hapus_promo', $promotion->id) }}" method="POST" style="display: inline-block; margin: 5px;" onsubmit="return confirm('Are you sure you want to delete this promotion?');">
+                    <form action="{{ route('hapus_promo', $promotion->id) }}" method="POST" style="display: inline-block; margin: 5px;" onsubmit="return confirm('Are you sure you want to delete this class?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete">
-                            <i class="fas fa-trash-alt"></i>
+                            <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </form>
                 </td>

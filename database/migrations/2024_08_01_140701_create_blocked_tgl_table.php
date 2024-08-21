@@ -16,6 +16,7 @@ return new class extends Migration
             $table->date('blocked_date');
             $table->string('reason')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

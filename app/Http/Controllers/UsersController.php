@@ -25,7 +25,7 @@ class UsersController extends Controller
                 ->orWhere('role', 'LIKE', "%{$search}%");
         }
 
-        $users = $query->orderBy('created_at','desc')->paginate(10);
+        $users = $query->orderBy('created_at', 'desc')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.users_table', compact('users'))->render();
@@ -96,7 +96,9 @@ class UsersController extends Controller
 
             return redirect()->route('kelola_user')->with('success', 'User berhasil ditambahkan.');
         } catch (\Exception $e) {
-            return redirect()->route('kelola_user')->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
+            return redirect()
+                ->route('kelola_user')
+                ->with('error', 'Gagal menambahkan pengguna: ' . $e->getMessage());
         }
     }
 
@@ -134,7 +136,7 @@ class UsersController extends Controller
 
                 $fileName = $request->file('image')->getClientOriginalName();
                 $request->file('image')->move(public_path('profile_images'), $fileName);
-                $imagePath = 'profile_images/'.$fileName;
+                $imagePath = 'profile_images/' . $fileName;
             }
 
             $user->update([
@@ -162,7 +164,9 @@ class UsersController extends Controller
 
             return redirect()->route('kelola_user')->with('success', 'User berhasil diperbarui.');
         } catch (\Exception $e) {
-            return redirect()->route('kelola_user')->with('error', 'Gagal memperbarui pengguna: ' . $e->getMessage());
+            return redirect()
+                ->route('kelola_user')
+                ->with('error', 'Gagal memperbarui pengguna: ' . $e->getMessage());
         }
     }
 
@@ -189,12 +193,14 @@ class UsersController extends Controller
             // Simpan log
             Logs::create($logData);
 
+            // Soft delete user
             $user->delete();
 
             return redirect()->route('kelola_user')->with('success', 'User berhasil dihapus.');
         } catch (\Exception $e) {
-            return redirect()->route('kelola_user')->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+            return redirect()
+                ->route('kelola_user')
+                ->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
         }
     }
 }
-

@@ -23,7 +23,7 @@
             <form class="form-inline">
                 <label for="search" class="sr-only">Search Time Slots</label>
                 <div class="input-group">
-                    <input type="text" name="search" id="search" class="form-control" placeholder="Search by start time or end time" value="{{ request('search') }}">
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
                     <div class="input-group-append">
                         <button class="btn btn-primary" type="button">
                             <i class="fas fa-search"></i>

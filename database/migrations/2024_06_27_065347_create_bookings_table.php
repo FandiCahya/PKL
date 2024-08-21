@@ -18,11 +18,12 @@ return new class extends Migration
             $table->foreignId('promotion_id')->nullable()->constrained('promotions');
             $table->enum('booking_type',['room','class'])->nullable();
             $table->date('tgl');
-            $table->foreignId('time_slot_id')->nullable()->constrained('time_slots')->onDelete('cascade');
+            $table->foreignId('time_slot_id')->nullable()->constrained('time_slots');
             $table->integer('harga')->nullable();
             $table->string('qrcode',255)->nullable();
             $table->enum('status', ['Booked', 'Pending', 'Rejected'])->default('Pending');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

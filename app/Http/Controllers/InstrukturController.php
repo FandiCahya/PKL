@@ -6,6 +6,7 @@ use App\Models\Instruktur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Logs;
+use Illuminate\Support\Facades\DB;
 
 class InstrukturController extends Controller
 {
@@ -16,13 +17,18 @@ class InstrukturController extends Controller
     {
         $search = $request->get('search');
         $profile = Auth::user();
-        $instrukturs = Instruktur::where('nama', 'like', "%{$search}%")->orderBy('created_at','desc')->paginate(10);
-        
+        $instrukturs = Instruktur::where('nama', 'like', "%{$search}%")
+            ->orWhere('email', 'LIKE', "%{$search}%")
+            ->orWhere('alamat', 'LIKE', "%{$search}%")
+            ->orWhere('no_hp', 'LIKE', "%{$search}%")
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
         if ($request->ajax()) {
             return view('admin.kelola_instruktur', compact('instrukturs'))->render();
         }
 
-        return view('admin.kelola_instruktur', compact('instrukturs','profile','search'));
+        return view('admin.kelola_instruktur', compact('instrukturs', 'profile', 'search'));
     }
 
     /**
@@ -31,7 +37,7 @@ class InstrukturController extends Controller
     public function create()
     {
         $profile = Auth::user();
-        return view('admin.tambah.instruktur',compact('profile'));
+        return view('admin.tambah.instruktur', compact('profile'));
     }
 
     /**
@@ -48,7 +54,7 @@ class InstrukturController extends Controller
 
         $instruktur = Instruktur::create($request->all());
 
-         // Data log
+        // Data log
         $logData = [
             'user_id' => Auth::id(),
             'action' => 'create',
@@ -70,7 +76,7 @@ class InstrukturController extends Controller
     public function show(Instruktur $instruktur)
     {
         $profile = Auth::user();
-        return view('admin.kelola_instruktur', compact('instruktur','profile'));
+        return view('admin.kelola_instruktur', compact('instruktur', 'profile'));
     }
 
     /**
@@ -79,7 +85,7 @@ class InstrukturController extends Controller
     public function edit(Instruktur $instruktur)
     {
         $profile = Auth::user();
-        return view('admin.edit.instruktur', compact('instruktur','profile'));
+        return view('admin.edit.instruktur', compact('instruktur', 'profile'));
     }
 
     /**
@@ -109,7 +115,6 @@ class InstrukturController extends Controller
         // Simpan log
         Logs::create($logData);
 
-
         return redirect()->route('instrukturs.index')->with('success', 'Instruktur updated successfully.');
     }
 
@@ -118,20 +123,38 @@ class InstrukturController extends Controller
      */
     public function destroy(Instruktur $instruktur)
     {
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'delete',
-            'description' => 'Deleted an instructor: ' . $instruktur->nama,
-            'table_name' => 'instrukturs',
-            'table_id' => $instruktur->id,
-            'data' => json_encode($instruktur->toArray()),
-        ];
+        try {
+            // Begin transaction
+            DB::beginTransaction();
 
-        // Simpan log
-        Logs::create($logData);
+            // Prepare log data
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted an instructor: ' . $instruktur->nama,
+                'table_name' => 'instrukturs',
+                'table_id' => $instruktur->id,
+                'data' => json_encode($instruktur->toArray()),
+            ];
 
-        $instruktur->delete();
+            // Save the log
+            Logs::create($logData);
 
-        return redirect()->route('instrukturs.index')->with('success', 'Instruktur deleted successfully.');
+            // Soft delete the instruktur
+            $instruktur->delete();
+
+            // Commit transaction
+            DB::commit();
+
+            return redirect()->route('instrukturs.index')->with('success', 'Instruktur deleted successfully.');
+        } catch (\Exception $e) {
+            // Rollback transaction if something goes wrong
+            DB::rollBack();
+
+            // Log the error or handle it as necessary
+            return redirect()
+                ->route('instrukturs.index')
+                ->with('error', 'Failed to delete Instruktur: ' . $e->getMessage());
+        }
     }
 }

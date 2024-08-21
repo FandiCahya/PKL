@@ -20,9 +20,10 @@ return new class extends Migration
             $table->string('image')->nullable()->default('profile.png');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'users'])->nullable()->default('users');
+            $table->enum('role', ['admin', 'user'])->nullable()->default('user');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

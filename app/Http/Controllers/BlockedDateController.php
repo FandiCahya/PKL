@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Logs;
 use App\Models\TimeSlot;
+use Illuminate\Support\Facades\Log;
 
 class BlockedDateController extends Controller
 {
@@ -69,7 +70,8 @@ class BlockedDateController extends Controller
     {
         $blockedDate = BlockedDate::findOrFail($id);
         $profile = Auth::user();
-        return view('admin.edit.block_dates', compact('blockedDate', 'profile'));
+        $timeSlots = TimeSlot::all();
+        return view('admin.edit.block_dates', compact('blockedDate', 'profile','timeSlots'));
     }
 
     public function update(Request $request, $id)
@@ -103,23 +105,34 @@ class BlockedDateController extends Controller
     }
     public function destroy($id)
     {
-        $blockedDate = BlockedDate::findOrFail($id);
-        $blockedDateData = $blockedDate->toArray();
-        $blockedDate->delete();
-
-        // Data log
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'delete',
-            'description' => 'Deleted blocked date: ' . $blockedDateData['id'],
-            'table_name' => 'blocked_dates',
-            'table_id' => $blockedDateData['id'],
-            'data' => json_encode($blockedDateData),
-        ];
-
-        // Simpan log
-        Logs::create($logData);
-
-        return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil dihapus.');
+        try {
+            $blockedDate = BlockedDate::findOrFail($id);
+            $blockedDateData = $blockedDate->toArray();
+    
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted blocked date: ' . $blockedDateData['blocked_date'],
+                'table_name' => 'blocked_dates',
+                'table_id' => $id,
+                'data' => json_encode($blockedDateData),
+            ];
+    
+            // Simpan log
+            Logs::create($logData);
+    
+            // Soft delete blocked date
+            $blockedDate->delete();
+    
+            return redirect()->route('blocked_dates.index')->with('success', 'Tanggal berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Log error untuk keperluan debugging
+            Log::error('Failed to delete blocked date with ID ' . $id . ': ' . $e->getMessage());
+    
+            // Redirect dengan pesan error
+            return redirect()->route('blocked_dates.index')->with('error', 'Gagal menghapus tanggal: ' . $e->getMessage());
+        }
     }
+    
 }

@@ -17,19 +17,23 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
-            Logs::create([
-                'user_id' => null,
-                'action' => 'login_failed',
-                'description' => 'Invalid login details',
-                'data' => json_encode($credentials),
-            ]);
+            // Logs::create([
+            //     'user_id' => null,
+            //     'action' => 'login_failed',
+            //     'description' => 'Invalid login details',
+            //     'data' => json_encode($credentials),
+            // ]);
             return response()->json(
                 [
                     'user' => null,
-                    'message' => 'Invalid login details',
+                    'message' => 'Invalid login details ',
                     'status' => 'failed',
                 ],
                 401,
+                // [
+                //     'error' => 'Invalid login details',
+                // ],
+                // 401,
             );
         }
 

@@ -30,10 +30,10 @@
                         <i class="fas fa-edit"></i> Edit
                     </a>
                     <form action="{{ route('time-slots.destroy', $timeSlot->id) }}" method="POST"
-                        style="display:inline;">
+                        style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this time?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">
+                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete">
                             <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </form>

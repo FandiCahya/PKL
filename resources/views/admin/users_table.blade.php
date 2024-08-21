@@ -4,11 +4,11 @@
             <th>No</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Alamat</th>
-            <th>No HP</th>
+            <th>Address</th>
+            <th>Phone</th>
             <th>Image</th>
             <th>Role</th>
-            <th>Actions</th>
+            <th style="width: 20%">Actions</th>
         </tr>
     </thead>
     @php
@@ -34,10 +34,10 @@
                     <a href="{{ route('edit_user', $user->id) }}" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit"></i> Update
                     </a>
-                    <form action="{{ route('hapus_user', $user->id) }}" method="POST" style="display:inline;">
+                    <form action="{{ route('hapus_user', $user->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this users?');">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">
+                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete">
                             <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </form>

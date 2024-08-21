@@ -2,11 +2,11 @@
     <thead class="thead-dark">
         <tr>
             <th>No</th>
-            <th>Nama</th>
-            <th>Alamat</th>
-            <th>No HP</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone</th>
             <th>Email</th>
-            <th>Aksi</th>
+            <th style="width: 20%">Actions</th>
         </tr>
     </thead>
     @php
@@ -22,13 +22,13 @@
                 <td>{{ $instruktur->email }}</td>
                 <td>
                     <a href="{{ route('instrukturs.edit', $instruktur->id) }}" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Update">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-edit"> </i> Update
                     </a>
                     <form action="{{ route('instrukturs.destroy', $instruktur->id) }}" method="POST" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this item?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete">
-                            <i class="fas fa-trash-alt"></i>
+                            <i class="fas fa-trash-alt"></i> Delete
                         </button>
                     </form>
                 </td>

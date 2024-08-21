@@ -4,9 +4,9 @@
             {{-- <th>ID</th> --}}
             <th style="width: 5%;">No</th>
             <th style="width: 20%;">Date</th>
-            <th style="width: 20%;">Time</th>
+            <th style="width: 15%;">Time</th>
             <th style="width: 30%;">Reason</th>
-            <th style="width: 15%;">Actions</th>
+            <th style="width: 20%;">Actions</th>
         </tr>
     </thead>
     @php
@@ -21,14 +21,14 @@
                 <td>{{ $blockedDate->reason }}</td>
                 <td>
                     <a href="{{ route('blocked_dates.edit', $blockedDate) }}" class="btn btn-warning"><i
-                            class="fas fa-edit"></i></a>
+                            class="fas fa-edit"></i> Update</a>
                     <form action="{{ route('blocked_dates.destroy', $blockedDate) }}" method="POST"
                         style="display:inline;"
                         onsubmit="return confirm('Are you sure you want to delete this blocked date?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger"data-toggle="tooltip" title="Delete"><i
-                                class="fas fa-trash-alt"></i></button>
+                                class="fas fa-trash-alt"></i> Delete</button>
                     </form>
                 </td>
             </tr>

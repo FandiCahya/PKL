@@ -7,6 +7,7 @@ use App\Models\BlockedTgl;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Logs;
+use Illuminate\Support\Facades\Log;
 
 class BlockedTglController extends Controller
 {
@@ -98,23 +99,35 @@ class BlockedTglController extends Controller
 
     public function destroy($id)
     {
-        $blockedDate = BlockedTgl::findOrFail($id);
-        $blockedDateData = $blockedDate->toArray();
-        $blockedDate->delete();
-
-        // Data log
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'delete',
-            'description' => 'Deleted blocked date: ' . $blockedDateData['id'],
-            'table_name' => 'blocked_tgl',
-            'table_id' => $blockedDateData['id'],
-            'data' => json_encode($blockedDateData),
-        ];
-
-        // Simpan log
-        Logs::create($logData);
-
-        return redirect()->route('blocked_tgl.index')->with('success', 'Tanggal berhasil dihapus.');
+        try {
+            // Cari entri berdasarkan ID
+            $blockedDate = BlockedTgl::findOrFail($id);
+            $blockedDateData = $blockedDate->toArray();
+    
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted blocked date: ' . $blockedDateData['id'],
+                'table_name' => 'blocked_tgl',
+                'table_id' => $blockedDateData['id'],
+                'data' => json_encode($blockedDateData),
+            ];
+    
+            // Simpan log
+            Logs::create($logData);
+    
+            // Soft delete blocked date
+            $blockedDate->delete();
+    
+            return redirect()->route('blocked_tgl.index')->with('success', 'Tanggal berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Log error untuk keperluan debugging
+            Log::error('Failed to delete blocked date with ID ' . $id . ': ' . $e->getMessage());
+    
+            // Redirect dengan pesan error
+            return redirect()->route('blocked_tgl.index')->with('error', 'Gagal menghapus tanggal: ' . $e->getMessage());
+        }
     }
+    
 }

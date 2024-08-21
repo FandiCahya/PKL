@@ -19,7 +19,7 @@ class RoomController extends Controller
             $query->where('nama', 'LIKE', "%{$search}%");
         }
 
-        $rooms = $query->orderBy('created_at','desc')->paginate(10);
+        $rooms = $query->orderBy('created_at', 'desc')->paginate(10);
 
         if ($request->ajax()) {
             return view('admin.rooms_table', compact('rooms'))->render();
@@ -102,25 +102,35 @@ class RoomController extends Controller
     }
     public function hapusRoom($id)
     {
-        $room = Room::findOrFail($id);
-        $roomData = $room->toArray();
+        try {
+            $room = Room::findOrFail($id);
+            $roomData = $room->toArray();
 
-        // Data log
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'delete',
-            'description' => 'Deleted room: ' . $roomData['nama'],
-            'table_name' => 'rooms',
-            'table_id' => $id,
-            'data' => json_encode($roomData),
-        ];
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted room: ' . $roomData['nama'],
+                'table_name' => 'rooms',
+                'table_id' => $id,
+                'data' => json_encode($roomData),
+            ];
 
-        // Simpan log
-        Logs::create($logData);
-        $room->delete();
+            // Simpan log
+            Logs::create($logData);
 
+            // Soft delete room
+            $room->delete();
 
+            return redirect()->route('kelola_room')->with('success', 'Room berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Log error untuk keperluan debugging
+            // Logs::error('Gagal menghapus room dengan ID ' . $id . ': ' . $e->getMessage());
 
-        return redirect()->route('kelola_room')->with('success', 'Room berhasil dihapus.');
+            // Redirect dengan pesan error
+            return redirect()
+                ->route('kelola_room')
+                ->with('error', 'Gagal menghapus room: ' . $e->getMessage());
+        }
     }
 }

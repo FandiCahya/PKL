@@ -163,23 +163,34 @@ class PromoController extends Controller
 
     public function hapusPromo($id)
     {
-        $promo = Promotion::findOrFail($id);
-        $promoData = $promo->toArray();
-        $promo->delete();
-
-        // Data log
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'delete',
-            'description' => 'Deleted class: ' . $promoData['name'],
-            'table_name' => 'promotions',
-            'table_id' => $id,
-            'data' => json_encode($promoData),
-        ];
-
-        // Simpan log
-        Logs::create($logData);
-
-        return redirect()->route('kelola_promo')->with('success', 'Class berhasil dihapus.');
+        try {
+            $promo = Promotion::findOrFail($id);
+            $promoData = $promo->toArray();
+    
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted promotion: ' . $promoData['name'],
+                'table_name' => 'promotions',
+                'table_id' => $id,
+                'data' => json_encode($promoData),
+            ];
+    
+            // Simpan log
+            Logs::create($logData);
+    
+            // Soft delete promotion
+            $promo->delete();
+    
+            return redirect()->route('kelola_promo')->with('success', 'Promotion berhasil dihapus.');
+        } catch (\Exception $e) {
+            // Log error untuk keperluan debugging
+            Log::error('Failed to delete promotion with ID ' . $id . ': ' . $e->getMessage());
+    
+            // Redirect dengan pesan error
+            return redirect()->route('kelola_promo')->with('error', 'Failed to delete promotion: ' . $e->getMessage());
+        }
     }
+    
 }

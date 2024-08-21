@@ -15,7 +15,7 @@
         <!-- Content Row -->
         <div class="row">
             <div class="col-md-12">
-                <h1 class="h4 mb-4 text-gray-800">Schedule</h1> 
+                <h1 class="h4 mb-4 text-gray-800">Schedule Class</h1> 
                 <div id="calendar"></div>
             </div>
         </div>

@@ -14,13 +14,14 @@ class CreateLogsTable extends Migration
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('action')->nullable();
             $table->text('description')->nullable();
             $table->string('table_name');
             $table->integer('table_id');
             $table->json('data');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

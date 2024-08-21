@@ -17,7 +17,7 @@
         <div class="col-lg-6">
             <form class="form-inline">
                 <div class="input-group">
-                    <input type="text" name="search" id="search" class="form-control" placeholder="Search by nama" value="{{ request('search') }}">
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
                     <div class="input-group-append">
                         <span class="input-group-text"><i class="fa fa-search"></i></span>
                     </div>

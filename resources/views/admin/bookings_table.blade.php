@@ -2,13 +2,14 @@
     <thead class="thead-dark">
         <tr>
             <th style="width: 5%;">No</th>
-            <th style="width: 15%;">User</th>
-            <th style="width: 15%;">Room/Promotion</th>
+            <th style="width: 10%;">User</th>
+            <th style="width: 10%;">Class</th>
+            <th style="width: 10%;">Room</th>
             <th style="width: 15%;">Date</th>
             <th style="width: 15%;">Time</th>
             <th style="width: 10%;">Price</th>
             <th style="width: 10%;">Status</th>
-            <th style="width: 15%;">QR Code</th>
+            <th style="width: 20%;">QR Code</th>
         </tr>
     </thead>
     <tbody>
@@ -20,11 +21,10 @@
                 <td>{{ $no++ }}</td>
                 <td>{{ isset($booking->user) ? $booking->user->name : '-' }}</td>
                 <td>
-                    @if ($booking->booking_type == 'room')
-                        {{ isset($booking->room) ? $booking->room->nama : '-' }}
-                    @else
-                        {{ isset($booking->promotion) ? $booking->promotion->name : '-' }}
-                    @endif
+                    {{ isset($booking->promotion) ? $booking->promotion->name : '-' }}
+                </td>
+                <td>
+                    {{ isset($booking->room) ? $booking->room->nama : '-' }}
                 </td>
                 <td>
                     @if ($booking->booking_type == 'room')
@@ -41,10 +41,33 @@
                     @endif
                 </td>
                 <td>{{ number_format($booking->harga, 2) }}</td>
-                <td>{{ ucfirst($booking->status) }}</td>
+                <td>
+                    {{-- {{ ucfirst($booking->status) }} --}}
+                    @php
+                        $badgeClass = '';
+                        $statusText = '';
+
+                        if ($booking->status === 'Booked') {
+                            $badgeClass = 'badge-success';
+                            $statusText = 'Booked';
+                        } elseif ($booking->status === 'Rejected') {
+                            $badgeClass = 'badge-danger';
+                            $statusText = 'Rejected';
+                        } else {
+                            // Assuming 'pending' is the default or fallback status
+                            $badgeClass = 'badge-warning';
+                            $statusText = 'Pending';
+                        }
+                    @endphp
+                    {{-- {{ $payment->status }} --}}
+                    <span class="badge {{ $badgeClass }}">
+                        {{ $statusText }}
+                    </span>
+                </td>
                 <td>
                     @if ($booking->status === 'Booked' && $booking->qrcode)
-                        <img src="{{ asset($booking->qrcode) }}" alt="QR Code" class="img-thumbnail" style="width: 100px;" data-toggle="tooltip" title="Click to view QR code">
+                        <img src="{{ asset($booking->qrcode) }}" alt="QR Code" class="img-thumbnail"
+                            style="width: 100px;" data-toggle="tooltip" title="Click to view QR code">
                     @else
                         <span>No QR Code</span>
                     @endif

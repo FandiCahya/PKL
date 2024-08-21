@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->date('blocked_date');
             $table->unsignedBigInteger('time_slot_id')->nullable(); // Reference to time_slot
-            $table->foreign('time_slot_id')->references('id')->on('time_slots')->onDelete('set null');
+            $table->foreign('time_slot_id')->references('id')->on('time_slots');
             $table->string('reason')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

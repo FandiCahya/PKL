@@ -15,6 +15,8 @@
         @php
             $no = 1;
         @endphp
+
+
         @foreach ($payments as $payment)
             <tr>
                 <td>{{ $no++ }}</td>
@@ -31,13 +33,35 @@
                         style="max-width: 150px; cursor: pointer;" data-toggle="modal" data-target="#paymentProofModal"
                         onclick="showImage('{{ asset($payment->payment_proof) }}')">
                 </td>
-                <td>{{ $payment->status }}</td>
+                <td>
+                    {{-- Status Payments --}}
+                    @php
+                        $badgeClass = '';
+                        $statusText = '';
+
+                        if ($payment->status === 'confirmed') {
+                            $badgeClass = 'badge-success';
+                            $statusText = 'Confirmed';
+                        } elseif ($payment->status === 'rejected') {
+                            $badgeClass = 'badge-danger';
+                            $statusText = 'Rejected';
+                        } else {
+                            // Assuming 'pending' is the default or fallback status
+                            $badgeClass = 'badge-warning';
+                            $statusText = 'Pending';
+                        }
+                    @endphp
+                    {{-- {{ $payment->status }} --}}
+                    <span class="badge {{ $badgeClass }}">
+                        {{ $statusText }}
+                    </span>
+                </td>
                 <td>{{ $payment->created_at->format('d M Y H:i') }}</td>
                 <td>
                     {{-- <a href="{{ route('payments.edit', $payment->id) }}" class="btn btn-warning btn-sm">Edit</a> --}}
                     <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
                         data-target="#validationModal-{{ $payment->id }}">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-check-circle"></i> Validation
                     </button>
 
                     {{-- <form action="{{ route('payments.destroy', $payment->id) }}" method="POST"

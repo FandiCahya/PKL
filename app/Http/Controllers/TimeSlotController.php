@@ -17,10 +17,13 @@ class TimeSlotController extends Controller
     {
         $search = $request->get('search');
         $profile = Auth::user();
-        $timeSlots = TimeSlot::where('start_time', 'like', "%{$search}%")
-            ->orWhere('end_time', 'like', "%{$search}%")
-            ->orderBy('created_at', 'desc')
-            ->paginate(10); // Menggunakan paginasi
+        $timeSlots = TimeSlot::whereHas('room', function($query) use ($search) {
+            $query->where('nama', 'like', "%{$search}%");
+        })
+        ->orWhere('start_time', 'like', "%{$search}%")
+        ->orWhere('end_time', 'like', "%{$search}%")
+        ->orderBy('created_at', 'desc')
+        ->paginate(10); // Using pagination
     
         if ($request->ajax()) {
             return view('admin.time_slots.table', compact('timeSlots'))->render();
@@ -136,21 +139,33 @@ class TimeSlotController extends Controller
      */
     public function destroy(TimeSlot $timeSlot)
     {
-        // Data log
-        $logData = [
-            'user_id' => Auth::id(),
-            'action' => 'delete',
-            'description' => 'Deleted a time slot: ' . $timeSlot->start_time . ' - ' . $timeSlot->end_time,
-            'table_name' => 'time_slots',
-            'table_id' => $timeSlot->id,
-            'data' => json_encode($timeSlot->toArray()),
-        ];
-
-        // Save log
-        Logs::create($logData);
-
-        $timeSlot->delete();
-
-        return redirect()->route('time-slots.index')->with('success', 'Time slot deleted successfully.');
+        $timeSlotData = $timeSlot->toArray();
+    
+        try {
+            // Data log
+            $logData = [
+                'user_id' => Auth::id(),
+                'action' => 'delete',
+                'description' => 'Deleted a time slot: ' . $timeSlot->start_time . ' - ' . $timeSlot->end_time,
+                'table_name' => 'time_slots',
+                'table_id' => $timeSlot->id,
+                'data' => json_encode($timeSlotData),
+            ];
+    
+            // Simpan log
+            Logs::create($logData);
+    
+            // Soft delete time slot
+            $timeSlot->delete();
+    
+            return redirect()->route('time-slots.index')->with('success', 'Time slot deleted successfully.');
+        } catch (\Exception $e) {
+            // Log error untuk keperluan debugging
+            // Log::error('Failed to delete time slot with ID ' . $timeSlot->id . ': ' . $e->getMessage());
+    
+            // Redirect dengan pesan error
+            return redirect()->route('time-slots.index')->with('error', 'Failed to delete time slot: ' . $e->getMessage());
+        }
     }
+    
 }
