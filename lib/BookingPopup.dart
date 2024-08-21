@@ -52,7 +52,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
             ),
             SizedBox(width: 10),
             Text(
-              'Time Slot Blocked',
+              'Time Blocked',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -205,176 +205,191 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: FutureBuilder<List<Room>>(
-          future: _roomsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Failed to load rooms'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No rooms available'));
-            } else {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Date',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    DateFormat.yMMMMd().format(widget.selectedDate),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  Text(
-                    'Room',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: snapshot.data!.map((room) {
-                        return roomSelectionButton(room);
-                      }).toList(),
-                    ),
-                  ),
-                  SizedBox(height: 40),
-                  Text(
-                    'Time',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 25,
-                      fontFamily: 'Source Sans Pro',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  FutureBuilder<List<TimeSlot>>(
-                    future: _timeSlotsFuture,
-                    builder: (context, timeSnapshot) {
-                      if (timeSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (timeSnapshot.hasError) {
-                        return Center(child: Text('Failed to load times'));
-                      } else if (!timeSnapshot.hasData ||
-                          timeSnapshot.data!.isEmpty) {
-                        return Center(child: Text('No time slots available'));
-                      } else {
-                        return timeSelectionList(timeSnapshot.data!);
-                      }
-                    },
-                  ),
-                  SizedBox(height: 40),
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        if (_selectedTime != -1 && _selectedRoom != -1) {
-                          print(
-                              'Booked room $_selectedRoom at $_selectedTime on ${widget.selectedDate}');
-                          _handleBooking();
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+        // child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: FutureBuilder<List<Room>>(
+                  future: _roomsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Failed to load rooms'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No rooms available'));
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Date',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            DateFormat.yMMMMd().format(widget.selectedDate),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          Text(
+                            'Room',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: snapshot.data!.map((room) {
+                                return roomSelectionButton(room);
+                              }).toList(),
+                            ),
+                          ),
+                          SizedBox(height: 40),
+                          Text(
+                            'Time',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          // Expanded(
+                            // child: 
+                            FutureBuilder<List<TimeSlot>>(
+                              future: _timeSlotsFuture,
+                              builder: (context, timeSnapshot) {
+                                if (timeSnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (timeSnapshot.hasError) {
+                                  return Center(
+                                      child: Text('Failed to load times'));
+                                } else if (!timeSnapshot.hasData ||
+                                    timeSnapshot.data!.isEmpty) {
+                                  return Center(
+                                      child: Text('No time slots available'));
+                                } else {
+                                  return timeSelectionList(timeSnapshot.data!);
+                                }
+                              },
+                            ),
+                          // ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
+              SizedBox(height: 40),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    if (_selectedTime != -1 && _selectedRoom != -1) {
+                      print(
+                          'Booked room $_selectedRoom at $_selectedTime on ${widget.selectedDate}');
+                      _handleBooking();
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          backgroundColor: Color(0xFF2C2C2C),
+                          title: Text(
+                            'Please select a room and time',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontFamily: 'Source Sans Pro',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Make sure to select both a room and time slot before proceeding.',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontFamily: 'Source Sans Pro',
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                              backgroundColor: Color(0xFF2C2C2C),
-                              title: Text(
-                                'Please select a room and time',
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Color(0xFF746EBD),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                'OK',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontFamily: 'Source Sans Pro',
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Make sure to select both a room and time slot before proceeding.',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 14,
-                                      fontFamily: 'Source Sans Pro',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Color(0xFF746EBD),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'OK',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontFamily: 'Source Sans Pro',
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
                             ),
-                          );
-                        }
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF746EBD),
-                          borderRadius: BorderRadius.circular(10),
+                          ],
                         ),
-                        child: Center(
-                          child: Text(
-                            'Book Now',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontFamily: 'Source Sans Pro',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF746EBD),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Book Now',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: 'Source Sans Pro',
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                   ),
-                ],
-              );
-            }
-          },
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      // ),
     );
   }
 

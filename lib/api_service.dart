@@ -1,9 +1,30 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'dart:convert';
+// import 'package:flutter/material.dart';
 
 class ApiService {
   static const String baseUrl = 'http://192.168.100.97:8000/api';
+
+// Method untuk mendapatkan payment berdasarkan booking_id
+  Future<Map<String, dynamic>?> getPaymentByBookingId(String bookingId) async {
+    final response = await http.get(Uri.parse('$baseUrl/payments/$bookingId'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['success']) {
+        return data['payment'];
+      } else {
+        return null;
+      }
+    } else if (response.statusCode == 404) {
+      // Payment not found
+      return null;
+    } else {
+      throw Exception('Failed to load payment');
+    }
+  }
 
   // Function to handle payment API
   Future<void> createPayment({

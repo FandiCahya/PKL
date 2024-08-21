@@ -20,7 +20,7 @@ class _SignUpState extends State<SignUp> {
       TextEditingController();
 
   Future<void> registerUser() async {
-    final url = Uri.parse('http://localhost:8000/api/auth/register');
+    final url = Uri.parse('http://192.168.100.97:8000/api/auth/register');
 
     if (_passwordController.text != _confirmPasswordController.text) {
       _showErrorDialog('Passwords do not match');

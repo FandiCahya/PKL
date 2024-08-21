@@ -67,6 +67,14 @@ class _BookingDetailDialogState extends State<BookingDetailDialog> {
     final paymentProofFile = File(_imageFile!.path);
 
     try {
+
+       // Cek apakah pembayaran sudah ada
+        final existingPayment = await _apiService.getPaymentByBookingId(widget.id);
+        if (existingPayment != null) {
+            _showErrorDialog('Payment proof already exists for this booking!');
+            return;
+        }
+        
       await _apiService.createPayment(
         userId: userId,
         bookingId: widget.id,

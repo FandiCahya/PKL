@@ -89,7 +89,7 @@ class _DashboardState extends State<Dashboard> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return FractionallySizedBox(
-          heightFactor: 0.75, // Mengatur tinggi menjadi 3/4 layar
+          heightFactor: 0.73, // Mengatur tinggi menjadi 3/4 layar
           child: BookingBottomSheet(selectedDate: selectedDay),
         );
       },
@@ -183,8 +183,7 @@ class _DashboardState extends State<Dashboard> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle, // Menggunakan bentuk bulat
                             border: Border.all(
-                              color:
-                                  Color(0xFF726BBC), // Border warna abu-abu
+                              color: Color(0xFF726BBC), // Border warna abu-abu
                               width: 1.5, // Lebar border
                             ),
                             boxShadow: [

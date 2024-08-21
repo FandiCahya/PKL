@@ -68,6 +68,12 @@ class _MyBookingState extends State<MyBooking> {
       } else {
         filteredBookings = bookings;
       }
+      // Sort bookings by date in descending order
+      filteredBookings.sort((a, b) {
+        DateTime dateA = DateFormat('yyyy-MM-dd').parse(a['tgl']);
+        DateTime dateB = DateFormat('yyyy-MM-dd').parse(b['tgl']);
+        return dateB.compareTo(dateA); // Descending order
+      });
     });
   }
 

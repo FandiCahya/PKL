@@ -28,7 +28,8 @@ class LoginPage extends StatelessWidget {
           'password': passwordController.text,
         }),
       );
-
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
       final jsonResponse = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -49,6 +50,7 @@ class LoginPage extends StatelessWidget {
           ),
         );
       } else {
+        print('Login failed: ${jsonResponse['message']}');
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -75,6 +77,7 @@ class LoginPage extends StatelessWidget {
               ),
               content: Text(
                 jsonResponse['message'] ?? 'An error occurred',
+                // jsonResponse['message'] ?? 'Incorrect email or password. Please try again.',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
