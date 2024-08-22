@@ -16,8 +16,28 @@ class PaymentController extends Controller
         return response()->json(['pembayaran' => $pembayaran], 200);
     }
 
+    public function getPaymentByBookingId($booking_id)
+    {
+        // Cari pembayaran berdasarkan booking_id
+        $payment = Payment::where('booking_id', $booking_id)->first();
+
+        // Jika pembayaran ditemukan, kembalikan detail pembayaran
+        if ($payment) {
+            return response()->json([
+                'success' => true,
+                'payment' => $payment
+            ], 200);
+        }
+
+        // Jika pembayaran tidak ditemukan, kembalikan pesan kesalahan
+        return response()->json([
+            'success' => false,
+            'message' => 'Payment not found for the given booking ID.'
+        ], 404);
+    }
+
     public function store(Request $request)
-    {   
+    {
         // Validasi input
         $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -25,6 +45,17 @@ class PaymentController extends Controller
             'amount' => 'required|numeric|min:0',
             'payment_proof' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
         ]);
+
+        // Cek apakah sudah ada pembayaran untuk booking_id ini
+        $existingPayment = Payment::where('booking_id', $request->booking_id)->first();
+        if ($existingPayment) {
+            return response()->json(
+                [
+                    'error' => 'Payment proof already exists for this booking.',
+                ],
+                400,
+            );
+        }
 
         // Ambil data booking berdasarkan booking_id
         $booking = Booking::findOrFail($request->booking_id);
@@ -63,9 +94,12 @@ class PaymentController extends Controller
 
         Logs::create($logData);
 
-        return response()->json([
-            'success' => 'Payment created successfully.',
-            'payment' => $payment
-        ], 201);
+        return response()->json(
+            [
+                'success' => 'Payment created successfully.',
+                'payment' => $payment,
+            ],
+            201,
+        );
     }
 }

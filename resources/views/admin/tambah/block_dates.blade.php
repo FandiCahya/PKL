@@ -28,7 +28,7 @@
                     <label for="time_slot_id">Time Slot:</label>
                     <select name="time_slot_id" id="time_slot_id" required>
                         @foreach ($timeSlots as $timeSlot)
-                            <option value="{{ $timeSlot->id }}">{{ $timeSlot->start_time }} - {{ $timeSlot->end_time }}</option>
+                            <option value="{{ $timeSlot->id }}">{{ $timeSlot->room->nama }} ==> {{ $timeSlot->start_time }} - {{ $timeSlot->end_time }}</option>
                         @endforeach
                     </select>
                 </div>

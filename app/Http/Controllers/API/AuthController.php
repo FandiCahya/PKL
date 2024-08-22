@@ -26,7 +26,7 @@ class AuthController extends Controller
             return response()->json(
                 [
                     'user' => null,
-                    'message' => 'Invalid login details ',
+                    'message' => 'Check Your Email and Password',
                     'status' => 'failed',
                 ],
                 401,
@@ -70,7 +70,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:user',
             'password' => 'required|string|min:8',
             'alamat' => 'nullable|string|max:255',
             'no_hp' => 'nullable|string|max:15',

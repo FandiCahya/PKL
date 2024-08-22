@@ -47,7 +47,7 @@
                                 <div class="p-5">
                                     <div class="text-center">
                                         {{-- <img src="path/to/your/logo.png" alt="Logo" class="mb-4" style="max-width: 100px;"> --}}
-                                        <h1 class="h4 text-gray-900 mb-4">GYM Booking</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">FitSpot</h1>
                                         {{-- <h2 class="h4 text-gray-900 mb-4">Di Gym Booking Admin</h2> --}}
                                     </div>
                                     @if(session()->has('loginError'))

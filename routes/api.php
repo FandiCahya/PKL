@@ -21,6 +21,7 @@ Route::get('detailbooking/{user_id}', [BookingController::class, 'getBookingsByU
 Route::post('/bookings', [BookingController::class, 'store']);
 
 
+
 // Route::get('/detailbooking/{userId}', [BookingController::class, 'getBookingsByUserIdAndDate']);
 // Route::apiResource('rooms', RoomController::class);
 Route::get('/kelolarooms',[RoomController::class,'index']);
@@ -30,11 +31,12 @@ Route::get('times/room/{roomId}', [TimeController::class, 'showByRoomId']);
 
 Route::get('/kelolapembayaran',[PaymentController::class,'index']);
 Route::post('payments', [PaymentController::class, 'store']);
+Route::get('payments/{booking_id}', [PaymentController::class, 'getPaymentByBookingId']);
 
 
 
 Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/register', [AuthController::class, 'register']);
+  
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 
 
