@@ -130,7 +130,7 @@ class LoginPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'GYM App',
+                      'FitSpot',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF746EBD),
