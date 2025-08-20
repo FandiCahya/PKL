@@ -1,28 +1,92 @@
-🏋️ Booking Gym App
 
-📌 Deskripsi
 
-Aplikasi Booking Gym yang memungkinkan pengguna untuk memesan jadwal gym secara online.
-Fitur utama mencakup registrasi pengguna, pemesanan jadwal, manajemen instruktur, dan laporan booking.
+# 🏋️ Booking Gym App
 
-🚀 Tech Stack
+## 📌 Deskripsi
 
-Frontend : Bootstrap
+Aplikasi **Booking Gym** berbasis mobile dengan **Flutter** yang terhubung ke **Laravel REST API** sebagai backend.
+Fitur utama meliputi registrasi user, booking jadwal gym, serta laporan admin.
 
-Backend : Laravel RestApi
+---
 
-Database : MySQL 
+## 🚀 Tech Stack
 
-Auth : JWT Authentication 
+* **Frontend (Mobile)** : Flutter (Dart)
+* **Backend (API)** : Laravel 10+
+* **Database** : MySQL
+* **Authentication** : Laravel Sanctum / JWT
 
-Android : Flutter
+---
 
-🎯 Fitur
+## 🎯 Fitur Utama
 
-🔐 Registrasi & Login User
+* 🔐 Registrasi & Login pengguna
+* 📅 Booking jadwal gym sesuai ketersediaan
+* 📊 Dashboard admin (laporan booking & user)
 
-📅 Booking Jadwal Gym
+---
 
-📊 Dashboard Admin untuk monitoring booking
+## 🛠️ Instalasi
+
+### 1️⃣ Clone Repository
+
+```bash
+https://github.com/FandiCahya/PKL.git
+cd PKL
+```
+
+### 2️⃣ Setup Backend (Laravel API)
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
+
+### 3️⃣ Setup Mobile (Flutter)
+
+```bash
+cd mobile
+flutter pub get
+flutter run
+```
+
+---
+
+## ⚙️ Konfigurasi
+
+### 🔹 Konfigurasi Laravel `.env`
+
+```env
+APP_NAME=BookingGym
+APP_ENV=local
+APP_KEY=base64:your-key
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=booking_gym
+DB_USERNAME=root
+DB_PASSWORD=
+
+SANCTUM_STATEFUL_DOMAINS=localhost
+SESSION_DOMAIN=localhost
+```
+
+### 🔹 Konfigurasi API di Flutter
+
+```dart
+const String baseUrl = "http://127.0.0.1:8000/api";
+```
+---
+
+## 📸  Sertifikat
+![Sertifikat](./public/1.jpg)
+
+---
 
 
