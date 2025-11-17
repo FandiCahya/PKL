@@ -27,7 +27,7 @@ Berikut adalah beberapa tampilan dari aplikasi:
 
 | Dashboard | Pilih Jadwal | Booking Berhasil |
 | :---: | :---: | :---: |
-| <img src="assets/img/Dashboard.png" width="250"> | <img src="assetsa/img/Choose Jadwal.png" width="250"> | <img src="assets/img/Booked Success.png" width="250"> |
+| <img src="assets/img/Dashboard.png" width="250"> | <img src="assets/img/Choose Jadwal.png" width="250"> | <img src="assets/img/Booked Success.png" width="250"> |
 
 | Profil Saya | Edit Profil | Pesanan Saya |
 | :---: | :---: | :---: |
@@ -71,5 +71,6 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 ## 👤 Kontributor
 
 * **[FandiCahya](https://github.com/FandiCahya)** - *Developer Utama*
+
 
 
