@@ -1,10 +1,10 @@
-# Proyek Aplikasi [Nama Aplikasi Anda, misal: "Go-Workout"] (PKL)
+# Proyek Aplikasi FitSpot (PKL)
 
-> Sebuah aplikasi Android untuk [Tulis tujuan singkat aplikasi, misal: "memudahkan pengguna dalam memesan jadwal gym dan kelas olahraga"] sebagai bagian dari Praktek Kerja Lapangan (PKL).
+> Sebuah aplikasi Android untuk booking gym sebagai bagian dari Praktek Kerja Lapangan (PKL).
 
 ## deskripsi Singkat
 
-Proyek ini adalah aplikasi seluler (Android) yang dibangun untuk [Jelaskan 1-2 kalimat tentang masalah yang diselesaikan]. Aplikasi ini memungkinkan pengguna untuk mendaftar, melihat jadwal yang tersedia, melakukan pemesanan, dan mengelola profil mereka.
+Aplikasi Booking Gym yang memungkinkan pengguna untuk memesan jadwal gym secara online. Fitur utama mencakup registrasi pengguna, pemesanan jadwal, manajemen instruktur, dan laporan booking.
 
 ---
 
@@ -71,3 +71,4 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 ## 👤 Kontributor
 
 * **[FandiCahya](https://github.com/FandiCahya)** - *Developer Utama*
+
